@@ -51,11 +51,17 @@ export default function GameClient() {
           this.load.image("cafe-bg", "/game/cafe.svg");
           this.load.image("kitchen-bg", "/game/kitchen.svg");
           this.load.image("park-bg", "/game/park.svg");
-          this.load.image("body-idle", "/game/body-idle.svg");
-          this.load.image("body-walk-a", "/game/body-walk-a.svg");
-          this.load.image("body-walk-b", "/game/body-walk-b.svg");
-          this.load.image("body-talk", "/game/body-talk.svg");
-          this.load.image("body-deadpan", "/game/body-deadpan.svg");
+          this.load.image("body-idle", "/game/body-idle-v2.svg");
+          this.load.image("body-walk-a", "/game/body-walk-a-v2.svg");
+          this.load.image("body-walk-b", "/game/body-walk-b-v2.svg");
+          this.load.image("body-talk", "/game/body-talk-v2.svg");
+          this.load.image("body-deadpan", "/game/body-deadpan-v2.svg");
+          this.load.image("body-gym", "/game/body-gym.svg");
+          this.load.image("body-badminton", "/game/body-badminton.svg");
+          this.load.image("body-football", "/game/body-football.svg");
+          this.load.image("body-run", "/game/body-run.svg");
+          this.load.image("body-seated", "/game/body-seated.svg");
+          this.load.image("body-cook", "/game/body-cook.svg");
         }
 
         create() {
@@ -165,6 +171,8 @@ export default function GameClient() {
           bob = true
         ) {
           const c = this.keep(this.add.container(x, y));
+
+          const shadow = this.add.ellipse(0, 265 * scale, 98 * scale, 18 * scale, 0x11151b, 0.12);
           const body = this.add.image(0, 18 * scale, pose)
             .setOrigin(0.5, 0)
             .setDisplaySize(160 * scale, 260 * scale);
@@ -172,7 +180,23 @@ export default function GameClient() {
           const head = this.add.image(0, -2 * scale, face)
             .setDisplaySize(112 * scale, 112 * scale);
 
-          c.add([body, head]);
+          c.add([shadow, body, head]);
+
+          const headBaseScaleY = head.scaleY;
+          this.time.addEvent({
+            delay: 2800 + Phaser.Math.Between(0, 1100),
+            loop: true,
+            callback: () => {
+              this.tweens.add({
+                targets: head,
+                scaleY: headBaseScaleY * 0.12,
+                duration: 60,
+                yoyo: true,
+                hold: 35,
+                ease: "Sine.InOut",
+              });
+            },
+          });
 
           if (bob) {
             this.tweens.add({
@@ -339,7 +363,7 @@ export default function GameClient() {
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
-          this.faceCharacter(195, 310, 0.56, "body-idle", "face-neutral");
+          this.faceCharacter(195, 310, 0.56, "body-gym", "face-neutral");
 
           this.panel(246, 190, 100, 58, 0xffd76d, 0.95, 14);
           this.text(260, 203, "1m86", 20);
@@ -382,12 +406,15 @@ export default function GameClient() {
           this.small(22, 170, "tap the shuttle when it hits the green zone");
 
           const court = this.keep(this.add.graphics());
-          court.fillStyle(0xbfe5bf, 1).fillRoundedRect(20, 220, 350, 330, 24);
-          court.lineStyle(2, 0xffffff, 0.9).strokeRoundedRect(36, 238, 318, 294, 12);
+          court.fillStyle(0xbfe5bf, 0.82).fillRoundedRect(20, 220, 350, 330, 24);
+          court.lineStyle(2, 0xffffff, 0.95).strokeRoundedRect(36, 238, 318, 294, 12);
           court.lineBetween(195, 238, 195, 532);
           court.fillStyle(0x74cf8f, 0.5).fillRoundedRect(160, 280, 70, 190, 14);
 
-          const shuttle = this.keep(this.add.text(34, 348, "🏸", { fontSize: "42px" }).setOrigin(0.5));
+          const player = this.faceCharacter(92, 315, 0.42, "body-badminton", "face-neutral", false);
+          player.container.setDepth(3);
+
+          const shuttle = this.keep(this.add.text(250, 348, "🏸", { fontSize: "42px" }).setOrigin(0.5).setDepth(4));
           let dir = 1;
           const move = this.tweens.add({ targets: shuttle, x: 354, duration: 1500, yoyo: true, repeat: -1, ease: "Sine.InOut" });
 
@@ -395,8 +422,15 @@ export default function GameClient() {
             move.pause();
             const ok = shuttle.x > 150 && shuttle.x < 240;
             this.state.badmintonHit = ok;
-            const reaction = this.faceCharacter(318, 120, 0.28, "body-idle", ok ? "face-smile" : "face-surprised", false);
-            this.tweens.add({ targets: reaction.container, scale: { from: 0.4, to: 1 }, duration: 220, ease: "Back.Out" });
+            player.head.setTexture(ok ? "face-smile" : "face-surprised");
+            this.tweens.add({
+              targets: player.container,
+              angle: ok ? -5 : 5,
+              x: ok ? 104 : 82,
+              duration: 180,
+              yoyo: true,
+              ease: "Back.Out",
+            });
             ok ? this.audio.hit() : this.audio.wrong();
             this.text(W / 2, 690, ok ? "NICE." : "we're pretending that didn't happen.", ok ? 30 : 17, "#17191f", 350, "center");
             this.time.delayedCall(950, () => this.showCafe());
@@ -426,6 +460,8 @@ export default function GameClient() {
 
           this.artBackground("cafe-bg", 0.98);
           this.panel(18, 145, 354, 350, 0xffffff, 0.08, 24);
+          const cafeActor = this.faceCharacter(285, 300, 0.42, "body-seated", "face-smile", true);
+          cafeActor.container.setDepth(2);
 
           seatOptions.forEach((s, i) => {
             this.button(30, 540 + i * 66, 330, 50, s.label, () => {
@@ -440,6 +476,7 @@ export default function GameClient() {
           this.stage = 5;
           this.clearScene(0xf3efff);
           this.artBackground("cafe-bg", 0.38);
+          this.faceCharacter(305, 470, 0.36, "body-seated", "face-thinking", true);
           this.small(22, 26, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
@@ -509,7 +546,7 @@ export default function GameClient() {
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.98);
           this.small(22, 26, "08 / COOKING");
-          this.faceCharacter(310, 250, 0.42, "body-talk", "face-smile");
+          this.faceCharacter(310, 250, 0.42, "body-cook", "face-smile");
           this.text(22, 70, "Tap the pan 3 times.", 28);
           const pan = this.keep(this.add.container(195, 360));
           const p = this.add.circle(0, 0, 105, 0x24282e);
