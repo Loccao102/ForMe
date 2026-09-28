@@ -667,18 +667,17 @@ export default function GameClient() {
           const hero = this.heroActor;
           if (hero?.container) {
             hero.head.setTexture("face-smile");
-            hero.body.setTexture("body-walk-a");
-            this.tweens.add({
-              targets: hero.container,
-              x: W + 110,
-              angle: 4,
-              duration: 620,
-              ease: "Sine.In",
-            });
+            this.walkActorTo(hero, W + 110, 620);
           }
 
           this.content.filter((o) => o?.y > 520 && o !== hero?.container).forEach((o) => {
-            this.tweens.add({ targets: o, y: H + 120, angle: Phaser.Math.Between(-40, 40), duration: 500, ease: "Back.In" });
+            this.tweens.add({
+              targets: o,
+              y: H + 120,
+              angle: Phaser.Math.Between(-40, 40),
+              duration: 500,
+              ease: "Back.In",
+            });
           });
           this.time.delayedCall(540, () => this.slideWorldTo("gym-bg", () => this.showGym(), 1, 650));
         }
@@ -772,6 +771,11 @@ export default function GameClient() {
               this.speech("Ừ, khoảng giữa là đúng.", 700);
             }
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
+            this.time.delayedCall(420, () => {
+              gymActor.head.setTexture("face-smile");
+              gymActor.body.setTexture("body-idle");
+              this.walkActorTo(gymActor, W + 105, 520);
+            });
             this.time.delayedCall(900, () => this.slideWorldTo("park-bg", () => this.showSports(), 1, 620));
           });
         }
@@ -856,7 +860,31 @@ export default function GameClient() {
             });
             ok ? this.audio.hit() : this.audio.wrong();
             this.text(W / 2, 690, ok ? "NICE." : "we're pretending that didn't happen.", ok ? 30 : 17, "#17191f", 350, "center");
-            this.time.delayedCall(850, () => this.showSportsMontage());
+
+            if (ok) {
+              this.tweens.add({
+                targets: shuttle,
+                x: W + 90,
+                y: 240,
+                angle: 35,
+                duration: 420,
+                ease: "Sine.In",
+              });
+            } else {
+              this.tweens.add({
+                targets: shuttle,
+                y: 540,
+                angle: 80,
+                duration: 420,
+                ease: "Bounce.Out",
+              });
+            }
+
+            this.time.delayedCall(480, () => {
+              player.body.setTexture("body-walk-a");
+              this.walkActorTo(player, -90, 420);
+            });
+            this.time.delayedCall(930, () => this.showSportsMontage());
           });
         }
 
@@ -1078,7 +1106,8 @@ export default function GameClient() {
           this.stage = 5;
           this.clearScene(0xf3efff);
           this.artBackground("cafe-bg", 0.38);
-          this.faceCharacter(305, 470, 0.36, "body-seated", "face-thinking", true);
+          const rememberedSeatX = this.state.seat === "window" ? 115 : this.state.seat === "corner" ? 286 : 205;
+          this.faceCharacter(rememberedSeatX, 470, 0.36, "body-seated", "face-thinking", true);
           this.small(22, 26, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
