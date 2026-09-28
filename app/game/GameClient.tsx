@@ -43,6 +43,16 @@ export default function GameClient() {
 
         preload() {
           this.load.image("face", photos.cafeBlack);
+          this.load.image("office-bg", "/game/office.svg");
+          this.load.image("gym-bg", "/game/gym.svg");
+          this.load.image("cafe-bg", "/game/cafe.svg");
+          this.load.image("kitchen-bg", "/game/kitchen.svg");
+          this.load.image("park-bg", "/game/park.svg");
+          this.load.image("body-idle", "/game/body-idle.svg");
+          this.load.image("body-walk-a", "/game/body-walk-a.svg");
+          this.load.image("body-walk-b", "/game/body-walk-b.svg");
+          this.load.image("body-talk", "/game/body-talk.svg");
+          this.load.image("body-deadpan", "/game/body-deadpan.svg");
         }
 
         create() {
@@ -137,15 +147,74 @@ export default function GameClient() {
           return [p, t];
         }
 
-        faceCharacter(x: number, y: number, scale = 1) {
-          const body = this.keep(this.add.graphics());
-          body.fillStyle(0x20242b, 1).fillRoundedRect(x - 42 * scale, y + 45 * scale, 84 * scale, 130 * scale, 22 * scale);
-          body.fillStyle(0xffffff, 1).fillRoundedRect(x - 32 * scale, y + 64 * scale, 64 * scale, 72 * scale, 14 * scale);
-          const head = this.keep(this.add.image(x, y, "face").setDisplaySize(94 * scale, 94 * scale));
-          const maskShape = this.make.graphics({ x: 0, y: 0 }, false);
-          maskShape.fillCircle(x, y, 47 * scale);
-          head.setMask(maskShape.createGeometryMask());
-          return { body, head };
+        artBackground(key: string, alpha = 1) {
+          const image = this.keep(this.add.image(W / 2, H / 2, key).setDisplaySize(W, H).setAlpha(alpha));
+          image.setDepth(-1);
+          return image;
+        }
+
+        faceCharacter(x: number, y: number, scale = 1, pose = "body-idle", bob = true) {
+          const c = this.keep(this.add.container(x, y));
+          const body = this.add.image(0, 16 * scale, pose)
+            .setOrigin(0.5, 0)
+            .setDisplaySize(160 * scale, 260 * scale);
+
+          const faceBack = this.add.graphics();
+          faceBack.fillStyle(0xffffff, 1).fillRoundedRect(-50 * scale, -50 * scale, 100 * scale, 100 * scale, 25 * scale);
+          faceBack.lineStyle(4 * scale, 0x11151b, 1).strokeRoundedRect(-50 * scale, -50 * scale, 100 * scale, 100 * scale, 25 * scale);
+
+          const head = this.add.image(0, 0, "face").setDisplaySize(92 * scale, 92 * scale);
+          const side = Math.min(head.width, head.height);
+          head.setCrop((head.width - side) / 2, (head.height - side) / 2, side, side);
+
+          c.add([body, faceBack, head]);
+
+          if (bob) {
+            this.tweens.add({
+              targets: c,
+              y: y - 5 * scale,
+              duration: 1450,
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.InOut",
+            });
+          }
+
+          return { container: c, body, head };
+        }
+
+        walkIn(y: number, scale = 0.72, targetX = W / 2) {
+          const actor = this.faceCharacter(-90, y, scale, "body-walk-a", false);
+          let frame = false;
+          const stepper = this.time.addEvent({
+            delay: 135,
+            loop: true,
+            callback: () => {
+              frame = !frame;
+              actor.body.setTexture(frame ? "body-walk-a" : "body-walk-b");
+            },
+          });
+
+          this.tweens.add({
+            targets: actor.container,
+            x: targetX,
+            duration: 950,
+            ease: "Sine.Out",
+            onComplete: () => {
+              stepper.remove();
+              actor.body.setTexture("body-idle");
+              this.tweens.add({
+                targets: actor.container,
+                y: y - 4 * scale,
+                duration: 1500,
+                yoyo: true,
+                repeat: -1,
+                ease: "Sine.InOut",
+              });
+            },
+          });
+
+          return actor;
         }
 
         showIntro() {
