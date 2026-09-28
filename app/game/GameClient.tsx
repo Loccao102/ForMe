@@ -267,23 +267,70 @@ export default function GameClient() {
           return [p, t];
         }
 
-        artBackground(key: string, alpha = 1, drift = true) {
-          const image = this.keep(this.add.image(W / 2, H / 2, key).setDisplaySize(W + 10, H + 10).setAlpha(alpha));
-          image.setDepth(-1);
+        sceneBackground(kind: "office" | "gym" | "park" | "cafe" | "kitchen" | "rooftop", alpha = 1) {
+          const g = this.keep(this.add.graphics().setDepth(-6));
 
-          if (drift) {
-            this.tweens.add({
-              targets: image,
-              x: W / 2 - 5,
-              y: H / 2 + 4,
-              duration: 7600,
-              yoyo: true,
-              repeat: -1,
-              ease: "Sine.InOut",
-            });
+          if (kind === "office") {
+            g.fillStyle(0x202838, alpha).fillRect(0, 0, W, H);
+            g.fillStyle(0x2e405d, alpha).fillRoundedRect(24, 82, 342, 190, 20);
+            g.fillStyle(0xf5cf79, 0.9 * alpha).fillCircle(308, 122, 24);
+            g.fillStyle(0x151a24, alpha).fillRoundedRect(28, 320, 334, 260, 24);
+            g.fillStyle(0x7a533d, alpha).fillRoundedRect(46, 452, 298, 22, 10);
+            g.fillStyle(0x566171, alpha).fillRoundedRect(285, 510, 54, 120, 16);
+            g.fillStyle(0x42584a, alpha).fillCircle(56, 560, 34);
+          } else if (kind === "gym") {
+            g.fillStyle(0x313b40, alpha).fillRect(0, 0, W, H);
+            g.fillStyle(0x3e4a4f, alpha).fillRect(0, 520, W, 324);
+            g.lineStyle(2, 0x657379, 0.35 * alpha);
+            [580, 640, 700, 760].forEach((y) => g.lineBetween(0, y, W, y));
+            [65, 130, 195, 260, 325].forEach((x) => g.lineBetween(x, 520, x, H));
+            g.lineStyle(7, 0x151b1f, 0.8 * alpha);
+            g.strokeRoundedRect(28, 210, 90, 210, 12);
+            g.strokeRoundedRect(272, 210, 90, 210, 12);
+            g.fillStyle(0x93a5a7, alpha).fillRoundedRect(84, 430, 222, 18, 9);
+            g.fillStyle(0x1f2529, alpha).fillCircle(72, 604, 28);
+            g.fillCircle(318, 604, 28);
+          } else if (kind === "park") {
+            g.fillStyle(0x9bdcff, alpha).fillRect(0, 0, W, 390);
+            g.fillStyle(0xffdf77, alpha).fillCircle(320, 92, 30);
+            g.fillStyle(0x72b96e, alpha).fillCircle(44, 330, 74);
+            g.fillCircle(154, 316, 92);
+            g.fillCircle(300, 330, 88);
+            g.fillStyle(0x72bf72, alpha).fillRect(0, 380, W, 464);
+          } else if (kind === "cafe") {
+            g.fillStyle(0xe7c49e, alpha).fillRect(0, 0, W, H);
+            g.fillStyle(0xf5e7d3, alpha).fillRoundedRect(22, 78, 346, 320, 22);
+            g.fillStyle(0x9dd8f1, alpha).fillRoundedRect(212, 100, 132, 230, 16);
+            g.fillStyle(0xf7d978, 0.9 * alpha).fillCircle(318, 136, 24);
+            g.fillStyle(0x7d5540, alpha).fillRoundedRect(42, 412, 306, 22, 10);
+            g.fillRoundedRect(58, 434, 14, 205, 7);
+            g.fillRoundedRect(318, 434, 14, 205, 7);
+            g.fillStyle(0x4f7c59, alpha).fillCircle(62, 340, 42);
+            g.fillStyle(0x5f493d, alpha).fillRoundedRect(280, 450, 54, 90, 14);
+          } else if (kind === "kitchen") {
+            g.fillStyle(0xd5a47e, alpha).fillRect(0, 0, W, H);
+            g.fillStyle(0xf4e0c4, alpha).fillRoundedRect(20, 70, 350, 210, 22);
+            g.fillStyle(0x7d4d36, alpha).fillRoundedRect(28, 330, 334, 230, 22);
+            g.fillStyle(0x2e3237, alpha).fillRoundedRect(55, 370, 118, 86, 10);
+            g.fillRoundedRect(217, 370, 118, 86, 10);
+            g.fillStyle(0x654333, alpha).fillRoundedRect(44, 635, 302, 24, 12);
+            g.fillStyle(0x4e7d56, alpha).fillCircle(74, 150, 35);
+            g.fillCircle(318, 146, 30);
+          } else {
+            g.fillStyle(0x182442, alpha).fillRect(0, 0, W, 560);
+            g.fillStyle(0xf4d886, alpha).fillCircle(306, 98, 28);
+            g.fillStyle(0x1d2945, alpha).fillRect(0, 330, 48, 230);
+            g.fillRect(54, 300, 60, 260);
+            g.fillRect(122, 386, 48, 174);
+            g.fillRect(180, 318, 72, 242);
+            g.fillRect(262, 356, 54, 204);
+            g.fillRect(324, 302, 66, 258);
+            g.fillStyle(0x202431, alpha).fillRect(0, 560, W, 284);
+            g.lineStyle(3, 0xd69f58, 0.72 * alpha);
+            g.lineBetween(24, 590, 366, 590);
           }
 
-          return image;
+          return g;
         }
 
         ambientDots(color = 0xffffff, count = 8, alpha = 0.2) {
@@ -323,50 +370,52 @@ export default function GameClient() {
         }
 
         slideWorldTo(
-          nextBackground: string,
+          _nextBackground: string,
           next: () => void,
           direction = 1,
-          duration = 620
+          duration = 520
         ) {
           this.input.enabled = false;
           this.audio.whoosh();
 
           const currentTargets = this.content.filter(
-            (o) => o?.active && typeof o.x === "number"
-          );
-
-          const nextBg = this.keep(
-            this.add.image(
-              direction > 0 ? W * 1.5 : -W * 0.5,
-              H / 2,
-              nextBackground
-            ).setDisplaySize(W + 10, H + 10).setDepth(-1.4)
+            (o) => o?.active && typeof o.x === "number" && o.depth < 20
           );
 
           this.tweens.add({
             targets: currentTargets,
-            x: direction > 0 ? `-=${W}` : `+=${W}`,
-            duration,
-            ease: "Sine.InOut",
+            x: direction > 0 ? `-=${W * 0.7}` : `+=${W * 0.7}`,
+            alpha: 0,
+            duration: duration * 0.7,
+            ease: "Sine.In",
           });
 
+          const curtain = this.add.rectangle(
+            direction > 0 ? W * 1.5 : -W * 0.5,
+            H / 2,
+            W,
+            H,
+            0xf8f2e8,
+            1
+          ).setDepth(90);
+
           this.tweens.add({
-            targets: nextBg,
+            targets: curtain,
             x: W / 2,
             duration,
             ease: "Sine.InOut",
           });
 
-          this.tweens.add({
-            targets: this.cameras.main,
-            scrollX: direction * 20,
-            duration,
-            ease: "Sine.InOut",
-          });
-
-          this.time.delayedCall(duration - 10, () => {
+          this.time.delayedCall(duration, () => {
             next();
-            this.cameras.main.flash(90, 255, 255, 255, false);
+            curtain.x = direction > 0 ? -W / 2 : W * 1.5;
+            this.tweens.add({
+              targets: curtain,
+              x: direction > 0 ? -W * 1.5 : W * 2.5,
+              duration: 320,
+              ease: "Sine.Out",
+              onComplete: () => curtain.destroy(),
+            });
             this.input.enabled = true;
           });
         }
@@ -987,13 +1036,13 @@ export default function GameClient() {
           this.stage = 0;
           this.clueLabel?.setVisible(false);
           this.clearScene(0xfff8ec);
-          this.artBackground("rooftop-bg", 0.94);
-          this.midgroundParallax("rooftop");
+          this.sceneBackground("rooftop");
+
           const introShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x0d1020, 0.16));
           introShade.setDepth(-0.5);
           this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
           const introActor = this.walkIn(170, 0.78);
-          this.sceneOccluders("rooftop");
+
           introActor.container.setSize(130, 240).setInteractive({ useHandCursor: true });
           introActor.container.on("pointerdown", () => {
             introActor.head.setTexture("face-surprised");
@@ -1049,10 +1098,10 @@ export default function GameClient() {
         showWork() {
           this.stage = 1;
           this.clearScene(0xeef7ff);
-          this.artBackground("office-bg", 0.78);
-          this.midgroundParallax("office");
+          this.sceneBackground("office");
+
           this.ambientDots(0x8ed7ff, 7, 0.18);
-          this.foregroundParallax(0x0d1118, 0.09, 7200);
+
           this.small(22, 26, "02 / WORK", "#d8e5f3");
           this.text(22, 70, "Tớ làm phần mềm.", 34, "#ffffff");
 
@@ -1064,7 +1113,7 @@ export default function GameClient() {
           });
           const workActor = this.faceCharacter(315, 675, 0.32, "body-talk", "face-neutral", false);
           this.heroActor = workActor;
-          this.sceneOccluders("office");
+
           const workTalkLoop = this.loopBodyFrames(workActor, ["body-talk", "body-talk-alt"], 520);
           const codeArea = this.keep(this.add.container(44, 214).setDepth(4));
           const rambleText = this.keep(this.add.text(0, 0, workRamble[0], {
@@ -1140,15 +1189,15 @@ export default function GameClient() {
         showGym() {
           this.stage = 2;
           this.clearScene(0xf2f6ed);
-          this.artBackground("gym-bg", 0.92);
-          this.midgroundParallax("gym");
+          this.sceneBackground("gym");
+
           this.ambientDots(0xb9ffd0, 6, 0.14);
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
           const gymActor = this.faceCharacter(-70, 310, 0.56, "body-walk-a", "face-neutral", false);
           this.heroActor = gymActor;
-          this.sceneOccluders("gym");
+
           gymActor.container.setSize(160, 250);
           let reps = 0;
           let lifting = false;
@@ -1259,10 +1308,10 @@ export default function GameClient() {
         showSports() {
           this.stage = 3;
           this.clearScene(0xeaf7ff);
-          this.artBackground("park-bg", 0.92);
-          this.midgroundParallax("park");
+          this.sceneBackground("park");
+
           this.ambientDots(0xffffff, 8, 0.16);
-          this.foregroundParallax(0x2d7f49, 0.11, 5200);
+
           this.small(22, 26, "04 / MOVE");
           this.text(22, 70, "Okay.\nEnough sitting.", 36);
           this.small(22, 170, "tap the shuttle when it hits the green zone");
@@ -1275,8 +1324,8 @@ export default function GameClient() {
 
           const player = this.faceCharacter(-70, 315, 0.42, "body-walk-a", "face-neutral", false);
           this.heroActor = player;
-          this.sceneOccluders("park");
-          player.container.setDepth(3);
+
+          player.container.setDepth(10);
 
           let readyFrame = false;
           let readyLoop: any = null;
@@ -1384,7 +1433,7 @@ export default function GameClient() {
         showSportsMontage() {
           this.audio.whoosh();
           this.clearScene(0xeaf7ff);
-          this.artBackground("park-bg", 0.96);
+          this.sceneBackground("park");
           this.small(22, 26, "04 / ALSO...");
           this.text(22, 70, "Badminton không phải\nmôn duy nhất.", 30);
 
@@ -1469,10 +1518,10 @@ export default function GameClient() {
         showCafe() {
           this.stage = 4;
           this.clearScene(0xfff4e6);
-          this.artBackground("cafe-bg", 0.92);
-          this.midgroundParallax("cafe");
+          this.sceneBackground("cafe");
+
           this.ambientDots(0xffe4a9, 7, 0.16);
-          this.foregroundParallax(0x4f2d1f, 0.07, 6800);
+
           this.small(22, 26, "05 / COFFEE?");
           this.text(22, 70, "Okay. Enough cardio.", 31);
           this.text(22, 118, "Coffee?", 42);
@@ -1490,14 +1539,14 @@ export default function GameClient() {
           this.small(22, 26, "05 / PICK A SEAT");
           this.text(22, 70, "Chọn chỗ đi.", 36);
 
-          this.artBackground("cafe-bg", 0.98);
-          this.foregroundParallax(0x4f2d1f, 0.07, 6800);
+          this.sceneBackground("cafe");
+
           this.panel(18, 145, 354, 350, 0xffffff, 0.08, 24);
 
           const cafeActor = this.faceCharacter(-70, 292, 0.42, "body-walk-a", "face-smile", false);
           this.heroActor = cafeActor;
-          this.sceneOccluders("cafe");
-          cafeActor.container.setDepth(2);
+
+          cafeActor.container.setDepth(10);
 
           let step = false;
           let cafeFoot = 0;
@@ -1614,7 +1663,7 @@ export default function GameClient() {
         showBook() {
           this.stage = 5;
           this.clearScene(0xf3efff);
-          this.artBackground("cafe-bg", 0.38);
+          this.sceneBackground("cafe");
           const rememberedSeatX = this.state.seat === "window" ? 115 : this.state.seat === "corner" ? 286 : 205;
           const bookActor = this.faceCharacter(rememberedSeatX, 470, 0.36, "body-book-closed", "face-thinking", true);
           this.small(22, 26, "06 / OPEN THE BOOK");
@@ -1734,7 +1783,7 @@ export default function GameClient() {
         showDeepTalk() {
           this.stage = 6;
           this.clearScene(0x17181d);
-          this.artBackground("cafe-bg", 0.32);
+          this.sceneBackground("cafe");
           this.ambientDots(0xffd9a8, 10, 0.12);
           const shade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.72));
           shade.setDepth(-0.5);
@@ -1764,7 +1813,7 @@ export default function GameClient() {
 
         showAnswer(id: keyof typeof questionAnswers) {
           this.clearScene(0x17181d);
-          this.artBackground("cafe-bg", 0.32);
+          this.sceneBackground("cafe");
           const answerShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.74));
           answerShade.setDepth(-0.5);
           this.small(22, 26, "07 / MY ANSWER", "#ffffff");
@@ -1794,10 +1843,10 @@ export default function GameClient() {
         showCooking() {
           this.stage = 7;
           this.clearScene(0xfff0e1);
-          this.artBackground("kitchen-bg", 0.9);
-          this.midgroundParallax("kitchen");
+          this.sceneBackground("kitchen");
+
           this.ambientDots(0xffd9a8, 7, 0.12);
-          this.foregroundParallax(0x5c3425, 0.07, 6200);
+
           this.small(22, 26, "08 / DINNER?");
           this.text(22, 70, "Nói chuyện sẽ hay hơn\nnếu có đồ ăn.", 31);
           this.button(24, 170, 165, 54, "cook", () => this.cookMiniGame());
@@ -1811,11 +1860,11 @@ export default function GameClient() {
 
         cookMiniGame() {
           this.clearScene(0xfff0e1);
-          this.artBackground("kitchen-bg", 0.98);
+          this.sceneBackground("kitchen");
           this.small(22, 26, "08 / COOKING");
           const cookActor = this.faceCharacter(310, 250, 0.42, "body-cook-a", "face-smile", false);
           this.heroActor = cookActor;
-          this.sceneOccluders("kitchen");
+
           this.text(22, 70, "Tap the pan 3 times.", 28);
           const pan = this.keep(this.add.container(195, 360));
           const p = this.add.circle(0, 0, 105, 0x24282e);
@@ -1919,9 +1968,8 @@ export default function GameClient() {
 
         revealFlaws() {
           this.clearScene(0xf0f1f5);
-          this.artBackground("office-bg", 0.38);
-          this.midgroundParallax("office");
-          this.sceneOccluders("office");
+          this.sceneBackground("office");
+
           const flawShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x17191f, 0.2));
           flawShade.setDepth(-0.5);
           this.small(22, 26, "09 / MUCH BETTER");
@@ -1974,15 +2022,15 @@ export default function GameClient() {
         showEnding() {
           this.stage = 9;
           this.clearScene(0x5d759c);
-          this.artBackground("rooftop-bg", 1);
-          this.midgroundParallax("rooftop");
+          this.sceneBackground("rooftop");
+
           this.ambientDots(0xffe3a0, 12, 0.18);
-          this.foregroundParallax(0x11131d, 0.16, 8200);
+
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
           endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
           const endActor = this.faceCharacter(326, 690, 0.34, "body-wave", "face-smile", false);
-          this.sceneOccluders("rooftop");
+
           this.tweens.add({
             targets: endActor.container,
             angle: { from: -2, to: 3 },
