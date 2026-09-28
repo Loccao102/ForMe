@@ -74,6 +74,10 @@ export default function GameClient() {
           this.load.image("body-cook-b", "/game/body-cook-b.svg");
           this.load.image("body-talk-alt", "/game/body-talk-alt.svg");
           this.load.image("body-wave", "/game/body-wave.svg");
+          this.load.image("body-laptop", "/game/body-laptop.svg");
+          this.load.image("body-book-closed", "/game/body-book-closed.svg");
+          this.load.image("body-book-open", "/game/body-book-open.svg");
+          this.load.image("body-serve", "/game/body-serve.svg");
         }
 
         create() {
@@ -271,6 +275,75 @@ export default function GameClient() {
             targets: actor.container,
             scaleX: baseX + amount,
             scaleY: baseY - amount,
+            duration,
+            yoyo: true,
+            ease: "Sine.InOut",
+          });
+        }
+
+        walkActorTo(
+          actor: any,
+          x: number,
+          duration = 620,
+          onComplete?: () => void
+        ) {
+          if (!actor?.container?.active) return;
+          let frame = false;
+          const direction = x >= actor.container.x ? 1 : -1;
+          actor.container.scaleX = Math.abs(actor.container.scaleX || 1) * direction;
+          actor.head.scaleX = Math.abs(actor.head.scaleX || 1) * direction;
+
+          const stepper = this.time.addEvent({
+            delay: 125,
+            loop: true,
+            callback: () => {
+              if (!actor?.body?.active) return;
+              frame = !frame;
+              actor.body.setTexture(frame ? "body-walk-a" : "body-walk-b");
+            },
+          });
+
+          this.tweens.add({
+            targets: actor.container,
+            x,
+            y: actor.container.y - 3,
+            duration,
+            ease: "Sine.InOut",
+            onComplete: () => {
+              stepper.remove();
+              actor.container.scaleX = Math.abs(actor.container.scaleX || 1);
+              actor.head.scaleX = Math.abs(actor.head.scaleX || 1);
+              actor.body.setTexture("body-idle");
+              onComplete?.();
+            },
+          });
+        }
+
+        foregroundParallax(color = 0x11151b, alpha = 0.12, speed = 6000) {
+          const near = this.keep(this.add.graphics().setDepth(20));
+          near.fillStyle(color, alpha);
+          near.fillEllipse(-30, H - 80, 150, 110);
+          near.fillEllipse(W + 20, H - 55, 190, 130);
+          near.fillRoundedRect(-20, H - 34, W + 40, 60, 24);
+
+          this.tweens.add({
+            targets: near,
+            x: -16,
+            duration: speed,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.InOut",
+          });
+
+          return near;
+        }
+
+        cameraNudge(x = 8, y = 0, duration = 180) {
+          const cam = this.cameras.main;
+          this.tweens.add({
+            targets: cam,
+            scrollX: x,
+            scrollY: y,
             duration,
             yoyo: true,
             ease: "Sine.InOut",
