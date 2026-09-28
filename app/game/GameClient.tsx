@@ -157,10 +157,59 @@ export default function GameClient() {
           return [p, t];
         }
 
-        artBackground(key: string, alpha = 1) {
-          const image = this.keep(this.add.image(W / 2, H / 2, key).setDisplaySize(W, H).setAlpha(alpha));
+        artBackground(key: string, alpha = 1, drift = true) {
+          const image = this.keep(this.add.image(W / 2, H / 2, key).setDisplaySize(W + 10, H + 10).setAlpha(alpha));
           image.setDepth(-1);
+
+          if (drift) {
+            this.tweens.add({
+              targets: image,
+              x: W / 2 - 5,
+              y: H / 2 + 4,
+              duration: 7600,
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.InOut",
+            });
+          }
+
           return image;
+        }
+
+        ambientDots(color = 0xffffff, count = 8, alpha = 0.2) {
+          for (let i = 0; i < count; i++) {
+            const dot = this.keep(this.add.circle(
+              Phaser.Math.Between(16, W - 16),
+              Phaser.Math.Between(80, H - 80),
+              Phaser.Math.Between(2, 5),
+              color,
+              alpha
+            ).setDepth(-0.2));
+
+            this.tweens.add({
+              targets: dot,
+              x: dot.x + Phaser.Math.Between(-24, 24),
+              y: dot.y - Phaser.Math.Between(18, 62),
+              alpha: { from: alpha * 0.55, to: alpha },
+              duration: Phaser.Math.Between(2400, 5200),
+              yoyo: true,
+              repeat: -1,
+              delay: Phaser.Math.Between(0, 900),
+              ease: "Sine.InOut",
+            });
+          }
+        }
+
+        transitionTo(next: () => void, duration = 280) {
+          this.input.enabled = false;
+          this.audio.whoosh();
+          this.cameras.main.fadeOut(duration, 15, 18, 24);
+
+          this.time.delayedCall(duration + 20, () => {
+            next();
+            this.cameras.main.fadeIn(duration + 110, 15, 18, 24);
+            this.input.enabled = true;
+          });
         }
 
         faceCharacter(
@@ -255,7 +304,15 @@ export default function GameClient() {
           const introShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x0d1020, 0.16));
           introShade.setDepth(-0.5);
           this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
-          this.walkIn(170, 0.78);
+          const introActor = this.walkIn(170, 0.78);
+          introActor.container.setSize(130, 240).setInteractive({ useHandCursor: true });
+          introActor.container.on("pointerdown", () => {
+            introActor.head.setTexture("face-surprised");
+            this.audio.pop();
+            const poke = this.text(W / 2, 305, "hey 😐", 15, "#ffffff", 150, "center");
+            this.tweens.add({ targets: poke, alpha: 0, y: 288, duration: 850, delay: 280 });
+            this.time.delayedCall(650, () => introActor.head.setTexture("face-smile"));
+          });
           this.text(W / 2, 360, "You just opened\na stranger's link.", 35, "#ffffff", 350, "center");
           this.text(W / 2, 455, "Bold move.", 18, "#f5d7b2", 330, "center");
 
@@ -283,7 +340,7 @@ export default function GameClient() {
             this.button(28, 430 + i * 72, 334, 56, option.label, () => {
               this.state.impression = option.id;
               this.small(92, 665, "noted. I'll remember that.");
-              this.time.delayedCall(650, () => this.showWork());
+              this.time.delayedCall(650, () => this.transitionTo(() => this.showWork()));
             }, i === 1);
           });
         }
@@ -292,6 +349,7 @@ export default function GameClient() {
           this.stage = 1;
           this.clearScene(0xeef7ff);
           this.artBackground("office-bg", 0.78);
+          this.ambientDots(0x8ed7ff, 7, 0.18);
           this.small(22, 26, "02 / WORK");
           this.text(22, 70, "Tớ làm phần mềm.", 34);
 
@@ -357,13 +415,14 @@ export default function GameClient() {
           this.content.filter((o) => o?.y > 520).forEach((o) => {
             this.tweens.add({ targets: o, y: H + 120, angle: Phaser.Math.Between(-40, 40), duration: 500, ease: "Back.In" });
           });
-          this.time.delayedCall(540, () => this.showGym());
+          this.time.delayedCall(540, () => this.transitionTo(() => this.showGym(), 320));
         }
 
         showGym() {
           this.stage = 2;
           this.clearScene(0xf2f6ed);
           this.artBackground("gym-bg", 0.92);
+          this.ambientDots(0xb9ffd0, 6, 0.14);
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
@@ -397,7 +456,7 @@ export default function GameClient() {
               this.speech("Ừ, khoảng giữa là đúng.", 700);
             }
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
-            this.time.delayedCall(900, () => this.showSports());
+            this.time.delayedCall(900, () => this.transitionTo(() => this.showSports()));
           });
         }
 
@@ -405,6 +464,7 @@ export default function GameClient() {
           this.stage = 3;
           this.clearScene(0xeaf7ff);
           this.artBackground("park-bg", 0.92);
+          this.ambientDots(0xffffff, 8, 0.16);
           this.small(22, 26, "04 / MOVE");
           this.text(22, 70, "Okay.\nEnough sitting.", 36);
           this.small(22, 170, "tap the shuttle when it hits the green zone");
@@ -492,7 +552,7 @@ export default function GameClient() {
             streaks.setAlpha(0);
             this.tweens.add({ targets: streaks, alpha: 1, x: -28, duration: 340, repeat: 1, yoyo: true });
 
-            this.time.delayedCall(900, () => this.showCafe());
+            this.time.delayedCall(900, () => this.transitionTo(() => this.showCafe()));
           });
         }
 
@@ -500,6 +560,7 @@ export default function GameClient() {
           this.stage = 4;
           this.clearScene(0xfff4e6);
           this.artBackground("cafe-bg", 0.92);
+          this.ambientDots(0xffe4a9, 7, 0.16);
           this.small(22, 26, "05 / COFFEE?");
           this.text(22, 70, "Okay. Enough cardio.", 31);
           this.text(22, 118, "Coffee?", 42);
@@ -545,7 +606,7 @@ export default function GameClient() {
                 ease: "Back.Out",
               });
               this.speech(reply, 420);
-              this.time.delayedCall(900, () => this.showBook());
+              this.time.delayedCall(900, () => this.transitionTo(() => this.showBook(), 220));
             }, i === 0);
           });
         }
@@ -586,7 +647,7 @@ export default function GameClient() {
               angle: -2,
               duration: 160,
               yoyo: true,
-              onComplete: () => this.showDeepTalk(),
+              onComplete: () => this.transitionTo(() => this.showDeepTalk(), 240),
             });
           });
         }
@@ -595,6 +656,7 @@ export default function GameClient() {
           this.stage = 6;
           this.clearScene(0x17181d);
           this.artBackground("cafe-bg", 0.32);
+          this.ambientDots(0xffd9a8, 10, 0.12);
           const shade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.72));
           shade.setDepth(-0.5);
           this.small(22, 26, "07 / ASK ME ONE", "#ffffff");
@@ -620,13 +682,14 @@ export default function GameClient() {
           const answerFace = id === "stupid" || id === "future" ? "face-smile" : id === "fear" ? "face-thinking" : "face-neutral";
           this.faceCharacter(195, 135, 0.7, "body-talk", answerFace);
           this.speech(questionAnswers[id], 300);
-          this.button(58, 610, 274, 58, "Okay. Dinner?", () => this.showCooking(), false);
+          this.button(58, 610, 274, 58, "Okay. Dinner?", () => this.transitionTo(() => this.showCooking()), false);
         }
 
         showCooking() {
           this.stage = 7;
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.9);
+          this.ambientDots(0xffd9a8, 7, 0.12);
           this.small(22, 26, "08 / DINNER?");
           this.text(22, 70, "Nói chuyện sẽ hay hơn\nnếu có đồ ăn.", 31);
           this.button(24, 170, 165, 54, "cook", () => this.cookMiniGame());
@@ -658,7 +721,7 @@ export default function GameClient() {
               pan.disableInteractive();
               this.text(W / 2, 520, "Tớ thích nấu ăn.", 28, "#17191f", 340, "center");
               this.text(W / 2, 565, "Nhưng chủ yếu là nấu cho\nnhững người mình quan tâm.", 19, "#6a4b43", 340, "center");
-              this.button(58, 685, 274, 56, "show me the bad part", () => this.showFlaws());
+              this.button(58, 685, 274, 56, "show me the bad part", () => this.transitionTo(() => this.showFlaws()));
             }
           });
         }
@@ -693,13 +756,14 @@ export default function GameClient() {
             this.small(48, 498 + i * 50, tag);
           });
           this.text(W / 2, 705, "Better?", 22, "#17191f", 340, "center");
-          this.button(92, 750, 206, 50, "Much.", () => this.showEnding());
+          this.button(92, 750, 206, 50, "Much.", () => this.transitionTo(() => this.showEnding(), 360));
         }
 
         showEnding() {
           this.stage = 9;
           this.clearScene(0x5d759c);
           this.artBackground("rooftop-bg", 1);
+          this.ambientDots(0xffe3a0, 12, 0.18);
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
           endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
