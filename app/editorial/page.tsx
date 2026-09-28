@@ -86,6 +86,18 @@ export default function EditorialPage() {
     return () => media.removeEventListener("change", sync);
   }, []);
 
+  useEffect(() => {
+    const html = document.documentElement;
+    const prevSnap = html.style.scrollSnapType;
+    const prevBehavior = html.style.scrollBehavior;
+    html.style.scrollSnapType = "none";
+    html.style.scrollBehavior = "auto";
+    return () => {
+      html.style.scrollSnapType = prevSnap;
+      html.style.scrollBehavior = prevBehavior;
+    };
+  }, []);
+
   const heroRef = useRef<HTMLElement>(null);
   const workRef = useRef<HTMLElement>(null);
   const afterRef = useRef<HTMLElement>(null);
