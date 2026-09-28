@@ -69,43 +69,46 @@ export default function GameClient() {
           this.load.on("complete", () => {
             [loadBg, loadTitle, loadTrack, loadBar, loadText].forEach((o) => o.destroy());
           });
+          this.load.on("loaderror", (file: any) => {
+            console.error("[ForMe] Failed to load game asset:", file?.key, file?.src);
+          });
 
-          this.load.image("face-neutral", "/game/face-neutral.svg");
-          this.load.image("face-smile", "/game/face-smile.svg");
-          this.load.image("face-thinking", "/game/face-thinking.svg");
-          this.load.image("face-surprised", "/game/face-surprised.svg");
-          this.load.image("face-deadpan", "/game/face-deadpan.svg");
-          this.load.image("office-bg", "/game/office.svg");
-          this.load.image("gym-bg", "/game/gym.svg");
-          this.load.image("cafe-bg", "/game/cafe.svg");
-          this.load.image("kitchen-bg", "/game/kitchen.svg");
-          this.load.image("park-bg", "/game/park.svg");
-          this.load.image("rooftop-bg", "/game/rooftop-night.svg");
-          this.load.image("body-idle", "/game/body-idle-v2.svg");
-          this.load.image("body-walk-a", "/game/body-walk-a-v2.svg");
-          this.load.image("body-walk-b", "/game/body-walk-b-v2.svg");
-          this.load.image("body-talk", "/game/body-talk-v2.svg");
-          this.load.image("body-deadpan", "/game/body-deadpan-v2.svg");
-          this.load.image("body-gym", "/game/body-gym.svg");
-          this.load.image("body-gym-up", "/game/body-gym-up.svg");
-          this.load.image("body-badminton", "/game/body-badminton.svg");
-          this.load.image("body-badminton-back", "/game/body-badminton-back.svg");
-          this.load.image("body-badminton-hit", "/game/body-badminton-hit.svg");
-          this.load.image("body-football", "/game/body-football.svg");
-          this.load.image("body-football-prep", "/game/body-football-prep.svg");
-          this.load.image("body-run", "/game/body-run.svg");
-          this.load.image("body-run-b", "/game/body-run-b.svg");
-          this.load.image("body-seated", "/game/body-seated.svg");
-          this.load.image("body-seated-sip", "/game/body-seated-sip.svg");
-          this.load.image("body-cook", "/game/body-cook.svg");
-          this.load.image("body-cook-a", "/game/body-cook-a.svg");
-          this.load.image("body-cook-b", "/game/body-cook-b.svg");
-          this.load.image("body-talk-alt", "/game/body-talk-alt.svg");
-          this.load.image("body-wave", "/game/body-wave.svg");
-          this.load.image("body-laptop", "/game/body-laptop.svg");
-          this.load.image("body-book-closed", "/game/body-book-closed.svg");
-          this.load.image("body-book-open", "/game/body-book-open.svg");
-          this.load.image("body-serve", "/game/body-serve.svg");
+          this.load.svg("face-neutral", "/game/face-neutral.svg");
+          this.load.svg("face-smile", "/game/face-smile.svg");
+          this.load.svg("face-thinking", "/game/face-thinking.svg");
+          this.load.svg("face-surprised", "/game/face-surprised.svg");
+          this.load.svg("face-deadpan", "/game/face-deadpan.svg");
+          this.load.svg("office-bg", "/game/office.svg");
+          this.load.svg("gym-bg", "/game/gym.svg");
+          this.load.svg("cafe-bg", "/game/cafe.svg");
+          this.load.svg("kitchen-bg", "/game/kitchen.svg");
+          this.load.svg("park-bg", "/game/park.svg");
+          this.load.svg("rooftop-bg", "/game/rooftop-night.svg");
+          this.load.svg("body-idle", "/game/body-idle-v2.svg");
+          this.load.svg("body-walk-a", "/game/body-walk-a-v2.svg");
+          this.load.svg("body-walk-b", "/game/body-walk-b-v2.svg");
+          this.load.svg("body-talk", "/game/body-talk-v2.svg");
+          this.load.svg("body-deadpan", "/game/body-deadpan-v2.svg");
+          this.load.svg("body-gym", "/game/body-gym.svg");
+          this.load.svg("body-gym-up", "/game/body-gym-up.svg");
+          this.load.svg("body-badminton", "/game/body-badminton.svg");
+          this.load.svg("body-badminton-back", "/game/body-badminton-back.svg");
+          this.load.svg("body-badminton-hit", "/game/body-badminton-hit.svg");
+          this.load.svg("body-football", "/game/body-football.svg");
+          this.load.svg("body-football-prep", "/game/body-football-prep.svg");
+          this.load.svg("body-run", "/game/body-run.svg");
+          this.load.svg("body-run-b", "/game/body-run-b.svg");
+          this.load.svg("body-seated", "/game/body-seated.svg");
+          this.load.svg("body-seated-sip", "/game/body-seated-sip.svg");
+          this.load.svg("body-cook", "/game/body-cook.svg");
+          this.load.svg("body-cook-a", "/game/body-cook-a.svg");
+          this.load.svg("body-cook-b", "/game/body-cook-b.svg");
+          this.load.svg("body-talk-alt", "/game/body-talk-alt.svg");
+          this.load.svg("body-wave", "/game/body-wave.svg");
+          this.load.svg("body-laptop", "/game/body-laptop.svg");
+          this.load.svg("body-book-closed", "/game/body-book-closed.svg");
+          this.load.svg("body-book-open", "/game/body-book-open.svg");
+          this.load.svg("body-serve", "/game/body-serve.svg");
         }
 
         create() {
@@ -813,9 +816,9 @@ export default function GameClient() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
           this.small(22, 26, "FIRST IMPRESSION");
-          const impressionActor = this.faceCharacter(W / 2, 155, 0.75, "body-idle", "face-neutral");
-          this.text(W / 2, 310, "Don't think too much.", 30, "#17191f", 340, "center");
-          this.text(W / 2, 355, "What kind of person do I look like?", 16, "#686d76", 340, "center");
+          const impressionActor = this.faceCharacter(W / 2, 112, 0.56, "body-idle", "face-neutral");
+          this.text(W / 2, 300, "Don't think too much.", 30, "#17191f", 340, "center");
+          this.text(W / 2, 345, "What kind of person do I look like?", 16, "#686d76", 340, "center");
 
           impressionOptions.forEach((option, i) => {
             this.button(28, 430 + i * 72, 334, 56, option.label, () => {
@@ -837,8 +840,8 @@ export default function GameClient() {
           this.midgroundParallax("office");
           this.ambientDots(0x8ed7ff, 7, 0.18);
           this.foregroundParallax(0x0d1118, 0.09, 7200);
-          this.small(22, 26, "02 / WORK");
-          this.text(22, 70, "Tớ làm phần mềm.", 34);
+          this.small(22, 26, "02 / WORK", "#d8e5f3");
+          this.text(22, 70, "Tớ làm phần mềm.", 34, "#ffffff");
 
           const win = this.panel(22, 145, 346, 285, 0x11151b, 1, 22);
           const top = this.keep(this.add.graphics());
@@ -936,7 +939,7 @@ export default function GameClient() {
           gymActor.container.setSize(160, 250);
           let reps = 0;
           let lifting = false;
-          const repText = this.small(150, 500, "walking in...");
+          const repText = this.small(150, 500, "walking in...", "#d5ddd9");
           let gymStep = false;
           let gymFoot = 0;
           const gymWalk = this.time.addEvent({
@@ -967,13 +970,15 @@ export default function GameClient() {
             },
           });
           gymActor.container.on("pointerdown", () => {
-            if (lifting) return;
+            if (lifting || reps >= 5) return;
             lifting = true;
             reps += 1;
             this.haptic(12);
             this.audio.pop();
             gymActor.head.setTexture(reps >= 3 ? "face-smile" : "face-neutral");
-            repText.setText("rep " + reps + (reps >= 3 ? " · okay, enough 😅" : ""));
+            repText.setText(
+              reps >= 5 ? "5 reps · save some energy 😅" : "rep " + reps + (reps >= 3 ? " · okay, enough 😅" : "")
+            );
 
             this.playBodySequence(
               gymActor,
@@ -995,13 +1000,13 @@ export default function GameClient() {
           this.text(260, 203, "1m86", 20);
           this.small(258, 229, "~90kg · WIP");
 
-          this.text(24, 565, "Gym bro level?", 18);
+          this.text(24, 565, "Gym bro level?", 18, "#ffffff");
           const rail = this.keep(this.add.graphics());
-          rail.lineStyle(6, 0x17191f, 0.2).lineBetween(40, 635, 350, 635);
-          this.small(28, 662, "couch potato");
-          this.small(275, 662, "gym rat");
+          rail.lineStyle(6, 0xffffff, 0.3).lineBetween(40, 635, 350, 635);
+          this.small(28, 662, "couch potato", "#cbd4d1");
+          this.small(275, 662, "gym rat", "#cbd4d1");
 
-          const knob = this.keep(this.add.circle(195, 635, 16, 0x17191f).setInteractive({ useHandCursor: true, draggable: true }));
+          const knob = this.keep(this.add.circle(195, 635, 16, 0x5f8dff).setInteractive({ useHandCursor: true, draggable: true }));
           this.input.setDraggable(knob);
           knob.on("drag", (_p: any, dragX: number) => {
             knob.x = Phaser.Math.Clamp(dragX, 45, 345);
