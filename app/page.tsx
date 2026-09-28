@@ -107,7 +107,7 @@ export default function Home() {
   };
 
   return (
-    <main className="story" ref={rootRef}>
+    <main className="story" ref={rootRef}>\n      <div className="story-progress" aria-hidden="true"><StoryProgress value={(active + 1) / 10} /></div>
       <aside className="story-nav" aria-label="Story progress">
         <div className="nav-name">LOC / 90 SEC</div>
         <div className="dots">
@@ -308,7 +308,7 @@ export default function Home() {
       <section className="scene talks-scene" data-scene="6">\n        <SceneAtmosphere index={6} />
         <SceneLabel n={7}>DEEP TALKS</SceneLabel>
         <div className="talks-bg">
-          <img src={photos.cafeBlack} alt="Lộc at a café" />
+          <motion.img src={photos.cafeBlack} alt="Lộc ở quán cà phê" animate={{ scale: [1.06, 1.1, 1.06], x: [0, -10, 0] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} />
           <div className="talks-gradient" />
         </div>
         <div className="talks-copy reveal">
