@@ -31,6 +31,79 @@ function SceneLabel({ n, children }: { n: number; children: React.ReactNode }) {
 function Doodle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <span className={`doodle ${className}`}>{children}</span>;
 }
+
+function StoryBridge({
+  children,
+  action,
+  onNext,
+  dark = false,
+}: {
+  children: React.ReactNode;
+  action: string;
+  onNext: () => void;
+  dark?: boolean;
+}) {
+  return (
+    <motion.div
+      className={dark ? "story-bridge dark" : "story-bridge"}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ amount: 0.7, once: true }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <p>{children}</p>
+      <button type="button" onClick={onNext}>
+        {action} <span>↓</span>
+      </button>
+    </motion.div>
+  );
+}
+
+const workMonologue = [
+  "Tớ làm phần mềm. Chủ yếu là backend, API và mấy thứ ở phía sau màn hình.",
+  "Rồi có database, microservice, queue, Docker... thỉnh thoảng phải nghĩ xem import vài trăm nghìn bản ghi kiểu gì cho đỡ nghẹt.",
+  "Nếu request timeout thì lại nghĩ idempotency, retry, transaction... rồi còn cache, lock, scale, WebSocket...",
+  "À... khoan.",
+  "Cái này là chuyên môn của tớ. Tớ nói hơi dài rồi 😅",
+  "Xin lỗi nha. Xuống tiếp thôi — ngoài code tớ cũng đang cố có một cuộc sống.",
+];
+
+function WorkMonologue({
+  step,
+  onAdvance,
+  onNext,
+}: {
+  step: number;
+  onAdvance: () => void;
+  onNext: () => void;
+}) {
+  const finished = step >= workMonologue.length - 1;
+
+  return (
+    <div className="work-monologue" aria-live="polite">
+      <div className="monologue-stream">
+        {workMonologue.slice(0, step + 1).map((line, index) => (
+          <motion.p
+            key={line}
+            className={index === step ? "current" : ""}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+          >
+            {line}
+          </motion.p>
+        ))}
+      </div>
+      <button
+        type="button"
+        className="monologue-next"
+        onClick={finished ? onNext : onAdvance}
+      >
+        {finished ? "Ừ, xuống tiếp thôi" : "ừm... tiếp đi"} <span>↓</span>
+      </button>
+    </div>
+  );
+}
 function SceneAtmosphere({ index }: { index: number }) {
   return (
     <div className="scene-atmosphere" aria-hidden="true">
