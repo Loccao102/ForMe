@@ -236,7 +236,7 @@ export default function Home() {
           <h2>...most days.</h2>
         </div>
         <div className="sport-track">
-          <article className="sport-card football reveal">
+          <motion.article className="sport-card football reveal" whileHover={{ y: -12, rotate: -2, scale: 1.02 }} transition={{ type: "spring", stiffness: 260, damping: 18 }}>
             <span className="sport-icon">⚽</span>
             <h3>Football</h3>
             <p>Chạy nhiều hơn mình tưởng.</p>
@@ -280,7 +280,7 @@ export default function Home() {
       <section className="scene reading-scene" data-scene="5">\n        <SceneAtmosphere index={5} />
         <SceneLabel n={6}>READING</SceneLabel>
         <div className="reading-layout">
-          <div className="book reveal">
+          <motion.div className="book reveal" initial={{ rotateX: 8, rotateZ: -2 }} whileInView={{ rotateX: 2, rotateZ: -1 }} viewport={{ amount: 0.45 }} transition={{ duration: 0.9, ease: "easeOut" }}>
             <div className="page left-page">
               <small>WHY?</small>
               <p>Tôi thích hiểu tại sao mọi thứ lại như vậy.</p>
