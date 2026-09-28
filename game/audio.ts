@@ -9,9 +9,9 @@ export class TinyAudio {
     if (!this.ctx) {
       this.ctx = new AudioContext();
       this.master = this.ctx.createGain();
-      this.master.gain.value = 0.16;
       this.master.connect(this.ctx.destination);
     }
+    if (this.master) this.master.gain.value = 0.16;
     if (this.ctx.state === "suspended") await this.ctx.resume();
     this.chime();
   }
