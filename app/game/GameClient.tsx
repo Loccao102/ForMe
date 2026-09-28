@@ -318,6 +318,26 @@ export default function GameClient() {
           });
         }
 
+        irisTo(next: () => void, color = 0xfff0e1) {
+          this.input.enabled = false;
+          this.audio.pop();
+
+          const circle = this.keep(
+            this.add.circle(W / 2, H / 2, 70, color, 1).setDepth(96).setScale(0.1)
+          );
+
+          this.tweens.add({
+            targets: circle,
+            scale: 8.5,
+            duration: 520,
+            ease: "Sine.InOut",
+            onComplete: () => {
+              next();
+              this.input.enabled = true;
+            },
+          });
+        }
+
         loopBodyFrames(actor: any, frames: string[], delay = 180) {
           let index = 0;
           actor.body.setTexture(frames[0]);
@@ -671,12 +691,35 @@ export default function GameClient() {
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
-          const gymActor = this.faceCharacter(195, 310, 0.56, "body-gym", "face-neutral", false);
+          const gymActor = this.faceCharacter(-70, 310, 0.56, "body-walk-a", "face-neutral", false);
           this.heroActor = gymActor;
-          gymActor.container.setSize(160, 250).setInteractive({ useHandCursor: true });
+          gymActor.container.setSize(160, 250);
           let reps = 0;
           let lifting = false;
-          const repText = this.small(150, 500, "tap me for a rep");
+          const repText = this.small(150, 500, "walking in...");
+          let gymStep = false;
+          const gymWalk = this.time.addEvent({
+            delay: 120,
+            loop: true,
+            callback: () => {
+              if (!gymActor.body.active) return;
+              gymStep = !gymStep;
+              gymActor.body.setTexture(gymStep ? "body-walk-a" : "body-walk-b");
+            },
+          });
+          this.tweens.add({
+            targets: gymActor.container,
+            x: 195,
+            duration: 760,
+            ease: "Sine.Out",
+            onComplete: () => {
+              gymWalk.remove();
+              gymActor.body.setTexture("body-gym");
+              gymActor.container.setInteractive({ useHandCursor: true });
+              repText.setText("tap me for a rep");
+              this.squash(gymActor, 0.02, 110);
+            },
+          });
           gymActor.container.on("pointerdown", () => {
             if (lifting) return;
             lifting = true;
@@ -749,18 +792,40 @@ export default function GameClient() {
           court.lineBetween(195, 238, 195, 532);
           court.fillStyle(0x74cf8f, 0.5).fillRoundedRect(160, 280, 70, 190, 14);
 
-          const player = this.faceCharacter(92, 315, 0.42, "body-badminton", "face-neutral", false);
+          const player = this.faceCharacter(-70, 315, 0.42, "body-walk-a", "face-neutral", false);
           this.heroActor = player;
           player.container.setDepth(3);
 
           let readyFrame = false;
-          const readyLoop = this.time.addEvent({
-            delay: 330,
+          let readyLoop: any = null;
+          let sportStep = false;
+          const sportWalk = this.time.addEvent({
+            delay: 115,
             loop: true,
             callback: () => {
               if (!player.body.active) return;
-              readyFrame = !readyFrame;
-              player.body.setTexture(readyFrame ? "body-badminton-back" : "body-badminton");
+              sportStep = !sportStep;
+              player.body.setTexture(sportStep ? "body-walk-a" : "body-walk-b");
+            },
+          });
+          this.tweens.add({
+            targets: player.container,
+            x: 92,
+            duration: 680,
+            ease: "Sine.Out",
+            onComplete: () => {
+              sportWalk.remove();
+              player.body.setTexture("body-badminton");
+              this.squash(player, 0.025, 110);
+              readyLoop = this.time.addEvent({
+                delay: 330,
+                loop: true,
+                callback: () => {
+                  if (!player.body.active) return;
+                  readyFrame = !readyFrame;
+                  player.body.setTexture(readyFrame ? "body-badminton-back" : "body-badminton");
+                },
+              });
             },
           });
 
@@ -770,7 +835,7 @@ export default function GameClient() {
 
           const hit = this.button(72, 600, 246, 62, "HIT!", () => {
             move.pause();
-            readyLoop.remove();
+            readyLoop?.remove();
             const ok = shuttle.x > 150 && shuttle.x < 240;
             this.state.badmintonHit = ok;
             player.head.setTexture(ok ? "face-smile" : "face-surprised");
@@ -1173,7 +1238,15 @@ export default function GameClient() {
             ease: "Sine.InOut",
           });
           this.speech(questionAnswers[id], 300);
-          this.button(58, 610, 274, 58, "Okay. Dinner?", () => this.transitionTo(() => this.showCooking()), false);
+          this.button(58, 610, 274, 58, "Okay. Dinner?", () => {
+            answerActor.head.setTexture("face-smile");
+            this.playBodySequence(
+              answerActor,
+              ["body-talk", "body-wave", "body-talk"],
+              120
+            );
+            this.time.delayedCall(260, () => this.irisTo(() => this.showCooking(), 0xfff0e1));
+          }, false);
         }
 
         showCooking() {
