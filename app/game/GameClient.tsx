@@ -1020,6 +1020,7 @@ export default function GameClient() {
             );
           };
 
+          const sliderFeedback = this.small(70, 700, "drag the slider, or just continue →", "#d5ddd9");
           const knob = this.keep(this.add.circle(195, 635, 16, 0x5f8dff).setInteractive({ useHandCursor: true, draggable: true }));
           this.input.setDraggable(knob);
           knob.on("drag", (_p: any, dragX: number) => {
@@ -1028,18 +1029,18 @@ export default function GameClient() {
           knob.on("dragend", () => {
             if (knob.x > 270) {
               this.audio.wrong();
-              this.speech("Không đến mức đó đâu 😐", 690);
+              sliderFeedback.setText("Không đến mức gym rat đâu 😐");
             } else if (knob.x < 105) {
               this.audio.wrong();
-              this.speech("Cũng không lười đến thế.", 690);
+              sliderFeedback.setText("Cũng không couch potato đến thế.");
             } else {
               this.audio.pop();
-              this.speech("Ừ, khoảng giữa là đúng.", 690);
+              sliderFeedback.setText("Ừ, khoảng giữa là đúng.");
             }
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
           });
 
-          const continueGym = this.button(72, 746, 246, 54, "CONTINUE →", leaveGym, false);
+          const continueGym = this.button(72, 752, 246, 52, "CONTINUE →", leaveGym, false);
         }
 
         showSports() {
@@ -1917,7 +1918,6 @@ export default function GameClient() {
           antialias: true,
           pixelArt: false,
           roundPixels: false,
-          transparent: false,
         },
         input: {
           activePointers: 2,
