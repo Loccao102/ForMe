@@ -159,7 +159,7 @@ export default function GameClient() {
             align,
             wordWrap: { width },
             lineSpacing: 4,
-          }).setOrigin(align === "center" ? 0.5 : 0, 0).setDepth(20));
+          }).setOrigin(align === "center" ? 0.5 : 0, 0).setDepth(20).setScrollFactor(0));
         }
 
         small(x: number, y: number, value: string, color = "#5b6069") {
@@ -169,18 +169,18 @@ export default function GameClient() {
             fontStyle: "bold",
             color,
             letterSpacing: 1.5,
-          }).setDepth(20));
+          }).setDepth(20).setScrollFactor(0));
         }
 
         panel(x: number, y: number, w: number, h: number, color = 0xffffff, alpha = 1, radius = 20) {
-          const g = this.keep(this.add.graphics().setDepth(18));
+          const g = this.keep(this.add.graphics().setDepth(18).setScrollFactor(0));
           g.fillStyle(color, alpha).fillRoundedRect(x, y, w, h, radius);
           g.lineStyle(2, 0x17191f, 0.9).strokeRoundedRect(x, y, w, h, radius);
           return g;
         }
 
         button(x: number, y: number, w: number, h: number, label: string, onClick: () => void, dark = true) {
-          const c = this.keep(this.add.container(x, y).setDepth(30));
+          const c = this.keep(this.add.container(x, y).setDepth(30).setScrollFactor(0));
           const g = this.add.graphics();
           g.fillStyle(dark ? 0x17191f : 0xffffff, 1).fillRoundedRect(0, 0, w, h, 16);
           g.lineStyle(2, 0x17191f, 1).strokeRoundedRect(0, 0, w, h, 16);
@@ -481,6 +481,123 @@ export default function GameClient() {
           });
 
           return near;
+        }
+
+        midgroundParallax(kind: "office" | "gym" | "park" | "cafe" | "kitchen" | "rooftop") {
+          const g = this.keep(this.add.graphics().setDepth(-0.45));
+          const palette: Record<string, number> = {
+            office: 0x6e7da3,
+            gym: 0x8aa09a,
+            park: 0x75b97b,
+            cafe: 0xb77c50,
+            kitchen: 0xb56f4d,
+            rooftop: 0x3f527d,
+          };
+          const c = palette[kind];
+
+          g.fillStyle(c, 0.16);
+          if (kind === "park") {
+            g.fillCircle(54, H - 235, 58);
+            g.fillCircle(330, H - 250, 72);
+            g.fillRoundedRect(0, H - 180, W, 180, 40);
+          } else if (kind === "cafe") {
+            g.fillRoundedRect(18, H - 280, 84, 220, 28);
+            g.fillCircle(338, H - 250, 50);
+          } else if (kind === "gym") {
+            g.fillRoundedRect(18, H - 315, 78, 245, 18);
+            g.fillRoundedRect(300, H - 345, 68, 275, 18);
+          } else if (kind === "kitchen") {
+            g.fillRoundedRect(-18, H - 255, 120, 210, 28);
+            g.fillRoundedRect(300, H - 280, 110, 230, 28);
+          } else if (kind === "office") {
+            g.fillRoundedRect(18, H - 325, 92, 260, 20);
+            g.fillRoundedRect(302, H - 300, 82, 235, 20);
+          } else {
+            g.fillRoundedRect(-20, H - 170, W + 40, 170, 30);
+            g.fillCircle(54, H - 190, 42);
+            g.fillCircle(342, H - 210, 48);
+          }
+
+          this.tweens.add({
+            targets: g,
+            x: 10,
+            duration: 9200,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.InOut",
+          });
+          return g;
+        }
+
+        sceneOccluders(kind: "office" | "gym" | "park" | "cafe" | "kitchen" | "rooftop") {
+          const g = this.keep(this.add.graphics().setDepth(8));
+          if (kind === "office") {
+            g.fillStyle(0x27303a, 0.9).fillRoundedRect(-18, H - 135, 94, 150, 20);
+            g.fillStyle(0x4f815d, 0.92).fillCircle(45, H - 155, 36);
+          } else if (kind === "gym") {
+            g.fillStyle(0x2e3439, 0.92).fillRoundedRect(-18, H - 155, 104, 170, 16);
+            g.fillStyle(0x242a2f, 0.9).fillCircle(342, H - 92, 64);
+          } else if (kind === "park") {
+            g.fillStyle(0x3f8f54, 0.94).fillCircle(20, H - 90, 72);
+            g.fillCircle(W - 12, H - 110, 84);
+          } else if (kind === "cafe") {
+            g.fillStyle(0x5b3d2f, 0.92).fillRoundedRect(-20, H - 118, 135, 128, 18);
+            g.fillStyle(0x4c7d57, 0.92).fillCircle(W - 18, H - 150, 58);
+          } else if (kind === "kitchen") {
+            g.fillStyle(0x674333, 0.94).fillRoundedRect(-20, H - 132, W + 40, 150, 18);
+            g.fillStyle(0xf4eee2, 0.9).fillEllipse(330, H - 140, 84, 24);
+          } else {
+            g.fillStyle(0x171923, 0.92).fillRoundedRect(-20, H - 95, W + 40, 120, 20);
+          }
+          return g;
+        }
+
+        dustBurst(x: number, y: number, color = 0xffffff, count = 5) {
+          for (let i = 0; i < count; i++) {
+            const p = this.add.circle(x, y, Phaser.Math.Between(2, 5), color, 0.22).setDepth(7);
+            this.tweens.add({
+              targets: p,
+              x: x + Phaser.Math.Between(-24, 24),
+              y: y - Phaser.Math.Between(8, 28),
+              alpha: 0,
+              scale: 0.2,
+              duration: Phaser.Math.Between(260, 480),
+              ease: "Sine.Out",
+              onComplete: () => p.destroy(),
+            });
+          }
+        }
+
+        speedLines(y = H / 2, direction = 1) {
+          const lines = this.keep(this.add.graphics().setDepth(6));
+          lines.lineStyle(3, 0xffffff, 0.3);
+          for (let i = 0; i < 7; i++) {
+            const yy = y - 90 + i * 30;
+            lines.lineBetween(direction > 0 ? 20 : 220, yy, direction > 0 ? 165 : 370, yy);
+          }
+          lines.setAlpha(0);
+          this.tweens.add({
+            targets: lines,
+            x: direction * -48,
+            alpha: { from: 0, to: 1 },
+            duration: 170,
+            yoyo: true,
+            repeat: 1,
+            ease: "Sine.InOut",
+          });
+          return lines;
+        }
+
+        cameraTrack(actor: any, strength = 0.1) {
+          return this.time.addEvent({
+            delay: 16,
+            loop: true,
+            callback: () => {
+              if (!actor?.container?.active) return;
+              const target = (actor.container.x - W / 2) * strength;
+              this.cameras.main.scrollX = Phaser.Math.Linear(this.cameras.main.scrollX, target, 0.18);
+            },
+          });
         }
 
         cameraNudge(x = 8, y = 0, duration = 180) {
