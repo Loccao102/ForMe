@@ -59,11 +59,19 @@ export default function GameClient() {
           this.load.image("body-talk", "/game/body-talk-v2.svg");
           this.load.image("body-deadpan", "/game/body-deadpan-v2.svg");
           this.load.image("body-gym", "/game/body-gym.svg");
+          this.load.image("body-gym-up", "/game/body-gym-up.svg");
           this.load.image("body-badminton", "/game/body-badminton.svg");
+          this.load.image("body-badminton-back", "/game/body-badminton-back.svg");
+          this.load.image("body-badminton-hit", "/game/body-badminton-hit.svg");
           this.load.image("body-football", "/game/body-football.svg");
           this.load.image("body-run", "/game/body-run.svg");
+          this.load.image("body-run-b", "/game/body-run-b.svg");
           this.load.image("body-seated", "/game/body-seated.svg");
+          this.load.image("body-seated-sip", "/game/body-seated-sip.svg");
           this.load.image("body-cook", "/game/body-cook.svg");
+          this.load.image("body-cook-a", "/game/body-cook-a.svg");
+          this.load.image("body-cook-b", "/game/body-cook-b.svg");
+          this.load.image("body-talk-alt", "/game/body-talk-alt.svg");
         }
 
         create() {
@@ -211,6 +219,59 @@ export default function GameClient() {
             next();
             this.cameras.main.fadeIn(duration + 110, 15, 18, 24);
             this.input.enabled = true;
+          });
+        }
+
+        loopBodyFrames(actor: any, frames: string[], delay = 180) {
+          let index = 0;
+          actor.body.setTexture(frames[0]);
+          return this.time.addEvent({
+            delay,
+            loop: true,
+            callback: () => {
+              if (!actor?.body?.active) return;
+              index = (index + 1) % frames.length;
+              actor.body.setTexture(frames[index]);
+            },
+          });
+        }
+
+        playBodySequence(
+          actor: any,
+          frames: string[],
+          delay = 95,
+          onComplete?: () => void
+        ) {
+          let index = 0;
+          actor.body.setTexture(frames[0]);
+
+          const evt = this.time.addEvent({
+            delay,
+            repeat: Math.max(0, frames.length - 2),
+            callback: () => {
+              index += 1;
+              if (actor?.body?.active) actor.body.setTexture(frames[index]);
+            },
+          });
+
+          this.time.delayedCall(delay * frames.length, () => {
+            if (actor?.body?.active) actor.body.setTexture(frames[frames.length - 1]);
+            onComplete?.();
+          });
+
+          return evt;
+        }
+
+        squash(actor: any, amount = 0.06, duration = 120) {
+          const baseX = actor.container.scaleX || 1;
+          const baseY = actor.container.scaleY || 1;
+          this.tweens.add({
+            targets: actor.container,
+            scaleX: baseX + amount,
+            scaleY: baseY - amount,
+            duration,
+            yoyo: true,
+            ease: "Sine.InOut",
           });
         }
 
