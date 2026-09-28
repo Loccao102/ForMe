@@ -1483,3 +1483,397 @@ button { color: inherit; }
   }
   .reveal { animation: none; }
 }
+
+
+/* =============================
+   Motion-first scene art v2
+   ============================= */
+
+.story-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 90;
+  height: 4px;
+  pointer-events: none;
+  background: rgba(23,25,31,.08);
+}
+
+.story-progress-fill {
+  width: 100%;
+  height: 100%;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--blue-strong), var(--coral), var(--yellow));
+}
+
+.scene-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-blob {
+  position: absolute;
+  display: block;
+  width: clamp(180px, 28vw, 430px);
+  aspect-ratio: 1;
+  border-radius: 45% 55% 58% 42% / 55% 38% 62% 45%;
+  filter: blur(3px);
+  opacity: .14;
+}
+
+.ambient-a {
+  top: 7%;
+  left: -7%;
+  background: var(--blue);
+}
+
+.ambient-b {
+  right: -8%;
+  bottom: -8%;
+  background: var(--coral);
+}
+
+.ambient-line {
+  position: absolute;
+  top: 15%;
+  left: 16%;
+  width: 68%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(23,25,31,.35), transparent);
+  transform: rotate(-6deg);
+}
+
+.work-scene .ambient-a { background: #68b9ff; }
+.work-scene .ambient-b { background: #9ce8bd; }
+.growth-scene .ambient-a { background: #9ce8bd; }
+.growth-scene .ambient-b { background: #ffe18c; }
+.sports-scene .ambient-a { background: #76caff; }
+.sports-scene .ambient-b { background: #aee89c; }
+.cafe-scene .ambient-a { background: #ffd36c; }
+.cafe-scene .ambient-b { background: #ffad9f; }
+.reading-scene .ambient-a { background: #c4b4ff; }
+.reading-scene .ambient-b { background: #9edff7; }
+.talks-scene .ambient-blob,
+.ending-scene .ambient-blob { mix-blend-mode: screen; opacity: .12; }
+
+/* gym is a room scene now, not a body transformation card */
+.gym-art {
+  position: relative;
+  width: min(620px, 100%);
+  min-height: 460px;
+  justify-self: center;
+  overflow: visible;
+  border: 2px solid var(--ink);
+  border-radius: 34px;
+  background: #eaf4f4;
+  box-shadow: 16px 18px 0 rgba(23,25,31,.11), var(--shadow);
+  transform: rotate(-1.2deg);
+}
+
+.gym-art::before {
+  content: "03 / SHOW UP";
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  left: 20px;
+  padding: 8px 11px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(8px);
+  font: 900 .68rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .09em;
+}
+
+.gym-art img {
+  display: block;
+  width: 100%;
+  min-height: 460px;
+  object-fit: cover;
+  border-radius: 32px;
+  will-change: transform;
+}
+
+.gym-height-badge {
+  position: absolute;
+  z-index: 6;
+  right: -24px;
+  top: 22%;
+  display: grid;
+  gap: 2px;
+  min-width: 110px;
+  padding: 14px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 18px;
+  background: var(--yellow);
+  box-shadow: 5px 7px 0 var(--ink);
+  transform: rotate(4deg);
+}
+
+.gym-height-badge b {
+  font-size: 1.55rem;
+  letter-spacing: -.04em;
+}
+
+.gym-height-badge span {
+  font: 800 .68rem/1.2 ui-monospace, monospace;
+  text-transform: uppercase;
+}
+
+.gym-orbit-note {
+  position: absolute;
+  z-index: 6;
+  padding: 9px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 12px;
+  background: rgba(255,255,255,.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 4px 5px 0 rgba(23,25,31,.16);
+  font-family: "Comic Sans MS", "Segoe Print", cursive;
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.note-one {
+  left: -28px;
+  bottom: 16%;
+}
+
+.note-two {
+  right: 7%;
+  bottom: -22px;
+}
+
+.growth-layout {
+  grid-template-columns: 1.08fr .92fr;
+}
+
+/* Photo scenes get a moving crop instead of a static card */
+.parallax-photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.parallax-photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.08 / 1;
+  object-fit: cover;
+  object-position: center;
+  will-change: transform;
+}
+
+.photo-frame > img { display: none; }
+
+.steam {
+  position: absolute;
+  z-index: 5;
+  display: block;
+  width: 24px;
+  height: 54px;
+  border: 2px solid rgba(255,255,255,.7);
+  border-color: rgba(255,255,255,.68) transparent transparent rgba(255,255,255,.42);
+  border-radius: 50%;
+  filter: blur(.3px);
+  pointer-events: none;
+}
+
+.steam-a { right: 18%; bottom: 29%; }
+.steam-b { right: 23%; bottom: 31%; transform: scale(.7) rotate(18deg); }
+
+.sport-card {
+  will-change: transform;
+  transition: box-shadow .25s ease;
+}
+
+.sport-card:hover {
+  box-shadow: 15px 19px 0 rgba(23,25,31,.14), 0 28px 60px rgba(23,25,31,.12);
+}
+
+.book {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.page {
+  transform-style: preserve-3d;
+}
+
+.left-page::before,
+.right-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  z-index: 3;
+  opacity: .18;
+}
+
+.left-page::before {
+  right: 0;
+  background: linear-gradient(90deg, transparent, #4a463f);
+}
+
+.right-page::before {
+  left: 0;
+  background: linear-gradient(90deg, #4a463f, transparent);
+}
+
+.talks-bg motion-img,
+.talks-bg img {
+  will-change: transform;
+}
+
+.bubbles span {
+  will-change: transform;
+}
+
+/* cooking becomes illustrated scene art rather than emoji decoration */
+.pan {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.pan-food {
+  display: grid;
+  width: 112px;
+  height: 112px;
+  place-items: center;
+  border-radius: 50%;
+  color: #382d28;
+  background:
+    radial-gradient(circle at 28% 34%, #ef7d61 0 9%, transparent 10%),
+    radial-gradient(circle at 65% 38%, #80bc75 0 8%, transparent 9%),
+    radial-gradient(circle at 48% 65%, #f1ca68 0 11%, transparent 12%),
+    #f5e3c0;
+  font: 900 .68rem/1.2 ui-monospace, monospace;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.5);
+}
+
+.ingredients {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.ingredients i {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border: 2px solid #3a403a;
+  border-radius: 46% 54% 42% 58%;
+  background: #8fca7e;
+}
+
+.ingredients i:nth-child(2) {
+  border-radius: 50%;
+  background: #e87362;
+}
+
+.ingredients i:nth-child(3) {
+  width: 30px;
+  border-radius: 42% 58% 55% 45%;
+  background: #efca70;
+}
+
+.ingredients i:nth-child(4) {
+  width: 20px;
+  height: 30px;
+  border-radius: 60% 40% 55% 45%;
+  background: #f3eee4;
+}
+
+.chaos-window {
+  will-change: transform;
+}
+
+.sun {
+  will-change: transform;
+}
+
+/* Give every scene a little more depth and visual overlap */
+.scene > .scene-label,
+.scene > .intro-grid,
+.scene > .work-layout,
+.scene > .growth-layout,
+.scene > .sports-title,
+.scene > .sport-track,
+.scene > .cafe-layout,
+.scene > .reading-layout,
+.scene > .talks-copy,
+.scene > .kitchen,
+.scene > .cooking-copy,
+.scene > .imperfect-copy,
+.scene > .ending-card {
+  z-index: 2;
+}
+
+@media (max-width: 860px) {
+  .gym-art {
+    width: min(620px, 95vw);
+    min-height: 340px;
+  }
+
+  .gym-art img {
+    min-height: 340px;
+  }
+
+  .gym-height-badge {
+    right: 10px;
+    top: 18%;
+  }
+
+  .note-one {
+    left: 10px;
+    bottom: 12%;
+  }
+
+  .note-two {
+    right: 12%;
+    bottom: -16px;
+  }
+
+  .growth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .growth-layout .copy-block {
+    order: -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .ambient-blob {
+    width: 65vw;
+    opacity: .1;
+  }
+
+  .gym-art,
+  .gym-art img {
+    min-height: 270px;
+  }
+
+  .gym-height-badge {
+    min-width: auto;
+    padding: 10px 12px;
+  }
+
+  .gym-height-badge b { font-size: 1.2rem; }
+  .gym-orbit-note { font-size: .66rem; }
+
+  .note-one { display: none; }
+
+  .pan-food {
+    width: 88px;
+    height: 88px;
+    font-size: .58rem;
+  }
+}
