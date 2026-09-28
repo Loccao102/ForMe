@@ -9,8 +9,8 @@ const contactUrl = process.env.NEXT_PUBLIC_CONTACT_URL;
 
 const impressions = [
   "quiet at first",
-  "probably works too much",
-  "looks like he has too many tabs open",
+  "probably talks a lot once comfortable",
+  "looks calmer than he actually is",
 ];
 
 const questions = {
@@ -147,7 +147,7 @@ export default function EditorialPage() {
             <br />
             That’s actually perfect.
           </p>
-          <span>scroll to make a questionable first impression ↓</span>
+          <span>23 · Hà Nội · 1m86 · scroll ↓</span>
         </div>
       </section>
 
@@ -210,9 +210,9 @@ export default function EditorialPage() {
           </h2>
 
           <motion.div className={styles.techStream} style={{ x: workX, rotate: workRotate }}>
-            {["API", "DATABASE", "QUEUE", "RETRY", "DOCKER", "CACHE", "WEBSOCKET", "WHY IS PROD DOWN?"].map(
+            {["IDEA", "BUILD", "BREAK", "FIX", "SHIP", "REPEAT", "WHY DID THAT WORK?"].map(
               (item, index) => (
-                <span key={item} className={index === 7 ? styles.techPanic : ""}>
+                <span key={item} className={index === 6 ? styles.techPanic : ""}>
                   {item}
                 </span>
               )
@@ -235,25 +235,25 @@ export default function EditorialPage() {
           </div>
 
           <motion.div
-            className={styles.bigNumber}
+            className={styles.bigStatement}
             initial={{ scale: 0.75, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            1m86
-            <small>still inconvenient on buses</small>
+            CURIOUS.
+            <small>about places, people, food, stories, and whatever comes next</small>
           </motion.div>
 
           <div className={styles.factRail}>
-            <Tape tilt={-2}>Hà Nội</Tape>
-            <Tape tilt={3}>coffee</Tape>
-            <Tape tilt={-4}>badminton</Tape>
-            <Tape tilt={2}>football</Tape>
-            <Tape tilt={-1}>running</Tape>
-            <Tape tilt={4}>books</Tape>
-            <Tape tilt={-3}>cooking</Tape>
-            <Tape tilt={1}>too many side projects</Tape>
+            <Tape tilt={-2}>coffee</Tape>
+            <Tape tilt={3}>badminton</Tape>
+            <Tape tilt={-4}>football</Tape>
+            <Tape tilt={2}>running</Tape>
+            <Tape tilt={-1}>books</Tape>
+            <Tape tilt={4}>cooking</Tape>
+            <Tape tilt={-3}>long conversations</Tape>
+            <Tape tilt={1}>new places</Tape>
           </div>
 
           <motion.div
@@ -267,8 +267,8 @@ export default function EditorialPage() {
           </motion.div>
 
           <p className={styles.moreCopy}>
-            I like building things, moving until my head gets quiet, sitting in cafés longer than planned,
-            and conversations that accidentally become personal.
+            I like moving until my head gets quiet, finding cafés worth staying in, cooking something good,
+            discovering new places, and conversations that accidentally become personal.
           </p>
         </div>
       </section>
@@ -316,12 +316,12 @@ export default function EditorialPage() {
             <h2>
               Coffee.
               <br />
-              Laptop.
+              A quiet corner.
               <br />
               <i>Then somehow… life.</i>
             </h2>
             <p>
-              I can spend one hour talking about code and the next two talking about why people become who they are.
+              I can start with something ordinary and somehow end up talking about why people become who they are.
             </p>
           </div>
 
@@ -333,19 +333,19 @@ export default function EditorialPage() {
       </section>
 
       <section className={styles.build}>
-        <div className={styles.sectionNo}>06 / I BUILD THINGS FOR NO GOOD REASON</div>
+        <div className={styles.sectionNo}>06 / SMALL THINGS I LIKE</div>
         <div className={styles.buildGrid}>
           <h2>
-            “What if I
+            The little things
             <br />
-            just made it?”
+            <i>matter more.</i>
           </h2>
           <div className={styles.projectPile}>
             {[
-              ["01", "3D worlds", "because normal portfolios felt too normal"],
-              ["02", "AI agents", "because clicking things manually gets boring"],
-              ["03", "tiny SaaS ideas", "because apparently sleep is optional"],
-              ["04", "weird experiments", "because curiosity usually wins"],
+              ["01", "a good meal", "especially when it is shared with someone I care about"],
+              ["02", "a new café", "quiet enough to stay longer than planned"],
+              ["03", "a long walk", "the easiest way to let my head slow down"],
+              ["04", "a real conversation", "the kind where people stop trying to sound impressive"],
             ].map(([n, title, copy], i) => (
               <motion.article
                 key={title}
@@ -364,31 +364,31 @@ export default function EditorialPage() {
       </section>
 
       <section className={styles.twoAm}>
-        <div className={styles.sectionNoLight}>07 / 02:17 AM</div>
+        <div className={styles.sectionNoLight}>07 / AFTER MIDNIGHT</div>
         <div className={styles.tabs}>
-          {["portfolio", "AI agent", "random SaaS", "new idea", "another new idea", "why am I awake"].map(
-            (tab, i) => (
+          {["the future", "family", "where life is going", "one awkward memory", "the next trip", "why am I awake"].map(
+            (thought, i) => (
               <motion.div
-                key={tab}
+                key={thought}
                 initial={{ y: 110, rotate: i % 2 ? 7 : -7, opacity: 0 }}
                 whileInView={{ y: i * 10, rotate: i % 2 ? 3 : -3, opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ type: "spring", stiffness: 130, damping: 18, delay: i * 0.06 }}
               >
-                <span>×</span>
-                {tab}
+                <span>✦</span>
+                {thought}
               </motion.div>
             )
           )}
         </div>
         <div className={styles.twoAmCopy}>
-          <span>27 tabs.</span>
+          <span>2:17 AM.</span>
           <h2>
-            I have a small problem with
+            My brain has a small problem with
             <br />
-            <i>“one more idea.”</i>
+            <i>“we can think about that tomorrow.”</i>
           </h2>
-          <p>Curiosity is useful. Time management is… catching up.</p>
+          <p>Sometimes thoughtful. Sometimes unnecessary. Usually both.</p>
         </div>
       </section>
 
@@ -418,7 +418,7 @@ export default function EditorialPage() {
 
       <section className={styles.question}>
         <div className={styles.questionIntro}>
-          <p className={styles.eyebrow}>ENOUGH ABOUT WHAT I DO.</p>
+          <p className={styles.eyebrow}>ENOUGH FACTS.</p>
           <h2>Ask me something real.</h2>
         </div>
 
@@ -490,13 +490,10 @@ export default function EditorialPage() {
             </p>
           )}
 
-          <a className={styles.githubLink} href="https://github.com/Loccao102" target="_blank" rel="noreferrer">
-            or see what I’m building ↗
-          </a>
         </div>
 
         <div className={styles.endingTicker}>
-          LOC — SOFTWARE — COFFEE — BADMINTON — BOOKS — IDEAS — TOO MANY TABS — COOKING —
+          LOC — COFFEE — BADMINTON — BOOKS — FOOD — LATE NIGHTS — LONG TALKS — NEW PLACES —
         </div>
       </section>
     </main>
