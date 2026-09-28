@@ -51,6 +51,7 @@ export default function GameClient() {
           this.load.image("cafe-bg", "/game/cafe.svg");
           this.load.image("kitchen-bg", "/game/kitchen.svg");
           this.load.image("park-bg", "/game/park.svg");
+          this.load.image("rooftop-bg", "/game/rooftop-night.svg");
           this.load.image("body-idle", "/game/body-idle-v2.svg");
           this.load.image("body-walk-a", "/game/body-walk-a-v2.svg");
           this.load.image("body-walk-b", "/game/body-walk-b-v2.svg");
@@ -250,10 +251,13 @@ export default function GameClient() {
         showIntro() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
-          this.small(22, 26, "FIGURE OUT LOC / 90 SEC");
+          this.artBackground("rooftop-bg", 0.94);
+          const introShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x0d1020, 0.16));
+          introShade.setDepth(-0.5);
+          this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
           this.walkIn(170, 0.78);
-          this.text(W / 2, 360, "You just opened\na stranger's link.", 35, "#17191f", 350, "center");
-          this.text(W / 2, 455, "Bold move.", 18, "#6c7078", 330, "center");
+          this.text(W / 2, 360, "You just opened\na stranger's link.", 35, "#ffffff", 350, "center");
+          this.text(W / 2, 455, "Bold move.", 18, "#f5d7b2", 330, "center");
 
           this.button(24, 535, 342, 58, "PLAY WITH SOUND  🔊", async () => {
             await this.audio.start(true);
@@ -433,7 +437,62 @@ export default function GameClient() {
             });
             ok ? this.audio.hit() : this.audio.wrong();
             this.text(W / 2, 690, ok ? "NICE." : "we're pretending that didn't happen.", ok ? 30 : 17, "#17191f", 350, "center");
-            this.time.delayedCall(950, () => this.showCafe());
+            this.time.delayedCall(850, () => this.showSportsMontage());
+          });
+        }
+
+        showSportsMontage() {
+          this.audio.whoosh();
+          this.clearScene(0xeaf7ff);
+          this.artBackground("park-bg", 0.96);
+          this.small(22, 26, "04 / ALSO...");
+          this.text(22, 70, "Badminton không phải\nmôn duy nhất.", 30);
+
+          const footballActor = this.faceCharacter(105, 350, 0.45, "body-football", "face-smile", false);
+          footballActor.container.setAlpha(0).setX(30);
+          this.tweens.add({
+            targets: footballActor.container,
+            alpha: 1,
+            x: 120,
+            duration: 420,
+            ease: "Back.Out",
+          });
+
+          const footballLabel = this.text(235, 330, "football", 28, "#17191f", 130, "center");
+          footballLabel.setAlpha(0);
+          this.tweens.add({ targets: footballLabel, alpha: 1, y: 318, duration: 350, delay: 160 });
+
+          this.time.delayedCall(760, () => {
+            this.audio.whoosh();
+            this.tweens.add({
+              targets: [footballActor.container, footballLabel],
+              x: "-=250",
+              alpha: 0,
+              duration: 260,
+              ease: "Sine.In",
+            });
+
+            const runner = this.faceCharacter(310, 355, 0.43, "body-run", "face-neutral", false);
+            runner.container.setAlpha(0).setX(420);
+            const runLabel = this.text(82, 330, "running", 28, "#17191f", 130, "center");
+            runLabel.setAlpha(0);
+
+            this.tweens.add({
+              targets: runner.container,
+              x: 270,
+              alpha: 1,
+              duration: 420,
+              ease: "Sine.Out",
+            });
+            this.tweens.add({ targets: runLabel, alpha: 1, y: 318, duration: 330, delay: 150 });
+
+            const streaks = this.keep(this.add.graphics());
+            streaks.lineStyle(4, 0xffffff, 0.6);
+            [0, 1, 2].forEach((i) => streaks.lineBetween(210, 455 + i * 24, 330, 455 + i * 24));
+            streaks.setAlpha(0);
+            this.tweens.add({ targets: streaks, alpha: 1, x: -28, duration: 340, repeat: 1, yoyo: true });
+
+            this.time.delayedCall(900, () => this.showCafe());
           });
         }
 
@@ -603,7 +662,11 @@ export default function GameClient() {
         showEnding() {
           this.stage = 9;
           this.clearScene(0x5d759c);
+          this.artBackground("rooftop-bg", 1);
+          const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
+          endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
+          this.faceCharacter(326, 690, 0.34, "body-seated", "face-smile", true);
           this.text(W / 2, 75, "So...", 34, "#ffffff", 350, "center");
 
           const first = impressionOptions.find((o) => o.id === this.state.impression)?.label ?? "something";
