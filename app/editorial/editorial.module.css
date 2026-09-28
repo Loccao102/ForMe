@@ -67,15 +67,34 @@
 .yellowPortrait img{width:100%;height:100%;object-fit:cover}
 .moreCopy{grid-column:1/3;font:500 clamp(26px,3.5vw,48px)/1.08 Georgia,serif;max-width:900px}
 
-.after{height:400vh;background:#17181d;color:#fff;isolation:isolate}
+.after{height:300vh;background:#17181d;color:#fff;isolation:isolate}
 .afterSticky{position:sticky;top:0;height:100svh;overflow:hidden}
-.afterTrack{height:100%;display:flex;width:400vw;will-change:transform;transform:translateZ(0)}
+.afterTrack{height:100%;display:flex;width:300vw;will-change:transform;transform:translateZ(0)}
 .afterPanel{width:100vw;height:100%;flex:0 0 100vw;padding:13vh 7vw;position:relative;overflow:hidden}
 .afterPanel h3{font-size:clamp(70px,12vw,175px);letter-spacing:-.08em;line-height:.8;margin:20vh 0 24px}
 .afterPanel p{font:500 clamp(22px,3vw,42px)/1.1 Georgia,serif;max-width:520px}
 .afterIndex{font:800 12px monospace;letter-spacing:.16em}
-.badminton{background:#3158ff}.football{background:#f08072;color:#18191d}.running{background:#6e956f}.coffeePanel{background:#d3a16f;color:#17181d}
-.shuttle,.ball,.route,.cup{position:absolute;right:8vw;bottom:10vh;font-size:clamp(100px,18vw,260px);opacity:.65}
+.badminton{background:#3158ff}.football{background:#f08072;color:#18191d}.running{background:#6e956f}
+.sportKicker{margin:0 0 12px!important;font:800 11px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace!important;letter-spacing:.16em;text-transform:uppercase;opacity:.72}
+.shuttleArt,.ballArt,.runArt{position:absolute;right:8vw;bottom:9vh;width:clamp(150px,21vw,320px);height:clamp(150px,21vw,320px);pointer-events:none}
+.shuttleArt{transform:rotate(-18deg);animation:sport-float 4.2s ease-in-out infinite}
+.shuttleArt b{position:absolute;left:42%;bottom:9%;width:25%;height:25%;border-radius:50%;background:#fff;border:4px solid rgba(17,18,22,.8)}
+.shuttleArt i{position:absolute;left:46%;bottom:28%;width:9%;height:61%;border-radius:999px 999px 22px 22px;background:rgba(255,255,255,.78);transform-origin:50% 100%;border:2px solid rgba(17,18,22,.5)}
+.shuttleArt i:nth-child(1){transform:rotate(-25deg)}
+.shuttleArt i:nth-child(2){transform:rotate(0)}
+.shuttleArt i:nth-child(3){transform:rotate(25deg)}
+.ballArt{border:5px solid rgba(17,18,22,.84);border-radius:50%;background:#f6f0e4;animation:sport-roll 8s linear infinite}
+.ballArt::before,.ballArt::after,.ballArt i{content:"";position:absolute;inset:35%;background:#17181d;clip-path:polygon(50% 0,98% 35%,80% 100%,20% 100%,2% 35%)}
+.ballArt::before{inset:8% 58% 58% 13%;transform:rotate(-18deg);opacity:.92}
+.ballArt::after{inset:58% 12% 9% 58%;transform:rotate(19deg);opacity:.92}
+.runArt{display:flex;flex-direction:column;justify-content:center;gap:18px;transform:rotate(-7deg)}
+.runArt i{display:block;height:14px;border-radius:999px;background:rgba(255,255,255,.8);box-shadow:0 0 0 2px rgba(17,18,22,.22);animation:run-line 2.2s ease-in-out infinite}
+.runArt i:nth-child(1){width:95%}
+.runArt i:nth-child(2){width:72%;margin-left:18%;animation-delay:.12s}
+.runArt i:nth-child(3){width:48%;margin-left:42%;animation-delay:.24s}
+@keyframes sport-float{50%{transform:translate(-18px,-20px) rotate(-10deg)}}
+@keyframes sport-roll{to{transform:rotate(360deg)}}
+@keyframes run-line{50%{transform:translateX(-28px);opacity:.45}}
 
 .cafe{min-height:150vh;padding:18vh 5vw 12vh;overflow:hidden;background:#e8d2b8}
 .cafeMarquee{position:absolute;will-change:transform;transform:translateZ(0);top:6vh;left:0;white-space:nowrap;font:900 clamp(38px,7vw,96px)/1 sans-serif;letter-spacing:-.05em;color:rgba(17,18,22,.12)}
@@ -152,9 +171,16 @@
   .yellowPortrait{height:68vh;position:relative;top:auto;margin:32px 0}
   .bigStatement{margin:18vh 0 8vh}
   .moreCopy{margin-top:10vh}
-  .after{height:340vh}
-  .afterPanel{padding:12vh 7vw}
-  .afterPanel h3{margin-top:26vh;font-size:18vw}
+  .after{height:auto;background:#17181d;padding:0}
+  .afterSticky{position:relative;height:auto;overflow:visible;padding-top:62px}
+  .afterTrack{display:block;width:100%!important;height:auto;transform:none!important}
+  .afterPanel{width:100%;height:88svh;min-height:620px;position:sticky;top:0;display:flex;flex-direction:column;justify-content:center;padding:12vh 24px 10vh;border-radius:26px 26px 0 0;box-shadow:0 -18px 45px rgba(0,0,0,.18)}
+  .afterPanel:nth-child(1){z-index:1}
+  .afterPanel:nth-child(2){z-index:2}
+  .afterPanel:nth-child(3){z-index:3}
+  .afterPanel h3{margin:10vh 0 20px;font-size:17vw;line-height:.82}
+  .afterPanel>p:not(.sportKicker){font-size:clamp(22px,7vw,34px);max-width:85%}
+  .shuttleArt,.ballArt,.runArt{right:18px;bottom:6vh;width:44vw;height:44vw;max-width:190px;max-height:190px}
   .cafeGrid{grid-template-columns:1fr}
   .cafeImageWrap{height:65vh}
   .cafe{padding-top:16vh}
@@ -199,8 +225,12 @@
 }
 
 @media (max-width:900px){
-  .afterTrack{width:400vw}
-  .afterPanel{width:100vw;flex-basis:100vw}
+  .afterTrack{width:100%}
+  .afterPanel{width:100%;flex-basis:auto}
   .cafeImageWrap img{height:120%}
   .tabs{min-height:430px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .shuttleArt,.ballArt,.runArt i,.ballArt{animation:none!important}
 }
