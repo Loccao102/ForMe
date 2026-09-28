@@ -222,7 +222,7 @@ export default function GameClient() {
         }
 
         panel(x: number, y: number, w: number, h: number, color = 0xffffff, alpha = 1, radius = 20) {
-          const g = this.keep(this.add.graphics().setDepth(18).setScrollFactor(0));
+          const g = this.keep(this.add.graphics().setDepth(2).setScrollFactor(0));
           g.fillStyle(color, alpha).fillRoundedRect(x, y, w, h, radius);
           g.lineStyle(2, 0x17191f, 0.9).strokeRoundedRect(x, y, w, h, radius);
           return g;
@@ -533,10 +533,10 @@ export default function GameClient() {
 
         foregroundParallax(color = 0x11151b, alpha = 0.12, speed = 6000) {
           const near = this.keep(this.add.graphics().setDepth(-0.1));
-          near.fillStyle(color, alpha);
-          near.fillEllipse(-30, H - 80, 150, 110);
-          near.fillEllipse(W + 20, H - 55, 190, 130);
-          near.fillRoundedRect(-20, H - 34, W + 40, 60, 24);
+          near.fillStyle(color, alpha * 0.55);
+          near.fillEllipse(-25, H - 54, 100, 72);
+          near.fillEllipse(W + 12, H - 48, 116, 78);
+          near.fillRoundedRect(-20, H - 18, W + 40, 32, 18);
 
           this.tweens.add({
             targets: near,
@@ -553,42 +553,21 @@ export default function GameClient() {
         midgroundParallax(kind: "office" | "gym" | "park" | "cafe" | "kitchen" | "rooftop") {
           const g = this.keep(this.add.graphics().setDepth(-0.45));
           const palette: Record<string, number> = {
-            office: 0x6e7da3,
-            gym: 0x8aa09a,
-            park: 0x75b97b,
-            cafe: 0xb77c50,
-            kitchen: 0xb56f4d,
-            rooftop: 0x3f527d,
+            office: 0x9db4d8,
+            gym: 0xaec9bf,
+            park: 0xb8deb4,
+            cafe: 0xe5b98f,
+            kitchen: 0xe5ad91,
+            rooftop: 0x6c82b4,
           };
           const c = palette[kind];
-
-          g.fillStyle(c, 0.16);
-          if (kind === "park") {
-            g.fillCircle(54, H - 235, 58);
-            g.fillCircle(330, H - 250, 72);
-            g.fillRoundedRect(0, H - 180, W, 180, 40);
-          } else if (kind === "cafe") {
-            g.fillRoundedRect(18, H - 280, 84, 220, 28);
-            g.fillCircle(338, H - 250, 50);
-          } else if (kind === "gym") {
-            g.fillRoundedRect(18, H - 315, 78, 245, 18);
-            g.fillRoundedRect(300, H - 345, 68, 275, 18);
-          } else if (kind === "kitchen") {
-            g.fillRoundedRect(-18, H - 255, 120, 210, 28);
-            g.fillRoundedRect(300, H - 280, 110, 230, 28);
-          } else if (kind === "office") {
-            g.fillRoundedRect(18, H - 325, 92, 260, 20);
-            g.fillRoundedRect(302, H - 300, 82, 235, 20);
-          } else {
-            g.fillRoundedRect(-20, H - 170, W + 40, 170, 30);
-            g.fillCircle(54, H - 190, 42);
-            g.fillCircle(342, H - 210, 48);
-          }
-
+          g.fillStyle(c, 0.055);
+          g.fillCircle(26, H - 185, 62);
+          g.fillCircle(W - 18, H - 210, 72);
           this.tweens.add({
             targets: g,
-            x: 10,
-            duration: 9200,
+            x: 6,
+            duration: 10500,
             yoyo: true,
             repeat: -1,
             ease: "Sine.InOut",
@@ -597,24 +576,20 @@ export default function GameClient() {
         }
 
         sceneOccluders(kind: "office" | "gym" | "park" | "cafe" | "kitchen" | "rooftop") {
-          const g = this.keep(this.add.graphics().setDepth(8));
-          if (kind === "office") {
-            g.fillStyle(0x27303a, 0.9).fillRoundedRect(-18, H - 135, 94, 150, 20);
-            g.fillStyle(0x4f815d, 0.92).fillCircle(45, H - 155, 36);
-          } else if (kind === "gym") {
-            g.fillStyle(0x2e3439, 0.92).fillRoundedRect(-18, H - 155, 104, 170, 16);
-            g.fillStyle(0x242a2f, 0.9).fillCircle(342, H - 92, 64);
-          } else if (kind === "park") {
-            g.fillStyle(0x3f8f54, 0.94).fillCircle(20, H - 90, 72);
-            g.fillCircle(W - 12, H - 110, 84);
+          const g = this.keep(this.add.graphics().setDepth(14));
+          if (kind === "park") {
+            g.fillStyle(0x397a4d, 0.7).fillCircle(-18, H - 42, 52);
+            g.fillCircle(W + 12, H - 48, 58);
           } else if (kind === "cafe") {
-            g.fillStyle(0x5b3d2f, 0.92).fillRoundedRect(-20, H - 118, 135, 128, 18);
-            g.fillStyle(0x4c7d57, 0.92).fillCircle(W - 18, H - 150, 58);
+            g.fillStyle(0x4d7756, 0.72).fillCircle(W + 8, H - 58, 52);
+          } else if (kind === "office") {
+            g.fillStyle(0x4d7658, 0.68).fillCircle(8, H - 48, 46);
+          } else if (kind === "rooftop") {
+            g.fillStyle(0x121722, 0.72).fillRoundedRect(-10, H - 42, W + 20, 54, 18);
           } else if (kind === "kitchen") {
-            g.fillStyle(0x674333, 0.94).fillRoundedRect(-20, H - 132, W + 40, 150, 18);
-            g.fillStyle(0xf4eee2, 0.9).fillEllipse(330, H - 140, 84, 24);
+            g.fillStyle(0x6c4938, 0.55).fillRoundedRect(-12, H - 34, W + 24, 46, 14);
           } else {
-            g.fillStyle(0x171923, 0.92).fillRoundedRect(-20, H - 95, W + 40, 120, 20);
+            g.fillStyle(0x252a2d, 0.45).fillRoundedRect(-10, H - 30, W + 20, 40, 12);
           }
           return g;
         }
@@ -679,6 +654,244 @@ export default function GameClient() {
           });
         }
 
+        drawFace2D(g: any, expression: string) {
+          g.clear();
+
+          // ears + head
+          g.lineStyle(3, 0x2b211f, 1);
+          g.fillStyle(0xf2b184, 1);
+          g.fillCircle(-43, 4, 11);
+          g.fillCircle(43, 4, 11);
+          g.fillRoundedRect(-43, -46, 86, 98, 31);
+          g.strokeRoundedRect(-43, -46, 86, 98, 31);
+
+          // hair
+          g.fillStyle(0x211b1a, 1);
+          g.fillRoundedRect(-45, -49, 90, 37, 20);
+          g.fillTriangle(-44, -18, -16, -37, -26, 1);
+          g.fillTriangle(-24, -19, 8, -43, -4, 2);
+          g.fillTriangle(2, -20, 31, -38, 22, 1);
+          g.fillTriangle(22, -18, 43, -30, 40, 3);
+
+          // brows
+          g.lineStyle(3, 0x3a2a26, 1);
+          const browTilt = expression === "thinking" ? -3 : expression === "surprised" ? -5 : 0;
+          g.lineBetween(-27, -2 + browTilt, -12, -3);
+          g.lineBetween(12, -3, 27, -2 - browTilt);
+
+          // eyes
+          if (expression === "smile") {
+            g.lineBetween(-27, 10, -12, 7);
+            g.lineBetween(12, 7, 27, 10);
+          } else if (expression === "deadpan") {
+            g.lineBetween(-27, 9, -12, 9);
+            g.lineBetween(12, 9, 27, 9);
+          } else {
+            g.fillStyle(0xffffff, 1);
+            g.fillEllipse(-19, 10, expression === "surprised" ? 13 : 10, expression === "surprised" ? 15 : 12);
+            g.fillEllipse(19, 10, expression === "surprised" ? 13 : 10, expression === "surprised" ? 15 : 12);
+            g.fillStyle(0x201b1a, 1);
+            g.fillCircle(-19, 11, expression === "surprised" ? 3 : 3.5);
+            g.fillCircle(19, 11, expression === "surprised" ? 3 : 3.5);
+          }
+
+          // nose
+          g.lineStyle(2, 0xc5795c, 1);
+          g.lineBetween(0, 12, 2, 22);
+
+          // mouth
+          g.lineStyle(3, 0x8c4b42, 1);
+          if (expression === "smile") {
+            g.beginPath();
+            g.arc(0, 27, 13, 0.15, Math.PI - 0.15);
+            g.strokePath();
+          } else if (expression === "surprised") {
+            g.fillStyle(0x8c4b42, 1);
+            g.fillEllipse(0, 30, 13, 10);
+          } else if (expression === "deadpan" || expression === "thinking") {
+            g.lineBetween(-9, 30, 10, 30);
+          } else {
+            g.beginPath();
+            g.arc(0, 25, 11, 0.35, Math.PI - 0.35);
+            g.strokePath();
+          }
+        }
+
+        drawBody2D(g: any, pose: string) {
+          g.clear();
+          g.lineStyle(4, 0x241e1d, 1);
+
+          const skin = 0xf2b184;
+          const shirt = 0x24272b;
+          const tee = 0xf1eee8;
+          const pants = 0x202328;
+          const shoe = 0xf5f5f3;
+
+          const limb = (x1: number, y1: number, x2: number, y2: number, width = 15, color = skin) => {
+            g.lineStyle(width, color, 1);
+            g.lineBetween(x1, y1, x2, y2);
+            g.lineStyle(4, 0x241e1d, 1);
+          };
+
+          const shoeAt = (x: number, y: number, flip = 1) => {
+            g.fillStyle(shoe, 1);
+            g.fillRoundedRect(x + (flip < 0 ? -32 : 0), y, 32, 13, 6);
+            g.strokeRoundedRect(x + (flip < 0 ? -32 : 0), y, 32, 13, 6);
+          };
+
+          const seated = pose.includes("seated") || pose.includes("laptop") || pose.includes("book");
+          const cooking = pose.includes("cook") || pose.includes("serve");
+
+          // torso
+          g.fillStyle(shirt, 1);
+          g.fillRoundedRect(-49, 42, 98, seated ? 103 : 118, 18);
+          g.strokeRoundedRect(-49, 42, 98, seated ? 103 : 118, 18);
+          g.fillStyle(tee, 1);
+          g.fillRoundedRect(-25, 52, 50, seated ? 76 : 90, 12);
+
+          if (cooking) {
+            g.fillStyle(0xd9b57b, 0.95);
+            g.fillRoundedRect(-30, 60, 60, 105, 12);
+          }
+
+          // arms / props
+          if (pose === "body-wave") {
+            limb(-38, 78, -54, 135, 16, shirt);
+            limb(38, 78, 55, 18, 16, shirt);
+            limb(55, 18, 61, -10, 13, skin);
+            g.fillStyle(skin, 1); g.fillCircle(62, -13, 9);
+          } else if (pose === "body-talk" || pose === "body-talk-alt") {
+            if (pose === "body-talk") {
+              limb(-38, 80, -54, 136, 16, shirt);
+              limb(38, 80, 67, 105, 16, shirt);
+              limb(67, 105, 82, 96, 12, skin);
+              g.fillStyle(skin, 1); g.fillCircle(84, 95, 8);
+            } else {
+              limb(38, 80, 54, 136, 16, shirt);
+              limb(-38, 80, -67, 105, 16, shirt);
+              limb(-67, 105, -82, 96, 12, skin);
+              g.fillStyle(skin, 1); g.fillCircle(-84, 95, 8);
+            }
+          } else if (pose === "body-gym" || pose === "body-gym-up") {
+            if (pose === "body-gym-up") {
+              limb(-39, 78, -54, 18, 15, skin);
+              limb(39, 78, 54, 18, 15, skin);
+              g.fillStyle(0x353a3e, 1);
+              g.fillRoundedRect(-77, 5, 42, 14, 5);
+              g.fillRoundedRect(35, 5, 42, 14, 5);
+            } else {
+              limb(-39, 78, -57, 140, 15, skin);
+              limb(39, 78, 57, 140, 15, skin);
+              g.fillStyle(0x353a3e, 1);
+              g.fillRoundedRect(-78, 134, 42, 14, 5);
+              g.fillRoundedRect(36, 134, 42, 14, 5);
+            }
+          } else if (pose.includes("badminton")) {
+            limb(-39, 80, -60, 128, 15, skin);
+            if (pose === "body-badminton-back") {
+              limb(39, 80, 56, 15, 14, skin);
+              g.lineStyle(4, 0x34383d, 1);
+              g.lineBetween(56, 15, 77, -15);
+              g.strokeEllipse(83, -22, 22, 32);
+            } else if (pose === "body-badminton-hit") {
+              limb(39, 80, 91, 87, 14, skin);
+              g.lineStyle(4, 0x34383d, 1);
+              g.lineBetween(91, 87, 119, 90);
+              g.strokeEllipse(126, 91, 22, 32);
+            } else {
+              limb(39, 80, 67, 43, 14, skin);
+              g.lineStyle(4, 0x34383d, 1);
+              g.lineBetween(67, 43, 89, 17);
+              g.strokeEllipse(96, 11, 22, 32);
+            }
+          } else if (pose.includes("cook")) {
+            limb(-38, 80, -61, 123, 15, skin);
+            const handY = pose === "body-cook-b" ? 128 : 102;
+            limb(38, 80, 74, handY, 15, skin);
+            g.lineStyle(6, 0x42464c, 1);
+            g.lineBetween(74, handY, 102, handY + (pose === "body-cook-b" ? 14 : 0));
+            g.fillStyle(0x42464c, 1);
+            g.fillEllipse(112, handY + (pose === "body-cook-b" ? 18 : 0), 34, 16);
+          } else if (pose === "body-serve") {
+            limb(-38, 80, -58, 130, 15, skin);
+            limb(38, 80, 70, 112, 15, skin);
+            g.fillStyle(0xf5f0e8, 1);
+            g.fillEllipse(91, 116, 60, 15);
+            g.lineStyle(3, 0x241e1d, 1); g.strokeEllipse(91, 116, 60, 15);
+          } else if (pose === "body-seated-sip") {
+            limb(-38, 80, -58, 126, 15, skin);
+            limb(38, 80, 57, 52, 15, skin);
+            g.fillStyle(0xf5f0e8, 1);
+            g.fillRoundedRect(52, 34, 25, 28, 7);
+          } else if (pose === "body-laptop") {
+            limb(-38, 80, -58, 122, 15, skin);
+            limb(38, 80, 58, 122, 15, skin);
+            g.fillStyle(0x30353d, 1);
+            g.fillRoundedRect(-42, 118, 84, 48, 8);
+            g.fillStyle(0x4774a8, 0.9);
+            g.fillRoundedRect(-34, 125, 68, 32, 5);
+          } else if (pose === "body-book-closed" || pose === "body-book-open") {
+            limb(-38, 80, -55, 118, 15, skin);
+            limb(38, 80, 55, 118, 15, skin);
+            if (pose === "body-book-open") {
+              g.fillStyle(0xfffdf6, 1);
+              g.fillRoundedRect(-54, 108, 52, 44, 5);
+              g.fillRoundedRect(2, 108, 52, 44, 5);
+            } else {
+              g.fillStyle(0x3a4968, 1);
+              g.fillRoundedRect(-40, 106, 80, 48, 7);
+            }
+          } else {
+            limb(-39, 80, -56, 140, 16, shirt);
+            limb(39, 80, 56, 140, 16, shirt);
+          }
+
+          // legs
+          if (seated) {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-24, 144, -58, 193);
+            g.lineBetween(24, 144, 58, 193);
+            shoeAt(-56, 188, -1);
+            shoeAt(56, 188, 1);
+          } else if (pose === "body-walk-a" || pose === "body-run") {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-20, 156, -61, 222);
+            g.lineBetween(20, 156, 58, 214);
+            shoeAt(-58, 216, -1); shoeAt(58, 210, 1);
+          } else if (pose === "body-walk-b" || pose === "body-run-b") {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-20, 156, 55, 218);
+            g.lineBetween(20, 156, -56, 222);
+            shoeAt(55, 213, 1); shoeAt(-54, 217, -1);
+          } else if (pose === "body-football") {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-20, 156, -55, 222);
+            g.lineBetween(20, 156, 82, 195);
+            shoeAt(-54, 217, -1); shoeAt(82, 190, 1);
+            g.fillStyle(0xffffff, 1); g.fillCircle(108, 199, 16);
+            g.fillStyle(0x202328, 1); g.fillCircle(108, 199, 6);
+          } else if (pose === "body-football-prep") {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-20, 156, -35, 222);
+            g.lineBetween(20, 156, 55, 214);
+            shoeAt(-34, 217, -1); shoeAt(55, 209, 1);
+            g.fillStyle(0xffffff, 1); g.fillCircle(83, 220, 16);
+            g.fillStyle(0x202328, 1); g.fillCircle(83, 220, 6);
+          } else {
+            g.lineStyle(25, pants, 1);
+            g.lineBetween(-20, 156, -25, 225);
+            g.lineBetween(20, 156, 25, 225);
+            shoeAt(-23, 218, -1); shoeAt(23, 218, 1);
+          }
+
+          // deadpan = arms tucked closer
+          if (pose === "body-deadpan") {
+            g.lineStyle(16, shirt, 1);
+            g.lineBetween(-40, 80, -44, 140);
+            g.lineBetween(40, 80, 44, 140);
+          }
+        }
+
         faceCharacter(
           x: number,
           y: number,
@@ -687,46 +900,46 @@ export default function GameClient() {
           face = "face-neutral",
           bob = true
         ) {
-          const c = this.keep(this.add.container(x, y));
+          const c = this.keep(this.add.container(x, y).setDepth(10));
 
-          const shadow = this.add.ellipse(0, 265 * scale, 98 * scale, 18 * scale, 0x11151b, 0.12);
-          const body = this.add.image(0, 18 * scale, pose)
-            .setOrigin(0.5, 0)
-            .setDisplaySize(160 * scale, 260 * scale);
+          const shadow = this.add.ellipse(0, 257 * scale, 96 * scale, 17 * scale, 0x11151b, 0.14);
+          const bodyWrap: any = this.add.container(0, 8 * scale).setScale(scale);
+          const bodyGraphics = this.add.graphics();
+          bodyWrap.add(bodyGraphics);
+          bodyWrap.setSize(180, 260);
+          bodyWrap.displayHeight = 260 * scale;
+          bodyWrap.setTexture = (key: string) => {
+            bodyWrap.poseKey = key;
+            this.drawBody2D(bodyGraphics, key);
+            return bodyWrap;
+          };
 
-          const head = this.add.image(0, -2 * scale, face)
-            .setDisplaySize(112 * scale, 112 * scale);
+          const headWrap: any = this.add.container(0, -2 * scale).setScale(scale);
+          const headGraphics = this.add.graphics();
+          headWrap.add(headGraphics);
+          headWrap.setSize(112, 112);
+          headWrap.setTexture = (key: string) => {
+            headWrap.faceKey = key;
+            this.drawFace2D(headGraphics, key.replace("face-", ""));
+            return headWrap;
+          };
 
-          c.add([shadow, body, head]);
-
-          const headBaseScaleY = head.scaleY;
-          this.time.addEvent({
-            delay: 2800 + Phaser.Math.Between(0, 1100),
-            loop: true,
-            callback: () => {
-              this.tweens.add({
-                targets: head,
-                scaleY: headBaseScaleY * 0.12,
-                duration: 60,
-                yoyo: true,
-                hold: 35,
-                ease: "Sine.InOut",
-              });
-            },
-          });
+          bodyWrap.setTexture(pose);
+          headWrap.setTexture(face);
+          c.add([shadow, bodyWrap, headWrap]);
 
           if (bob) {
             this.tweens.add({
               targets: c,
-              y: y - 5 * scale,
-              duration: 1450,
+              y: y - 4 * scale,
+              duration: 1500,
               yoyo: true,
               repeat: -1,
               ease: "Sine.InOut",
             });
           }
 
-          return { container: c, body, head };
+          return { container: c, body: bodyWrap, head: headWrap };
         }
 
         walkIn(y: number, scale = 0.72, targetX = W / 2) {
@@ -844,7 +1057,7 @@ export default function GameClient() {
           this.text(22, 70, "Tớ làm phần mềm.", 34, "#ffffff");
 
           const win = this.panel(22, 145, 346, 285, 0x11151b, 1, 22);
-          const top = this.keep(this.add.graphics());
+          const top = this.keep(this.add.graphics().setDepth(3));
           top.fillStyle(0xffffff, 0.08).fillRoundedRect(34, 160, 322, 34, 10);
           ["#ff746e", "#ffd361", "#7fe29a"].forEach((c, i) => {
             const dot = this.keep(this.add.circle(53 + i * 18, 177, 5, Phaser.Display.Color.HexStringToColor(c).color));
@@ -853,7 +1066,7 @@ export default function GameClient() {
           this.heroActor = workActor;
           this.sceneOccluders("office");
           const workTalkLoop = this.loopBodyFrames(workActor, ["body-talk", "body-talk-alt"], 520);
-          const codeArea = this.keep(this.add.container(44, 214));
+          const codeArea = this.keep(this.add.container(44, 214).setDepth(4));
           const rambleText = this.keep(this.add.text(0, 0, workRamble[0], {
             fontFamily: "monospace", fontSize: "14px", color: "#aee7bd", wordWrap: { width: 285 }, lineSpacing: 7,
           }));
@@ -895,7 +1108,7 @@ export default function GameClient() {
         }
 
         spawnTechChip(label: string, x: number, y: number) {
-          const chip = this.keep(this.add.container(x, y).setAlpha(0).setScale(0.7));
+          const chip = this.keep(this.add.container(x, y).setDepth(12).setAlpha(0).setScale(0.7));
           const g = this.add.graphics();
           g.fillStyle(0xffffff, 1).fillRoundedRect(0, 0, 86, 38, 12);
           g.lineStyle(2, 0x17191f, 1).strokeRoundedRect(0, 0, 86, 38, 12);
