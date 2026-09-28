@@ -133,7 +133,7 @@ export default function EditorialPage() {
   };
 
   return (
-    <main className={styles.site}>
+    <main className={styles.site} data-motion="v2-stable">
       <section ref={heroRef} className={styles.hero}>
         <div className={styles.heroNoise} />
         <motion.div className={styles.heroWord} style={{ scale: heroScale, y: heroY }}>
