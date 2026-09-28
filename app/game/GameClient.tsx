@@ -91,6 +91,9 @@ export default function GameClient() {
         clearScene(color = 0xfff8ec) {
           this.tweens.killAll();
           this.time.removeAllEvents();
+          this.cameras.main.setScroll(0, 0);
+          this.cameras.main.setZoom(1);
+          this.cameras.main.setRotation(0);
           this.content.forEach((o) => o?.destroy?.());
           this.content = [];
           this.heroActor = null;
@@ -224,6 +227,93 @@ export default function GameClient() {
           this.time.delayedCall(duration + 20, () => {
             next();
             this.cameras.main.fadeIn(duration + 110, 15, 18, 24);
+            this.input.enabled = true;
+          });
+        }
+
+        slideWorldTo(
+          nextBackground: string,
+          next: () => void,
+          direction = 1,
+          duration = 620
+        ) {
+          this.input.enabled = false;
+          this.audio.whoosh();
+
+          const currentTargets = this.content.filter(
+            (o) => o?.active && typeof o.x === "number"
+          );
+
+          const nextBg = this.keep(
+            this.add.image(
+              direction > 0 ? W * 1.5 : -W * 0.5,
+              H / 2,
+              nextBackground
+            ).setDisplaySize(W + 10, H + 10).setDepth(-1.4)
+          );
+
+          this.tweens.add({
+            targets: currentTargets,
+            x: direction > 0 ? `-=${W}` : `+=${W}`,
+            duration,
+            ease: "Sine.InOut",
+          });
+
+          this.tweens.add({
+            targets: nextBg,
+            x: W / 2,
+            duration,
+            ease: "Sine.InOut",
+          });
+
+          this.tweens.add({
+            targets: this.cameras.main,
+            scrollX: direction * 20,
+            duration,
+            ease: "Sine.InOut",
+          });
+
+          this.time.delayedCall(duration - 10, () => {
+            next();
+            this.cameras.main.flash(90, 255, 255, 255, false);
+            this.input.enabled = true;
+          });
+        }
+
+        glitchTo(next: () => void) {
+          this.input.enabled = false;
+          this.audio.wrong();
+          this.cameras.main.shake(230, 0.009);
+
+          const bands = Array.from({ length: 7 }).map((_, i) => {
+            const band = this.add.rectangle(
+              W / 2,
+              90 + i * 105,
+              W + 80,
+              Phaser.Math.Between(16, 34),
+              i % 2 ? 0xffe5dc : 0xdce8ff,
+              0.72
+            ).setDepth(95);
+            this.content.push(band);
+            return band;
+          });
+
+          bands.forEach((band, i) => {
+            band.x += i % 2 ? -W : W;
+            this.tweens.add({
+              targets: band,
+              x: W / 2,
+              duration: 120,
+              delay: i * 24,
+              yoyo: true,
+              hold: 25,
+              ease: "Stepped",
+            });
+          });
+
+          this.time.delayedCall(360, () => {
+            next();
+            this.cameras.main.flash(130, 255, 255, 255, false);
             this.input.enabled = true;
           });
         }
@@ -570,7 +660,7 @@ export default function GameClient() {
           this.content.filter((o) => o?.y > 520 && o !== hero?.container).forEach((o) => {
             this.tweens.add({ targets: o, y: H + 120, angle: Phaser.Math.Between(-40, 40), duration: 500, ease: "Back.In" });
           });
-          this.time.delayedCall(540, () => this.transitionTo(() => this.showGym(), 320));
+          this.time.delayedCall(540, () => this.slideWorldTo("gym-bg", () => this.showGym(), 1, 650));
         }
 
         showGym() {
@@ -639,7 +729,7 @@ export default function GameClient() {
               this.speech("Ừ, khoảng giữa là đúng.", 700);
             }
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
-            this.time.delayedCall(900, () => this.transitionTo(() => this.showSports()));
+            this.time.delayedCall(900, () => this.slideWorldTo("park-bg", () => this.showSports(), 1, 620));
           });
         }
 
@@ -774,7 +864,13 @@ export default function GameClient() {
 
             this.time.delayedCall(900, () => {
               runLoop.remove();
-              this.transitionTo(() => this.showCafe());
+              this.tweens.add({
+                targets: runner.container,
+                x: W + 110,
+                duration: 320,
+                ease: "Sine.In",
+              });
+              this.time.delayedCall(180, () => this.slideWorldTo("cafe-bg", () => this.showCafe(), 1, 620));
             });
           });
         }
@@ -897,7 +993,18 @@ export default function GameClient() {
                 });
               });
               this.speech(reply, 420);
-              this.time.delayedCall(1450, () => this.transitionTo(() => this.showBook(), 220));
+              this.time.delayedCall(950, () => {
+                cafeActor.head.setTexture("face-thinking");
+                this.tweens.add({
+                  targets: laptop,
+                  scaleY: 0.12,
+                  alpha: 0.45,
+                  duration: 320,
+                  ease: "Sine.InOut",
+                });
+                this.cameraNudge(0, -4, 180);
+              });
+              this.time.delayedCall(1420, () => this.showBook());
             }, i === 0);
           });
         }
@@ -977,7 +1084,43 @@ export default function GameClient() {
               onComplete: () => pageFlip.destroy(),
             });
 
-            this.time.delayedCall(950, () => this.transitionTo(() => this.showDeepTalk(), 240));
+            const topics = [
+              { value: "future", x: 64, y: 188 },
+              { value: "family", x: 305, y: 198 },
+              { value: "fear", x: 54, y: 430 },
+              { value: "love", x: 326, y: 440 },
+              { value: "career", x: 195, y: 166 },
+            ].map((item, i) => {
+              const topic = this.keep(this.add.text(195, 330, item.value, {
+                fontFamily: "Arial",
+                fontSize: "15px",
+                fontStyle: "bold",
+                color: i % 2 ? "#f08d83" : "#4b7fc8",
+                backgroundColor: "#fffdf5",
+                padding: { x: 10, y: 6 },
+              }).setOrigin(0.5).setAlpha(0).setScale(0.55).setDepth(8));
+
+              this.tweens.add({
+                targets: topic,
+                x: item.x,
+                y: item.y,
+                alpha: 1,
+                scale: 1,
+                duration: 520,
+                delay: 360 + i * 70,
+                ease: "Back.Out",
+              });
+              return topic;
+            });
+
+            this.tweens.add({
+              targets: this.cameras.main,
+              zoom: 1.055,
+              duration: 760,
+              ease: "Sine.InOut",
+            });
+
+            this.time.delayedCall(1120, () => this.showDeepTalk());
           });
         }
 
@@ -1141,7 +1284,7 @@ export default function GameClient() {
                 });
               });
 
-              this.button(58, 710, 274, 56, "show me the bad part", () => this.transitionTo(() => this.showFlaws()));
+              this.button(58, 710, 274, 56, "show me the bad part", () => this.glitchTo(() => this.showFlaws()));
             }
           });
         }
