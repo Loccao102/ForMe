@@ -723,6 +723,7 @@ export default function GameClient() {
           introShade.setDepth(-0.5);
           this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
           const introActor = this.walkIn(170, 0.78);
+          this.sceneOccluders("rooftop");
           introActor.container.setSize(130, 240).setInteractive({ useHandCursor: true });
           introActor.container.on("pointerdown", () => {
             introActor.head.setTexture("face-surprised");
@@ -750,13 +751,17 @@ export default function GameClient() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
           this.small(22, 26, "FIRST IMPRESSION");
-          this.faceCharacter(W / 2, 155, 0.75, "body-idle", "face-neutral");
+          const impressionActor = this.faceCharacter(W / 2, 155, 0.75, "body-idle", "face-neutral");
           this.text(W / 2, 310, "Don't think too much.", 30, "#17191f", 340, "center");
           this.text(W / 2, 355, "What kind of person do I look like?", 16, "#686d76", 340, "center");
 
           impressionOptions.forEach((option, i) => {
             this.button(28, 430 + i * 72, 334, 56, option.label, () => {
               this.state.impression = option.id;
+              impressionActor.head.setTexture(
+                option.id === "quiet" ? "face-thinking" : option.id === "work" ? "face-deadpan" : "face-surprised"
+              );
+              this.squash(impressionActor, 0.035, 110);
               this.small(92, 665, "noted. I'll remember that.");
               this.time.delayedCall(650, () => this.transitionTo(() => this.showWork()));
             }, i === 1);
@@ -871,6 +876,7 @@ export default function GameClient() {
           let lifting = false;
           const repText = this.small(150, 500, "walking in...");
           let gymStep = false;
+          let gymFoot = 0;
           const gymWalk = this.time.addEvent({
             delay: 120,
             loop: true,
@@ -878,6 +884,11 @@ export default function GameClient() {
               if (!gymActor.body.active) return;
               gymStep = !gymStep;
               gymActor.body.setTexture(gymStep ? "body-walk-a" : "body-walk-b");
+              if (gymStep) {
+                gymFoot += 1;
+                this.audio.step(gymFoot);
+                this.dustBurst(gymActor.container.x, gymActor.container.y + 135, 0xe8eee9, 3);
+              }
             },
           });
           this.tweens.add({
@@ -979,6 +990,7 @@ export default function GameClient() {
           let readyFrame = false;
           let readyLoop: any = null;
           let sportStep = false;
+          let sportFoot = 0;
           const sportWalk = this.time.addEvent({
             delay: 115,
             loop: true,
@@ -986,6 +998,11 @@ export default function GameClient() {
               if (!player.body.active) return;
               sportStep = !sportStep;
               player.body.setTexture(sportStep ? "body-walk-a" : "body-walk-b");
+              if (sportStep) {
+                sportFoot += 1;
+                this.audio.step(sportFoot);
+                this.dustBurst(player.container.x, player.container.y + 112, 0xffffff, 3);
+              }
             },
           });
           this.tweens.add({
@@ -1190,6 +1207,7 @@ export default function GameClient() {
           cafeActor.container.setDepth(2);
 
           let step = false;
+          let cafeFoot = 0;
           const walkLoop = this.time.addEvent({
             delay: 125,
             loop: true,
@@ -1197,6 +1215,11 @@ export default function GameClient() {
               if (!cafeActor.body.active) return;
               step = !step;
               cafeActor.body.setTexture(step ? "body-walk-a" : "body-walk-b");
+              if (step) {
+                cafeFoot += 1;
+                this.audio.step(cafeFoot);
+                this.dustBurst(cafeActor.container.x, cafeActor.container.y + 110, 0xf7e7d3, 3);
+              }
             },
           });
           this.tweens.add({
@@ -1300,7 +1323,7 @@ export default function GameClient() {
           this.clearScene(0xf3efff);
           this.artBackground("cafe-bg", 0.38);
           const rememberedSeatX = this.state.seat === "window" ? 115 : this.state.seat === "corner" ? 286 : 205;
-          this.faceCharacter(rememberedSeatX, 470, 0.36, "body-seated", "face-thinking", true);
+          const bookActor = this.faceCharacter(rememberedSeatX, 470, 0.36, "body-book-closed", "face-thinking", true);
           this.small(22, 26, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
@@ -1339,6 +1362,9 @@ export default function GameClient() {
           });
 
           this.button(58, 535, 274, 58, "OPEN IT", () => {
+            this.audio.page();
+            bookActor.body.setTexture("body-book-open");
+            this.squash(bookActor, 0.025, 120);
             this.audio.whoosh();
             this.cameraNudge(0, -6, 170);
             this.tweens.add({
@@ -1359,6 +1385,7 @@ export default function GameClient() {
               ease: "Back.Out",
             });
 
+            this.time.delayedCall(210, () => this.audio.page());
             const pageFlip = this.add.rectangle(6, 0, 148, 230, 0xfffdf6).setOrigin(0, 0.5);
             pages.add(pageFlip);
             this.tweens.add({
@@ -1564,11 +1591,9 @@ export default function GameClient() {
               this.text(W / 2, 545, "Nhưng chủ yếu là nấu cho\nnhững người mình quan tâm.", 19, "#6a4b43", 340, "center");
 
               this.time.delayedCall(620, () => {
-                this.playBodySequence(
-                  cookActor,
-                  ["body-cook-a", "body-cook-b", "body-cook-a"],
-                  110
-                );
+                cookActor.body.setTexture("body-serve");
+                this.audio.settle();
+                this.squash(cookActor, 0.025, 130);
                 plates.forEach((plate, i) => {
                   this.tweens.add({
                     targets: plate,
@@ -1601,6 +1626,8 @@ export default function GameClient() {
         revealFlaws() {
           this.clearScene(0xf0f1f5);
           this.artBackground("office-bg", 0.38);
+          this.midgroundParallax("office");
+          this.sceneOccluders("office");
           const flawShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x17191f, 0.2));
           flawShade.setDepth(-0.5);
           this.small(22, 26, "09 / MUCH BETTER");
@@ -1661,6 +1688,7 @@ export default function GameClient() {
           endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
           const endActor = this.faceCharacter(326, 690, 0.34, "body-wave", "face-smile", false);
+          this.sceneOccluders("rooftop");
           this.tweens.add({
             targets: endActor.container,
             angle: { from: -2, to: 3 },
