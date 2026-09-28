@@ -36,6 +36,9 @@ export default function GameClient() {
         content: any[] = [];
         progress!: any;
         heroActor: any = null;
+        soundEnabled = false;
+        soundToggle: any = null;
+        soundLabel: any = null;
 
         constructor() {
           super("main");
@@ -107,7 +110,36 @@ export default function GameClient() {
         create() {
           this.cameras.main.setBackgroundColor("#fff8ec");
           this.bg = this.add.graphics().setDepth(-20);
-          this.progress = this.add.graphics().setDepth(50);
+          this.progress = this.add.graphics().setDepth(50).setScrollFactor(0);
+
+          const soundBg = this.add.graphics();
+          soundBg.fillStyle(0x11151b, 0.7).fillRoundedRect(-38, -15, 76, 30, 12);
+          soundBg.lineStyle(1, 0xffffff, 0.18).strokeRoundedRect(-38, -15, 76, 30, 12);
+          this.soundLabel = this.add.text(0, 0, "MUTED", {
+            fontFamily: "monospace",
+            fontSize: "10px",
+            fontStyle: "bold",
+            color: "#ffffff",
+          }).setOrigin(0.5);
+          this.soundToggle = this.add.container(W - 48, 25, [soundBg, this.soundLabel])
+            .setDepth(120)
+            .setScrollFactor(0)
+            .setSize(76, 30)
+            .setInteractive({ useHandCursor: true })
+            .setVisible(false);
+
+          this.soundToggle.on("pointerdown", async () => {
+            if (this.soundEnabled) {
+              this.audio.stop();
+              this.soundEnabled = false;
+            } else {
+              await this.audio.start(true);
+              this.soundEnabled = true;
+            }
+            this.soundLabel.setText(this.soundEnabled ? "SOUND ON" : "MUTED");
+            this.tweens.add({ targets: this.soundToggle, scale: 0.93, duration: 70, yoyo: true });
+          });
+
           this.input.on("pointerdown", (pointer: any) => {
             this.audio.click();
             const ripple = this.add.circle(pointer.x, pointer.y, 8, 0xffffff, 0.22).setDepth(99);
@@ -737,10 +769,16 @@ export default function GameClient() {
 
           this.button(24, 535, 342, 58, "PLAY WITH SOUND  🔊", async () => {
             await this.audio.start(true);
+            this.soundEnabled = true;
+            this.soundLabel.setText("SOUND ON");
+            this.soundToggle.setVisible(true);
             this.showImpression();
           });
           this.button(24, 605, 342, 58, "PLAY MUTED", async () => {
             await this.audio.start(false);
+            this.soundEnabled = false;
+            this.soundLabel.setText("MUTED");
+            this.soundToggle.setVisible(true);
             this.showImpression();
           }, false);
 
