@@ -803,10 +803,39 @@ export default function GameClient() {
           this.text(22, 70, "Chọn chỗ đi.", 36);
 
           this.artBackground("cafe-bg", 0.98);
+          this.foregroundParallax(0x4f2d1f, 0.07, 6800);
           this.panel(18, 145, 354, 350, 0xffffff, 0.08, 24);
-          const cafeActor = this.faceCharacter(285, 300, 0.42, "body-seated", "face-smile", true);
+
+          const cafeActor = this.faceCharacter(-70, 292, 0.42, "body-walk-a", "face-smile", false);
           this.heroActor = cafeActor;
           cafeActor.container.setDepth(2);
+
+          let step = false;
+          const walkLoop = this.time.addEvent({
+            delay: 125,
+            loop: true,
+            callback: () => {
+              if (!cafeActor.body.active) return;
+              step = !step;
+              cafeActor.body.setTexture(step ? "body-walk-a" : "body-walk-b");
+            },
+          });
+          this.tweens.add({
+            targets: cafeActor.container,
+            x: 205,
+            duration: 780,
+            ease: "Sine.Out",
+            onComplete: () => {
+              walkLoop.remove();
+              cafeActor.body.setTexture("body-idle");
+            },
+          });
+
+          const laptop = this.keep(this.add.container(192, 390).setAlpha(0).setScale(0.78).setDepth(3));
+          const base = this.add.rectangle(0, 22, 86, 8, 0x2f3339).setOrigin(0.5);
+          const screen = this.add.rectangle(0, -4, 78, 48, 0x1a1d24).setOrigin(0.5);
+          const glow = this.add.rectangle(0, -4, 66, 36, 0x315787).setOrigin(0.5).setAlpha(0.65);
+          laptop.add([base, screen, glow]);
 
           const coffee = this.keep(this.add.text(332, 402, "☕", { fontSize: "34px" }).setOrigin(0.5).setDepth(4));
           coffee.setInteractive({ useHandCursor: true });
@@ -844,14 +873,31 @@ export default function GameClient() {
                   : "Outside? Okay, miễn là trời không quá nóng.";
 
               cafeActor.head.setTexture("face-smile");
-              this.tweens.add({
-                targets: cafeActor.container,
-                x: targetX,
-                duration: 520,
-                ease: "Back.Out",
+              this.walkActorTo(cafeActor, targetX, 520, () => {
+                cafeActor.body.setTexture("body-seated");
+                cafeActor.container.y = 315;
+                this.squash(cafeActor, 0.025, 120);
+                this.cameraNudge(targetX < W / 2 ? -6 : 6, 0, 160);
+
+                this.tweens.add({
+                  targets: laptop,
+                  alpha: 1,
+                  scale: 1,
+                  y: 382,
+                  duration: 420,
+                  ease: "Back.Out",
+                });
+
+                this.tweens.add({
+                  targets: glow,
+                  alpha: { from: 0.12, to: 0.72 },
+                  duration: 500,
+                  yoyo: true,
+                  repeat: 1,
+                });
               });
               this.speech(reply, 420);
-              this.time.delayedCall(900, () => this.transitionTo(() => this.showBook(), 220));
+              this.time.delayedCall(1450, () => this.transitionTo(() => this.showBook(), 220));
             }, i === 0);
           });
         }
