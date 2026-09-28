@@ -1,0 +1,369 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { photos } from "./photos";
+
+const scenes = [
+  "boring-bio",
+  "work",
+  "growth",
+  "sports",
+  "work-cafe",
+  "reading",
+  "deep-talks",
+  "cooking",
+  "imperfect",
+  "ending",
+];
+
+const contactUrl = process.env.NEXT_PUBLIC_CONTACT_URL ?? "";
+
+function SceneLabel({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <div className="scene-label">
+      <span>{String(n).padStart(2, "0")}</span>
+      <b>{children}</b>
+    </div>
+  );
+}
+
+function Doodle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <span className={`doodle ${className}`}>{children}</span>;
+}
+
+export default function Home() {
+  const [active, setActive] = useState(0);
+  const [contactHint, setContactHint] = useState(false);
+  const rootRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-scene]"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const index = Number((visible.target as HTMLElement).dataset.scene ?? 0);
+        setActive(index);
+      },
+      { threshold: [0.35, 0.55, 0.72] }
+    );
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const goTo = (index: number) => {
+    document.querySelector<HTMLElement>(`[data-scene="${index}"]`)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const handleContact = () => {
+    if (contactUrl) {
+      window.open(contactUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    setContactHint(true);
+    window.setTimeout(() => setContactHint(false), 3200);
+  };
+
+  return (
+    <main className="story" ref={rootRef}>
+      <aside className="story-nav" aria-label="Story progress">
+        <div className="nav-name">LOC / 90 SEC</div>
+        <div className="dots">
+          {scenes.map((name, index) => (
+            <button
+              key={name}
+              className={active === index ? "dot active" : "dot"}
+              aria-label={`Go to scene ${index + 1}: ${name}`}
+              onClick={() => goTo(index)}
+            >
+              <span />
+            </button>
+          ))}
+        </div>
+        <div className="nav-count">{String(active + 1).padStart(2, "0")} / 10</div>
+      </aside>
+
+      <section className="scene intro-scene" data-scene="0">
+        <div className="paper-grain" />
+        <div className="intro-grid">
+          <div className="fake-profile reveal">
+            <div className="fake-topbar">
+              <span className="mini-brand">dating-ish</span>
+              <span>•••</span>
+            </div>
+            <div className="profile-head">
+              <img src={photos.cafeYellow} alt="Cao Tiến Lộc" />
+              <div>
+                <h2>Cao Tiến Lộc, 23</h2>
+                <p>Hà Nội</p>
+              </div>
+            </div>
+            <div className="profile-lines">
+              <span>↕ 1m86 · ~90kg</span>
+              <span>⌘ Software Engineer</span>
+              <span>☕ Coffee / work café</span>
+              <span>⌁ Books</span>
+              <span>⚽ Football · 🏸 Badminton · Running</span>
+            </div>
+            <p className="profile-copy">
+              Thích trò chuyện sâu, phát triển bản thân và làm những thứ bất chợt nghĩ ra.
+            </p>
+            <div className="profile-actions"><i>×</i><i>★</i><i>♥</i></div>
+          </div>
+
+          <div className="intro-copy reveal delay-1">
+            <Doodle className="scribble">hmm...</Doodle>
+            <p className="eyebrow">THIS COULD&apos;VE BEEN A BIO</p>
+            <h1>
+              Ừm... đúng.
+              <br />
+              <em>Nhưng hơi chán.</em>
+            </h1>
+            <p className="lead">
+              Bình thường thì quá nhàm chán,
+              <br /> nên tôi tạo ra cái này.
+            </p>
+            <button className="primary" onClick={() => goTo(1)}>
+              Xem bản thú vị hơn <span>↓</span>
+            </button>
+          </div>
+        </div>
+        <p className="tiny-note bottom-note">Same facts. Better way to tell them.</p>
+      </section>
+
+      <section className="scene work-scene" data-scene="1">
+        <SceneLabel n={2}>WORK</SceneLabel>
+        <div className="work-layout">
+          <div className="copy-block reveal">
+            <p className="eyebrow">BAN NGÀY</p>
+            <h2>Tôi làm phần mềm.</h2>
+            <p className="scene-copy">
+              Tôi thích cảm giác biến một ý tưởng hơi mơ hồ thành thứ thật sự chạy được.
+            </p>
+            <div className="flow">
+              <span>idea</span><b>→</b><span>code</span><b>→</b><span>bug</span><b>→</b><span>fix</span><b>↻</b>
+            </div>
+            <p className="tiny-note">Rồi thường có thêm một ý tưởng khác.</p>
+          </div>
+
+          <div className="browser-card reveal delay-1">
+            <div className="browser-bar"><i /><i /><i /><span>localhost:3000</span></div>
+            <div className="terminal">
+              <p><span>const</span> me = {"{"}</p>
+              <p>&nbsp;&nbsp;learn: <b>true</b>,</p>
+              <p>&nbsp;&nbsp;build: <b>true</b>,</p>
+              <p>&nbsp;&nbsp;breakThings: <b>sometimes</b>,</p>
+              <p>&nbsp;&nbsp;tryAgain: <b>true</b></p>
+              <p>{"}"}</p>
+            </div>
+            <Doodle className="work-sticker">probably over-engineered</Doodle>
+          </div>
+        </div>
+      </section>
+
+      <section className="scene growth-scene" data-scene="2">
+        <SceneLabel n={3}>SELF-GROWTH</SceneLabel>
+        <div className="growth-layout">
+          <div className="photo-cutout reveal">
+            <img src={photos.fullbody} alt="Lộc standing" />
+            <div className="height-line"><span>1m86</span></div>
+            <Doodle className="weight-tag">~90kg</Doodle>
+          </div>
+
+          <div className="copy-block reveal delay-1">
+            <p className="eyebrow">NOT A TRANSFORMATION POST</p>
+            <h2>Chỉ đang cố tốt hơn một chút mỗi ngày.</h2>
+            <p className="scene-copy">
+              Gym không phải để trông như siêu anh hùng. Với tôi nó là chuyện khỏe hơn,
+              kỷ luật hơn và giữ lời hứa với chính mình.
+            </p>
+            <div className="growth-bars">
+              <div><span>healthier</span><i style={{ width: "72%" }} /></div>
+              <div><span>stronger</span><i style={{ width: "63%" }} /></div>
+              <div><span>more disciplined</span><i style={{ width: "58%" }} /></div>
+            </div>
+            <p className="tiny-note">not there yet. still going.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="scene sports-scene" data-scene="3">
+        <SceneLabel n={4}>MOVE</SceneLabel>
+        <div className="sports-title reveal">
+          <p className="eyebrow">TÔI KHÔNG NGỒI TRƯỚC MÁY TÍNH CẢ NGÀY.</p>
+          <h2>...most days.</h2>
+        </div>
+        <div className="sport-track">
+          <article className="sport-card football reveal">
+            <span className="sport-icon">⚽</span>
+            <h3>Football</h3>
+            <p>Chạy nhiều hơn mình tưởng.</p>
+            <Doodle>pass!</Doodle>
+          </article>
+          <article className="sport-card badminton reveal delay-1">
+            <span className="sport-icon">🏸</span>
+            <h3>Badminton</h3>
+            <p>Môn dễ khiến tôi nghiêm túc hơi quá.</p>
+            <Doodle>one more game?</Doodle>
+          </article>
+          <article className="sport-card running reveal delay-2">
+            <span className="sport-icon">⌁</span>
+            <h3>Running</h3>
+            <p>Đầu óc thường yên hơn sau vài km.</p>
+            <Doodle>keep moving →</Doodle>
+          </article>
+        </div>
+        <div className="flying-shuttle" aria-hidden="true">🏸</div>
+      </section>
+
+      <section className="scene cafe-scene" data-scene="4">
+        <SceneLabel n={5}>WORK CAFÉ</SceneLabel>
+        <div className="cafe-layout">
+          <figure className="photo-frame reveal">
+            <img src={photos.cafeYellow} alt="Lộc sitting in a café" />
+            <figcaption>somewhere with coffee + a socket</figcaption>
+          </figure>
+          <div className="copy-block reveal delay-1">
+            <p className="eyebrow">FAVOURITE THIRD PLACE</p>
+            <h2>Có những ngày tôi ra quán để làm việc.</h2>
+            <p className="scene-copy">Có những ngày chỉ để ngồi, nghĩ và nhìn mọi thứ trôi qua.</p>
+            <div className="cafe-chips">
+              <span>work</span><span>think</span><span>people-watch</span><span>coffee</span>
+            </div>
+            <Doodle className="coffee-note">good coffee = better ideas?</Doodle>
+          </div>
+        </div>
+      </section>
+
+      <section className="scene reading-scene" data-scene="5">
+        <SceneLabel n={6}>READING</SceneLabel>
+        <div className="reading-layout">
+          <div className="book reveal">
+            <div className="page left-page">
+              <small>WHY?</small>
+              <p>Tôi thích hiểu tại sao mọi thứ lại như vậy.</p>
+            </div>
+            <div className="book-spine" />
+            <div className="page right-page">
+              <small>AND PEOPLE?</small>
+              <p>Con người cũng vậy.</p>
+              <div className="highlight" />
+            </div>
+          </div>
+          <div className="reading-side reveal delay-1">
+            <p className="scene-copy">
+              Đọc với tôi không phải để đếm số cuốn. Tôi chỉ thích cảm giác có thêm một góc nhìn mới.
+            </p>
+            <div className="margin-notes">
+              <span>better questions</span>
+              <span>broader view</span>
+              <span>less certain, more curious</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="scene talks-scene" data-scene="6">
+        <SceneLabel n={7}>DEEP TALKS</SceneLabel>
+        <div className="talks-bg">
+          <img src={photos.cafeBlack} alt="Lộc at a café" />
+          <div className="talks-gradient" />
+        </div>
+        <div className="talks-copy reveal">
+          <p className="eyebrow">SMALL TALK IS FINE.</p>
+          <h2>Nhưng tôi thích những cuộc nói chuyện làm mình quên mất thời gian hơn.</h2>
+          <div className="bubbles">
+            <span>future</span>
+            <span>family</span>
+            <span>career</span>
+            <span>relationships</span>
+            <span>things we&apos;re afraid of</span>
+            <span>random 2AM thoughts</span>
+          </div>
+        </div>
+        <div className="empty-chair reveal delay-2">
+          <div className="chair-back" />
+          <div className="chair-seat" />
+          <Doodle>your seat?</Doodle>
+        </div>
+      </section>
+
+      <section className="scene cooking-scene" data-scene="7">
+        <SceneLabel n={8}>COOKING</SceneLabel>
+        <div className="kitchen">
+          <div className="counter">
+            <div className="pan">🍳</div>
+            <div className="ingredients">🥬 &nbsp; 🍅 &nbsp; 🥩 &nbsp; 🧄</div>
+          </div>
+          <div className="plates">
+            <span>🍽️</span><span>🍽️</span><span>🍽️</span>
+          </div>
+        </div>
+        <div className="cooking-copy reveal">
+          <p className="eyebrow">I LIKE COOKING.</p>
+          <h2>Actually...</h2>
+          <p className="big-line">Tôi thích nấu ăn <em>cho những người mình quan tâm.</em></p>
+          <Doodle className="recipe-note">good food → happier people</Doodle>
+        </div>
+      </section>
+
+      <section className="scene imperfect-scene" data-scene="8">
+        <SceneLabel n={9}>REALITY CHECK</SceneLabel>
+        <div className="chaos-window win-one">
+          <div className="browser-bar"><i /><i /><i /><span>tabs: 27</span></div>
+          <p>portfolio</p><p>new project idea</p><p>another new project idea</p><p>how to sleep earlier</p>
+        </div>
+        <div className="chaos-window win-two">
+          <b>02:17 AM</b>
+          <span>“mình sửa nốt cái này thôi”</span>
+        </div>
+        <div className="imperfect-copy reveal">
+          <p className="narrator">Narrator: “Nghe có vẻ mọi thứ ổn hết nhỉ?”</p>
+          <h2>lol no.</h2>
+          <div className="messy-tags">
+            <span>overthinks sometimes</span>
+            <span>starts too many things</span>
+            <span>sleeps later than he should</span>
+            <span>still figuring things out</span>
+          </div>
+          <p className="scene-copy">Phần này chắc mới giống người thật hơn.</p>
+        </div>
+      </section>
+
+      <section className="scene ending-scene" data-scene="9">
+        <div className="sun" />
+        <div className="city">
+          <i /><i /><i /><i /><i /><i /><i /><i />
+        </div>
+        <div className="ending-card reveal">
+          <p className="eyebrow">SO... THAT&apos;S THE SHORT VERSION.</p>
+          <h2>You know Lộc</h2>
+          <div className="meter"><i /><span>7%</span></div>
+          <p className="ending-joke">“Ừ, nghe cũng hợp lý.”</p>
+          <h3>Phần còn lại nói chuyện trực tiếp chắc vui hơn.</h3>
+          <button className="primary dark" onClick={handleContact}>Say hi <span>→</span></button>
+          <a className="secondary-link" href="https://github.com/Loccao102" target="_blank" rel="noreferrer">
+            hoặc xem tôi đang build gì ↗
+          </a>
+          {contactHint && (
+            <div className="contact-hint">
+              Chưa gắn link chat. Thêm <code>NEXT_PUBLIC_CONTACT_URL</code> trước khi public.
+            </div>
+          )}
+        </div>
+        <p className="final-note">A normal bio felt boring. So I built this instead.</p>
+      </section>
+
+      {active < 9 && (
+        <button className="next-scene" onClick={() => goTo(Math.min(active + 1, 9))} aria-label="Next scene">
+          ↓
+        </button>
+      )}
+    </main>
+  );
+}
