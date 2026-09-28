@@ -64,6 +64,7 @@ export default function GameClient() {
           this.load.image("body-badminton-back", "/game/body-badminton-back.svg");
           this.load.image("body-badminton-hit", "/game/body-badminton-hit.svg");
           this.load.image("body-football", "/game/body-football.svg");
+          this.load.image("body-football-prep", "/game/body-football-prep.svg");
           this.load.image("body-run", "/game/body-run.svg");
           this.load.image("body-run-b", "/game/body-run-b.svg");
           this.load.image("body-seated", "/game/body-seated.svg");
@@ -72,6 +73,7 @@ export default function GameClient() {
           this.load.image("body-cook-a", "/game/body-cook-a.svg");
           this.load.image("body-cook-b", "/game/body-cook-b.svg");
           this.load.image("body-talk-alt", "/game/body-talk-alt.svg");
+          this.load.image("body-wave", "/game/body-wave.svg");
         }
 
         create() {
@@ -424,6 +426,7 @@ export default function GameClient() {
           });
           const workActor = this.faceCharacter(315, 675, 0.32, "body-talk", "face-neutral", false);
           this.heroActor = workActor;
+          const workTalkLoop = this.loopBodyFrames(workActor, ["body-talk", "body-talk-alt"], 520);
           const codeArea = this.keep(this.add.container(44, 214));
           const rambleText = this.keep(this.add.text(0, 0, workRamble[0], {
             fontFamily: "monospace", fontSize: "14px", color: "#aee7bd", wordWrap: { width: 285 }, lineSpacing: 7,
@@ -452,6 +455,7 @@ export default function GameClient() {
               this.spawnTechChip("SCALE", 239, 615);
             }
             if (step === 4) {
+              workTalkLoop.remove();
               workActor.head.setTexture("face-deadpan");
               workActor.body.setTexture("body-deadpan");
               this.cameras.main.shake(120, 0.004);
@@ -633,7 +637,7 @@ export default function GameClient() {
           this.small(22, 26, "04 / ALSO...");
           this.text(22, 70, "Badminton không phải\nmôn duy nhất.", 30);
 
-          const footballActor = this.faceCharacter(105, 350, 0.45, "body-football", "face-smile", false);
+          const footballActor = this.faceCharacter(105, 350, 0.45, "body-football-prep", "face-smile", false);
           footballActor.container.setAlpha(0).setX(30);
           this.tweens.add({
             targets: footballActor.container,
@@ -641,6 +645,21 @@ export default function GameClient() {
             x: 120,
             duration: 420,
             ease: "Back.Out",
+            onComplete: () => {
+              this.playBodySequence(
+                footballActor,
+                ["body-football-prep", "body-football", "body-football-prep"],
+                115
+              );
+              this.tweens.add({
+                targets: footballActor.container,
+                x: 136,
+                angle: -4,
+                duration: 160,
+                yoyo: true,
+                ease: "Back.Out",
+              });
+            },
           });
 
           const footballLabel = this.text(235, 330, "football", 28, "#17191f", 130, "center");
@@ -840,7 +859,16 @@ export default function GameClient() {
           answerShade.setDepth(-0.5);
           this.small(22, 26, "07 / MY ANSWER", "#ffffff");
           const answerFace = id === "stupid" || id === "future" ? "face-smile" : id === "fear" ? "face-thinking" : "face-neutral";
-          this.faceCharacter(195, 135, 0.7, "body-talk", answerFace);
+          const answerActor = this.faceCharacter(195, 135, 0.7, "body-talk", answerFace, false);
+          this.loopBodyFrames(answerActor, ["body-talk", "body-talk-alt"], 720);
+          this.tweens.add({
+            targets: answerActor.container,
+            y: 131,
+            duration: 1650,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.InOut",
+          });
           this.speech(questionAnswers[id], 300);
           this.button(58, 610, 274, 58, "Okay. Dinner?", () => this.transitionTo(() => this.showCooking()), false);
         }
@@ -934,7 +962,28 @@ export default function GameClient() {
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
           endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
-          this.faceCharacter(326, 690, 0.34, "body-seated", "face-smile", true);
+          const endActor = this.faceCharacter(326, 690, 0.34, "body-wave", "face-smile", false);
+          this.tweens.add({
+            targets: endActor.container,
+            angle: { from: -2, to: 3 },
+            duration: 260,
+            yoyo: true,
+            repeat: 2,
+            ease: "Sine.InOut",
+          });
+          this.time.delayedCall(950, () => {
+            if (!endActor.body.active) return;
+            endActor.body.setTexture("body-seated");
+            endActor.container.y += 22;
+            this.tweens.add({
+              targets: endActor.container,
+              y: endActor.container.y - 4,
+              duration: 1500,
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.InOut",
+            });
+          });
           this.text(W / 2, 75, "So...", 34, "#ffffff", 350, "center");
 
           const first = impressionOptions.find((o) => o.id === this.state.impression)?.label ?? "something";
