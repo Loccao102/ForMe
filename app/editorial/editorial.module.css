@@ -1,3 +1,5 @@
+:global(html){scroll-snap-type:none!important;scroll-behavior:auto!important;overscroll-behavior-y:auto}
+:global(body){overflow-x:hidden}
 .site{
   --ink:#111216;
   --paper:#f3eee3;
@@ -17,9 +19,9 @@
 
 .hero{min-height:125vh;background:#111216;color:#fff;display:grid;place-items:center;overflow:hidden}
 .heroNoise{position:absolute;inset:0;opacity:.18;background-image:radial-gradient(circle at 20% 20%,#fff 0 1px,transparent 1px),radial-gradient(circle at 80% 60%,#fff 0 1px,transparent 1px);background-size:34px 34px,51px 51px}
-.heroWord{position:absolute;inset:12vh 0 auto;display:flex;flex-direction:column;align-items:center;font-weight:950;letter-spacing:-.08em;line-height:.78;font-size:clamp(68px,15vw,220px);z-index:1}
+.heroWord{position:absolute;will-change:transform;transform:translateZ(0);inset:12vh 0 auto;display:flex;flex-direction:column;align-items:center;font-weight:950;letter-spacing:-.08em;line-height:.78;font-size:clamp(68px,15vw,220px);z-index:1}
 .heroWord em{font-family:Georgia,serif;font-weight:400;color:var(--yellow);letter-spacing:-.06em}
-.heroPhoto{width:min(38vw,420px);height:min(65vh,650px);position:relative;z-index:3;box-shadow:0 40px 90px rgba(0,0,0,.42);border:10px solid #fff;transform-origin:center}
+.heroPhoto{width:min(38vw,420px);will-change:transform;transform:translateZ(0);height:min(65vh,650px);position:relative;z-index:3;box-shadow:0 40px 90px rgba(0,0,0,.42);border:10px solid #fff;transform-origin:center}
 .heroPhoto img{width:100%;height:100%;object-fit:cover}
 .photoIndex{position:absolute;top:-20px;right:-22px;background:var(--coral);color:#111;padding:12px 14px;font:800 13px monospace}
 .heroBottom{position:absolute;bottom:7vh;left:5vw;right:5vw;display:flex;justify-content:space-between;align-items:end;z-index:4}
@@ -41,13 +43,13 @@
 .choiceActive{color:var(--blue)!important}
 .impressionReply{min-height:20px;font:700 11px monospace;color:var(--blue)}
 
-.work{height:230vh;background:#121317;color:#fff}
-.workSticky{position:sticky;top:0;height:100vh;overflow:hidden;padding:13vh 5vw}
+.work{height:210vh;background:#121317;color:#fff;isolation:isolate}
+.workSticky{position:sticky;top:0;height:100svh;overflow:hidden;padding:13vh 5vw}
 .workKicker{font:800 11px monospace;letter-spacing:.18em;color:#9ea6ba}
 .work h2{font-size:clamp(70px,14vw,205px);line-height:.78;letter-spacing:-.09em;margin:7vh 0 0}
 .splitWord{display:inline-flex;overflow:hidden;padding-bottom:.08em}
 .splitWord>span{display:inline-block}
-.techStream{position:absolute;left:0;top:56vh;display:flex;gap:18px;white-space:nowrap;transform-origin:left center}
+.techStream{position:absolute;will-change:transform;transform:translateZ(0);left:0;top:56vh;display:flex;gap:18px;white-space:nowrap;transform-origin:left center}
 .techStream span{display:inline-block;border:2px solid #fff;border-radius:999px;padding:15px 24px;font:800 clamp(18px,2vw,30px) monospace}
 .techPanic{background:var(--coral);color:#111;border-color:var(--coral)!important}
 .workJoke{position:absolute;right:6vw;bottom:8vh;width:min(390px,75vw);display:flex;flex-direction:column;gap:7px;border-left:3px solid var(--yellow);padding-left:20px}
@@ -65,10 +67,10 @@
 .yellowPortrait img{width:100%;height:100%;object-fit:cover}
 .moreCopy{grid-column:1/3;font:500 clamp(26px,3.5vw,48px)/1.08 Georgia,serif;max-width:900px}
 
-.after{height:430vh;background:#17181d;color:#fff}
-.afterSticky{position:sticky;top:0;height:100vh;overflow:hidden}
-.afterTrack{height:100%;display:flex;width:400%;will-change:transform}
-.afterPanel{width:25%;height:100%;flex:0 0 25%;padding:13vh 7vw;position:relative;overflow:hidden}
+.after{height:400vh;background:#17181d;color:#fff;isolation:isolate}
+.afterSticky{position:sticky;top:0;height:100svh;overflow:hidden}
+.afterTrack{height:100%;display:flex;width:400vw;will-change:transform;transform:translateZ(0)}
+.afterPanel{width:100vw;height:100%;flex:0 0 100vw;padding:13vh 7vw;position:relative;overflow:hidden}
 .afterPanel h3{font-size:clamp(70px,12vw,175px);letter-spacing:-.08em;line-height:.8;margin:20vh 0 24px}
 .afterPanel p{font:500 clamp(22px,3vw,42px)/1.1 Georgia,serif;max-width:520px}
 .afterIndex{font:800 12px monospace;letter-spacing:.16em}
@@ -76,13 +78,13 @@
 .shuttle,.ball,.route,.cup{position:absolute;right:8vw;bottom:10vh;font-size:clamp(100px,18vw,260px);opacity:.65}
 
 .cafe{min-height:150vh;padding:18vh 5vw 12vh;overflow:hidden;background:#e8d2b8}
-.cafeMarquee{position:absolute;top:6vh;left:0;white-space:nowrap;font:900 clamp(38px,7vw,96px)/1 sans-serif;letter-spacing:-.05em;color:rgba(17,18,22,.12)}
+.cafeMarquee{position:absolute;will-change:transform;transform:translateZ(0);top:6vh;left:0;white-space:nowrap;font:900 clamp(38px,7vw,96px)/1 sans-serif;letter-spacing:-.05em;color:rgba(17,18,22,.12)}
 .cafeGrid{display:grid;grid-template-columns:1fr 1.05fr;gap:5vw;align-items:center;min-height:100vh}
 .cafeCopy h2{font-size:clamp(54px,7vw,108px);line-height:.86;letter-spacing:-.065em;margin:16px 0}
 .cafeCopy h2 i{font-family:Georgia,serif;font-weight:400}
 .cafeCopy>p:last-child{font:500 clamp(20px,2vw,30px)/1.25 Georgia,serif;max-width:560px}
 .cafeImageWrap{height:88vh;overflow:hidden;position:relative;border-radius:45% 45% 8px 8px}
-.cafeImageWrap img{width:100%;height:112%;object-fit:cover}
+.cafeImageWrap img{width:100%;height:118%;object-fit:cover;will-change:transform;transform:translateZ(0)}
 .cafeImageWrap span{position:absolute;bottom:28px;right:28px;background:#fff;padding:10px 14px;font:800 11px monospace}
 
 .build{min-height:135vh;padding:14vh 5vw;background:#f5f1e8}
@@ -96,8 +98,8 @@
 .projectPile article p{font:500 18px/1.35 Georgia,serif}
 
 .twoAm{min-height:120vh;background:#111216;color:#fff;padding:14vh 5vw;overflow:hidden}
-.tabs{width:min(850px,92vw);margin:10vh auto 0;position:relative;min-height:420px}
-.tabs>div{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(680px,86vw);height:72px;background:#f1eadc;color:#18191d;border:1px solid #5c5f66;border-radius:4px;padding:24px 26px;font:700 17px Georgia,serif;box-shadow:0 20px 45px rgba(0,0,0,.24)}
+.tabs{width:min(850px,92vw);margin:8vh auto 0;position:relative;min-height:470px}
+.tabs>div{position:absolute;left:50%;top:0;width:min(680px,86vw);height:72px;background:#f1eadc;color:#18191d;border:1px solid #5c5f66;border-radius:4px;padding:24px 26px;font:700 17px Georgia,serif;box-shadow:0 20px 45px rgba(0,0,0,.24)}
 .tabs>div span{float:right;color:var(--coral);font-family:monospace}
 .twoAmCopy{text-align:center;position:relative;z-index:4}
 .twoAmCopy>span{font:900 clamp(60px,10vw,150px)/1 monospace;color:var(--yellow)}
@@ -144,13 +146,13 @@
   .impressionGrid{grid-template-columns:1fr}
   .portraitCard{height:58vh}
   .handArrow{display:none}
-  .work{height:190vh}
+  .work{height:175vh}
   .techStream{top:58vh}
   .editorialSpread{display:block}
   .yellowPortrait{height:68vh;position:relative;top:auto;margin:32px 0}
   .bigStatement{margin:18vh 0 8vh}
   .moreCopy{margin-top:10vh}
-  .after{height:360vh}
+  .after{height:340vh}
   .afterPanel{padding:12vh 7vw}
   .afterPanel h3{margin-top:26vh;font-size:18vw}
   .cafeGrid{grid-template-columns:1fr}
@@ -190,4 +192,15 @@
 }
 @media (prefers-reduced-motion:reduce){
   .site *{scroll-behavior:auto!important}
+}
+@media (hover:none){
+  .impressionChoices button{transform:none!important}
+  .dmButton{transform:none!important}
+}
+
+@media (max-width:900px){
+  .afterTrack{width:400vw}
+  .afterPanel{width:100vw;flex-basis:100vw}
+  .cafeImageWrap img{height:120%}
+  .tabs{min-height:430px}
 }
