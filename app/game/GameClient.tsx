@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { photos } from "../photos";
 import { TinyAudio } from "../../game/audio";
 import {
   flawTags,
@@ -42,7 +41,11 @@ export default function GameClient() {
         }
 
         preload() {
-          this.load.image("face", photos.cafeBlack);
+          this.load.image("face-neutral", "/game/face-neutral.svg");
+          this.load.image("face-smile", "/game/face-smile.svg");
+          this.load.image("face-thinking", "/game/face-thinking.svg");
+          this.load.image("face-surprised", "/game/face-surprised.svg");
+          this.load.image("face-deadpan", "/game/face-deadpan.svg");
           this.load.image("office-bg", "/game/office.svg");
           this.load.image("gym-bg", "/game/gym.svg");
           this.load.image("cafe-bg", "/game/cafe.svg");
@@ -153,21 +156,23 @@ export default function GameClient() {
           return image;
         }
 
-        faceCharacter(x: number, y: number, scale = 1, pose = "body-idle", bob = true) {
+        faceCharacter(
+          x: number,
+          y: number,
+          scale = 1,
+          pose = "body-idle",
+          face = "face-neutral",
+          bob = true
+        ) {
           const c = this.keep(this.add.container(x, y));
-          const body = this.add.image(0, 16 * scale, pose)
+          const body = this.add.image(0, 18 * scale, pose)
             .setOrigin(0.5, 0)
             .setDisplaySize(160 * scale, 260 * scale);
 
-          const faceBack = this.add.graphics();
-          faceBack.fillStyle(0xffffff, 1).fillRoundedRect(-50 * scale, -50 * scale, 100 * scale, 100 * scale, 25 * scale);
-          faceBack.lineStyle(4 * scale, 0x11151b, 1).strokeRoundedRect(-50 * scale, -50 * scale, 100 * scale, 100 * scale, 25 * scale);
+          const head = this.add.image(0, -2 * scale, face)
+            .setDisplaySize(112 * scale, 112 * scale);
 
-          const head = this.add.image(0, 0, "face").setDisplaySize(92 * scale, 92 * scale);
-          const side = Math.min(head.width, head.height);
-          head.setCrop((head.width - side) / 2, (head.height - side) / 2, side, side);
-
-          c.add([body, faceBack, head]);
+          c.add([body, head]);
 
           if (bob) {
             this.tweens.add({
@@ -184,7 +189,7 @@ export default function GameClient() {
         }
 
         walkIn(y: number, scale = 0.72, targetX = W / 2) {
-          const actor = this.faceCharacter(-90, y, scale, "body-walk-a", false);
+          const actor = this.faceCharacter(-90, y, scale, "body-walk-a", "face-neutral", false);
           let frame = false;
           const stepper = this.time.addEvent({
             delay: 135,
@@ -203,6 +208,7 @@ export default function GameClient() {
             onComplete: () => {
               stepper.remove();
               actor.body.setTexture("body-idle");
+              actor.head.setTexture("face-smile");
               this.tweens.add({
                 targets: actor.container,
                 y: y - 4 * scale,
@@ -241,7 +247,7 @@ export default function GameClient() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
           this.small(22, 26, "FIRST IMPRESSION");
-          this.faceCharacter(W / 2, 155, 0.75);
+          this.faceCharacter(W / 2, 155, 0.75, "body-idle", "face-neutral");
           this.text(W / 2, 310, "Don't think too much.", 30, "#17191f", 340, "center");
           this.text(W / 2, 355, "What kind of person do I look like?", 16, "#686d76", 340, "center");
 
@@ -267,6 +273,7 @@ export default function GameClient() {
           ["#ff746e", "#ffd361", "#7fe29a"].forEach((c, i) => {
             const dot = this.keep(this.add.circle(53 + i * 18, 177, 5, Phaser.Display.Color.HexStringToColor(c).color));
           });
+          const workActor = this.faceCharacter(315, 675, 0.32, "body-talk", "face-neutral", false);
           const codeArea = this.keep(this.add.container(44, 214));
           const rambleText = this.keep(this.add.text(0, 0, workRamble[0], {
             fontFamily: "monospace", fontSize: "14px", color: "#aee7bd", wordWrap: { width: 285 }, lineSpacing: 7,
@@ -280,17 +287,23 @@ export default function GameClient() {
             rambleText.setText(workRamble.slice(0, step + 1).join("\n\n"));
             this.tweens.add({ targets: rambleText, alpha: { from: 0.3, to: 1 }, x: { from: 8, to: 0 }, duration: 220 });
 
-            if (step === 1) this.spawnTechChip("API", 44, 560);
+            if (step === 1) {
+              workActor.head.setTexture("face-thinking");
+              this.spawnTechChip("API", 44, 560);
+            }
             if (step === 2) {
               this.spawnTechChip("DB", 118, 585);
               this.spawnTechChip("QUEUE", 206, 554);
             }
             if (step === 3) {
+              workActor.head.setTexture("face-surprised");
               this.spawnTechChip("DOCKER", 48, 626);
               this.spawnTechChip("WS", 160, 646);
               this.spawnTechChip("SCALE", 239, 615);
             }
             if (step === 4) {
+              workActor.head.setTexture("face-deadpan");
+              workActor.body.setTexture("body-deadpan");
               this.cameras.main.shake(120, 0.004);
               this.audio.wrong();
             }
@@ -326,7 +339,7 @@ export default function GameClient() {
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
-          this.faceCharacter(195, 310, 0.56, "body-idle");
+          this.faceCharacter(195, 310, 0.56, "body-idle", "face-neutral");
 
           this.panel(246, 190, 100, 58, 0xffd76d, 0.95, 14);
           this.text(260, 203, "1m86", 20);
@@ -382,6 +395,8 @@ export default function GameClient() {
             move.pause();
             const ok = shuttle.x > 150 && shuttle.x < 240;
             this.state.badmintonHit = ok;
+            const reaction = this.faceCharacter(318, 120, 0.28, "body-idle", ok ? "face-smile" : "face-surprised", false);
+            this.tweens.add({ targets: reaction.container, scale: { from: 0.4, to: 1 }, duration: 220, ease: "Back.Out" });
             ok ? this.audio.hit() : this.audio.wrong();
             this.text(W / 2, 690, ok ? "NICE." : "we're pretending that didn't happen.", ok ? 30 : 17, "#17191f", 350, "center");
             this.time.delayedCall(950, () => this.showCafe());
@@ -450,7 +465,7 @@ export default function GameClient() {
           const shade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.72));
           shade.setDepth(-0.5);
           this.small(22, 26, "07 / ASK ME ONE", "#ffffff");
-          this.faceCharacter(195, 130, 0.65, "body-talk");
+          this.faceCharacter(195, 130, 0.65, "body-talk", "face-thinking");
           this.text(W / 2, 270, "Small talk is fine.", 20, "#ffffff", 350, "center");
           this.text(W / 2, 310, "Nhưng tớ thích câu hỏi\nkhiến mình phải nghĩ.", 27, "#ffffff", 350, "center");
 
@@ -469,7 +484,8 @@ export default function GameClient() {
           const answerShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.74));
           answerShade.setDepth(-0.5);
           this.small(22, 26, "07 / MY ANSWER", "#ffffff");
-          this.faceCharacter(195, 135, 0.7, "body-talk");
+          const answerFace = id === "stupid" || id === "future" ? "face-smile" : id === "fear" ? "face-thinking" : "face-neutral";
+          this.faceCharacter(195, 135, 0.7, "body-talk", answerFace);
           this.speech(questionAnswers[id], 300);
           this.button(58, 610, 274, 58, "Okay. Dinner?", () => this.showCooking(), false);
         }
@@ -493,7 +509,7 @@ export default function GameClient() {
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.98);
           this.small(22, 26, "08 / COOKING");
-          this.faceCharacter(310, 250, 0.42, "body-talk");
+          this.faceCharacter(310, 250, 0.42, "body-talk", "face-smile");
           this.text(22, 70, "Tap the pan 3 times.", 28);
           const pan = this.keep(this.add.container(195, 360));
           const p = this.add.circle(0, 0, 105, 0x24282e);
@@ -532,7 +548,7 @@ export default function GameClient() {
           const flawShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x17191f, 0.2));
           flawShade.setDepth(-0.5);
           this.small(22, 26, "09 / MUCH BETTER");
-          this.faceCharacter(315, 120, 0.36, "body-deadpan", false);
+          this.faceCharacter(315, 120, 0.36, "body-deadpan", "face-deadpan", false);
           this.text(W / 2, 75, "lol no.", 64, "#17191f", 350, "center");
           const clock = this.panel(218, 165, 150, 75, 0x17191f, 1, 16);
           this.text(235, 180, "02:17 AM", 24, "#ffd76d");
