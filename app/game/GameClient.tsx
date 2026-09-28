@@ -1040,7 +1040,7 @@ export default function GameClient() {
 
           const introShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x0d1020, 0.16));
           introShade.setDepth(-0.5);
-          this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
+          this.small(22, 48, "FIGURE OUT LOC / 90 SEC", "#ffffff");
           const introActor = this.walkIn(170, 0.78);
 
           introActor.container.setSize(130, 240).setInteractive({ useHandCursor: true });
@@ -1077,10 +1077,10 @@ export default function GameClient() {
         showImpression() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
-          this.small(22, 26, "FIRST IMPRESSION");
+          this.small(22, 48, "FIRST IMPRESSION");
           const impressionActor = this.faceCharacter(W / 2, 112, 0.56, "body-idle", "face-neutral");
           this.text(W / 2, 300, "Don't think too much.", 30, "#17191f", 340, "center");
-          this.text(W / 2, 345, "What kind of person do I look like?", 16, "#686d76", 340, "center");
+          this.text(W / 2, 346, "First guess: what kind of person do I look like?", 15, "#686d76", 350, "center");
 
           impressionOptions.forEach((option, i) => {
             this.button(28, 430 + i * 72, 334, 56, option.label, () => {
@@ -1100,10 +1100,9 @@ export default function GameClient() {
           this.clearScene(0xeef7ff);
           this.sceneBackground("office");
 
-          this.ambientDots(0x8ed7ff, 7, 0.18);
-
-          this.small(22, 26, "02 / WORK", "#d8e5f3");
-          this.text(22, 70, "Tớ làm phần mềm.", 34, "#ffffff");
+          this.small(22, 48, "02 / WORK", "#d8e5f3");
+          this.text(22, 82, "Tớ làm phần mềm.", 32, "#ffffff");
+          this.small(22, 126, "tap “ừm... tiếp đi” a few times", "#d8e5f3");
 
           const win = this.panel(22, 145, 346, 285, 0x11151b, 1, 22);
           const top = this.keep(this.add.graphics().setDepth(3));
@@ -1191,8 +1190,7 @@ export default function GameClient() {
           this.clearScene(0xf2f6ed);
           this.sceneBackground("gym");
 
-          this.ambientDots(0xb9ffd0, 6, 0.14);
-          this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
+          this.small(22, 48, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
           const gymActor = this.faceCharacter(-70, 310, 0.56, "body-walk-a", "face-neutral", false);
@@ -1201,7 +1199,7 @@ export default function GameClient() {
           gymActor.container.setSize(160, 250);
           let reps = 0;
           let lifting = false;
-          const repText = this.small(150, 500, "walking in...", "#d5ddd9");
+          const repText = this.small(126, 500, "walk in → tap character for reps", "#f0f4f2");
           let gymStep = false;
           let gymFoot = 0;
           const gymWalk = this.time.addEvent({
@@ -1227,7 +1225,7 @@ export default function GameClient() {
               gymWalk.remove();
               gymActor.body.setTexture("body-gym");
               gymActor.container.setInteractive({ useHandCursor: true });
-              repText.setText("tap me for a rep");
+              repText.setText("tap character for a rep · optional");
               this.squash(gymActor, 0.02, 110);
             },
           });
@@ -1282,7 +1280,7 @@ export default function GameClient() {
             );
           };
 
-          const sliderFeedback = this.small(70, 700, "drag the slider, or just continue →", "#d5ddd9");
+          const sliderFeedback = this.small(58, 700, "optional: drag slider · continue when ready", "#e4ebe7");
           const knob = this.keep(this.add.circle(195, 635, 16, 0x5f8dff).setInteractive({ useHandCursor: true, draggable: true }));
           this.input.setDraggable(knob);
           knob.on("drag", (_p: any, dragX: number) => {
@@ -1302,7 +1300,7 @@ export default function GameClient() {
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
           });
 
-          const continueGym = this.button(72, 752, 246, 52, "CONTINUE →", leaveGym, false);
+          const continueGym = this.button(72, 734, 246, 54, "CONTINUE TO SPORTS", leaveGym, false);
         }
 
         showSports() {
@@ -1310,9 +1308,7 @@ export default function GameClient() {
           this.clearScene(0xeaf7ff);
           this.sceneBackground("park");
 
-          this.ambientDots(0xffffff, 8, 0.16);
-
-          this.small(22, 26, "04 / MOVE");
+          this.small(22, 48, "04 / MOVE");
           this.text(22, 70, "Okay.\nEnough sitting.", 36);
           this.small(22, 170, "tap the shuttle when it hits the green zone");
 
@@ -1434,7 +1430,7 @@ export default function GameClient() {
           this.audio.whoosh();
           this.clearScene(0xeaf7ff);
           this.sceneBackground("park");
-          this.small(22, 26, "04 / ALSO...");
+          this.small(22, 48, "04 / ALSO...");
           this.text(22, 70, "Badminton không phải\nmôn duy nhất.", 30);
 
           const footballActor = this.faceCharacter(105, 350, 0.45, "body-football-prep", "face-smile", false);
@@ -1520,14 +1516,13 @@ export default function GameClient() {
           this.clearScene(0xfff4e6);
           this.sceneBackground("cafe");
 
-          this.ambientDots(0xffe4a9, 7, 0.16);
+          this.small(22, 48, "05 / COFFEE?");
+          this.text(22, 82, "Okay. Enough cardio.", 28);
+          this.text(22, 126, "Coffee break?", 40);
+          this.small(22, 174, "pick one · this changes the next beat");
 
-          this.small(22, 26, "05 / COFFEE?");
-          this.text(22, 70, "Okay. Enough cardio.", 31);
-          this.text(22, 118, "Coffee?", 42);
-
-          this.button(24, 190, 165, 54, "obviously", () => this.chooseSeat());
-          this.button(201, 190, 165, 54, "no thanks", () => {
+          this.button(24, 215, 165, 54, "yes, obviously", () => this.chooseSeat());
+          this.button(201, 215, 165, 54, "no coffee", () => {
             this.audio.wrong();
             this.speech("Interesting. We're going anyway.", 275);
             this.time.delayedCall(700, () => this.chooseSeat());
@@ -1536,8 +1531,9 @@ export default function GameClient() {
 
         chooseSeat() {
           this.clearScene(0xfff4e6);
-          this.small(22, 26, "05 / PICK A SEAT");
-          this.text(22, 70, "Chọn chỗ đi.", 36);
+          this.small(22, 48, "05 / PICK A SEAT");
+          this.text(22, 82, "Chọn chỗ ngồi.", 34);
+          this.small(22, 128, "pick a vibe · then we continue");
 
           this.sceneBackground("cafe");
 
@@ -1666,7 +1662,7 @@ export default function GameClient() {
           this.sceneBackground("cafe");
           const rememberedSeatX = this.state.seat === "window" ? 115 : this.state.seat === "corner" ? 286 : 205;
           const bookActor = this.faceCharacter(rememberedSeatX, 470, 0.36, "body-book-closed", "face-thinking", true);
-          this.small(22, 26, "06 / OPEN THE BOOK");
+          this.small(22, 48, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
           const book = this.keep(this.add.container(195, 330).setScale(0.75).setAlpha(0));
@@ -1784,10 +1780,10 @@ export default function GameClient() {
           this.stage = 6;
           this.clearScene(0x17181d);
           this.sceneBackground("cafe");
-          this.ambientDots(0xffd9a8, 10, 0.12);
+
           const shade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.72));
           shade.setDepth(-0.5);
-          this.small(22, 26, "07 / ASK ME ONE", "#ffffff");
+          this.small(22, 48, "07 / ASK ME ONE", "#ffffff");
           const talkActor = this.faceCharacter(195, 130, 0.65, "body-talk", "face-thinking", false);
           this.heroActor = talkActor;
           this.loopBodyFrames(talkActor, ["body-talk", "body-talk-alt"], 620);
@@ -1816,7 +1812,7 @@ export default function GameClient() {
           this.sceneBackground("cafe");
           const answerShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.74));
           answerShade.setDepth(-0.5);
-          this.small(22, 26, "07 / MY ANSWER", "#ffffff");
+          this.small(22, 48, "07 / MY ANSWER", "#ffffff");
           const answerFace = id === "stupid" || id === "future" ? "face-smile" : id === "fear" ? "face-thinking" : "face-neutral";
           const answerActor = this.faceCharacter(195, 135, 0.7, "body-talk", answerFace, false);
           this.loopBodyFrames(answerActor, ["body-talk", "body-talk-alt"], 720);
@@ -1845,9 +1841,7 @@ export default function GameClient() {
           this.clearScene(0xfff0e1);
           this.sceneBackground("kitchen");
 
-          this.ambientDots(0xffd9a8, 7, 0.12);
-
-          this.small(22, 26, "08 / DINNER?");
+          this.small(22, 48, "08 / DINNER?");
           this.text(22, 70, "Nói chuyện sẽ hay hơn\nnếu có đồ ăn.", 31);
           this.button(24, 170, 165, 54, "cook", () => this.cookMiniGame());
           this.button(201, 170, 165, 54, "order", () => {
@@ -1861,7 +1855,7 @@ export default function GameClient() {
         cookMiniGame() {
           this.clearScene(0xfff0e1);
           this.sceneBackground("kitchen");
-          this.small(22, 26, "08 / COOKING");
+          this.small(22, 48, "08 / COOKING");
           const cookActor = this.faceCharacter(310, 250, 0.42, "body-cook-a", "face-smile", false);
           this.heroActor = cookActor;
 
@@ -1957,7 +1951,7 @@ export default function GameClient() {
         showFlaws() {
           this.stage = 8;
           this.clearScene(0xf0f1f5);
-          this.small(22, 26, "09 / REALITY CHECK");
+          this.small(22, 48, "09 / REALITY CHECK");
           this.text(W / 2, 86, "This is starting to sound\nsuspiciously good.", 29, "#17191f", 350, "center");
           this.button(40, 215, 310, 62, "SHOW ME THE BAD PART", () => {
             this.audio.wrong();
@@ -1972,7 +1966,7 @@ export default function GameClient() {
 
           const flawShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x17191f, 0.2));
           flawShade.setDepth(-0.5);
-          this.small(22, 26, "09 / MUCH BETTER");
+          this.small(22, 48, "09 / MUCH BETTER");
           const flawActor = this.faceCharacter(315, 120, 0.36, "body-deadpan", "face-deadpan", false);
           this.tweens.add({
             targets: flawActor.container,
@@ -2024,11 +2018,9 @@ export default function GameClient() {
           this.clearScene(0x5d759c);
           this.sceneBackground("rooftop");
 
-          this.ambientDots(0xffe3a0, 12, 0.18);
-
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
           endShade.setDepth(-0.5);
-          this.small(22, 26, "END / 7%", "#ffffff");
+          this.small(22, 48, "END / 7%", "#ffffff");
           const endActor = this.faceCharacter(326, 690, 0.34, "body-wave", "face-smile", false);
 
           this.tweens.add({
