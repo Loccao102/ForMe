@@ -434,6 +434,7 @@ export default function GameClient() {
         ) {
           if (!actor?.container?.active) return;
           let frame = false;
+          let stepIndex = 0;
           const direction = x >= actor.container.x ? 1 : -1;
           actor.container.scaleX = Math.abs(actor.container.scaleX || 1) * direction;
           actor.head.scaleX = Math.abs(actor.head.scaleX || 1) * direction;
@@ -445,6 +446,16 @@ export default function GameClient() {
               if (!actor?.body?.active) return;
               frame = !frame;
               actor.body.setTexture(frame ? "body-walk-a" : "body-walk-b");
+              if (frame) {
+                stepIndex += 1;
+                this.audio.step(stepIndex);
+                this.dustBurst(
+                  actor.container.x,
+                  actor.container.y + actor.body.displayHeight * 0.92,
+                  0xffffff,
+                  3
+                );
+              }
             },
           });
 
@@ -665,12 +676,18 @@ export default function GameClient() {
         walkIn(y: number, scale = 0.72, targetX = W / 2) {
           const actor = this.faceCharacter(-90, y, scale, "body-walk-a", "face-neutral", false);
           let frame = false;
+          let introStep = 0;
           const stepper = this.time.addEvent({
             delay: 135,
             loop: true,
             callback: () => {
               frame = !frame;
               actor.body.setTexture(frame ? "body-walk-a" : "body-walk-b");
+              if (frame) {
+                introStep += 1;
+                this.audio.step(introStep);
+                this.dustBurst(actor.container.x, actor.container.y + actor.body.displayHeight * 0.92, 0xffffff, 3);
+              }
             },
           });
 
@@ -701,6 +718,7 @@ export default function GameClient() {
           this.stage = 0;
           this.clearScene(0xfff8ec);
           this.artBackground("rooftop-bg", 0.94);
+          this.midgroundParallax("rooftop");
           const introShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x0d1020, 0.16));
           introShade.setDepth(-0.5);
           this.small(22, 26, "FIGURE OUT LOC / 90 SEC", "#ffffff");
@@ -749,6 +767,7 @@ export default function GameClient() {
           this.stage = 1;
           this.clearScene(0xeef7ff);
           this.artBackground("office-bg", 0.78);
+          this.midgroundParallax("office");
           this.ambientDots(0x8ed7ff, 7, 0.18);
           this.foregroundParallax(0x0d1118, 0.09, 7200);
           this.small(22, 26, "02 / WORK");
@@ -762,6 +781,7 @@ export default function GameClient() {
           });
           const workActor = this.faceCharacter(315, 675, 0.32, "body-talk", "face-neutral", false);
           this.heroActor = workActor;
+          this.sceneOccluders("office");
           const workTalkLoop = this.loopBodyFrames(workActor, ["body-talk", "body-talk-alt"], 520);
           const codeArea = this.keep(this.add.container(44, 214));
           const rambleText = this.keep(this.add.text(0, 0, workRamble[0], {
@@ -838,12 +858,14 @@ export default function GameClient() {
           this.stage = 2;
           this.clearScene(0xf2f6ed);
           this.artBackground("gym-bg", 0.92);
+          this.midgroundParallax("gym");
           this.ambientDots(0xb9ffd0, 6, 0.14);
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
           const gymActor = this.faceCharacter(-70, 310, 0.56, "body-walk-a", "face-neutral", false);
           this.heroActor = gymActor;
+          this.sceneOccluders("gym");
           gymActor.container.setSize(160, 250);
           let reps = 0;
           let lifting = false;
@@ -936,6 +958,7 @@ export default function GameClient() {
           this.stage = 3;
           this.clearScene(0xeaf7ff);
           this.artBackground("park-bg", 0.92);
+          this.midgroundParallax("park");
           this.ambientDots(0xffffff, 8, 0.16);
           this.foregroundParallax(0x2d7f49, 0.11, 5200);
           this.small(22, 26, "04 / MOVE");
@@ -950,6 +973,7 @@ export default function GameClient() {
 
           const player = this.faceCharacter(-70, 315, 0.42, "body-walk-a", "face-neutral", false);
           this.heroActor = player;
+          this.sceneOccluders("park");
           player.container.setDepth(3);
 
           let readyFrame = false;
@@ -1010,7 +1034,14 @@ export default function GameClient() {
               yoyo: true,
               ease: "Back.Out",
             });
-            ok ? this.audio.hit() : this.audio.wrong();
+            if (ok) {
+              this.audio.hit();
+              this.speedLines(360, 1);
+              this.cameraNudge(10, -3, 120);
+            } else {
+              this.audio.wrong();
+              this.cameraNudge(-7, 5, 140);
+            }
             this.text(W / 2, 690, ok ? "NICE." : "we're pretending that didn't happen.", ok ? 30 : 17, "#17191f", 350, "center");
 
             if (ok) {
@@ -1056,11 +1087,14 @@ export default function GameClient() {
             duration: 420,
             ease: "Back.Out",
             onComplete: () => {
+              this.audio.kick();
               this.playBodySequence(
                 footballActor,
                 ["body-football-prep", "body-football", "body-football-prep"],
                 115
               );
+              this.dustBurst(footballActor.container.x + 70, footballActor.container.y + 150, 0xffffff, 6);
+              this.speedLines(430, 1);
               this.tweens.add({
                 targets: footballActor.container,
                 x: 136,
@@ -1088,6 +1122,7 @@ export default function GameClient() {
 
             const runner = this.faceCharacter(310, 355, 0.43, "body-run", "face-neutral", false);
             const runLoop = this.loopBodyFrames(runner, ["body-run", "body-run-b"], 120);
+            const runCamera = this.cameraTrack(runner, 0.13);
             runner.container.setAlpha(0).setX(420);
             const runLabel = this.text(82, 330, "running", 28, "#17191f", 130, "center");
             runLabel.setAlpha(0);
@@ -1109,6 +1144,7 @@ export default function GameClient() {
 
             this.time.delayedCall(900, () => {
               runLoop.remove();
+              runCamera.remove();
               this.tweens.add({
                 targets: runner.container,
                 x: W + 110,
@@ -1124,6 +1160,7 @@ export default function GameClient() {
           this.stage = 4;
           this.clearScene(0xfff4e6);
           this.artBackground("cafe-bg", 0.92);
+          this.midgroundParallax("cafe");
           this.ambientDots(0xffe4a9, 7, 0.16);
           this.foregroundParallax(0x4f2d1f, 0.07, 6800);
           this.small(22, 26, "05 / COFFEE?");
@@ -1149,6 +1186,7 @@ export default function GameClient() {
 
           const cafeActor = this.faceCharacter(-70, 292, 0.42, "body-walk-a", "face-smile", false);
           this.heroActor = cafeActor;
+          this.sceneOccluders("cafe");
           cafeActor.container.setDepth(2);
 
           let step = false;
@@ -1184,7 +1222,7 @@ export default function GameClient() {
           coffee.on("pointerdown", () => {
             if (sipping) return;
             sipping = true;
-            this.audio.pop();
+            this.audio.sip();
             cafeActor.body.setTexture("body-seated-sip");
             cafeActor.head.setTexture("face-smile");
             this.tweens.add({ targets: coffee, alpha: 0.2, y: 386, duration: 160, yoyo: true, hold: 170 });
@@ -1220,6 +1258,8 @@ export default function GameClient() {
                 this.squash(cafeActor, 0.025, 120);
                 this.cameraNudge(targetX < W / 2 ? -6 : 6, 0, 160);
 
+                cafeActor.body.setTexture("body-laptop");
+                this.audio.settle();
                 this.tweens.add({
                   targets: laptop,
                   alpha: 1,
@@ -1240,6 +1280,7 @@ export default function GameClient() {
               this.speech(reply, 420);
               this.time.delayedCall(950, () => {
                 cafeActor.head.setTexture("face-thinking");
+                cafeActor.body.setTexture("body-seated");
                 this.tweens.add({
                   targets: laptop,
                   scaleY: 0.12,
@@ -1434,6 +1475,7 @@ export default function GameClient() {
           this.stage = 7;
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.9);
+          this.midgroundParallax("kitchen");
           this.ambientDots(0xffd9a8, 7, 0.12);
           this.foregroundParallax(0x5c3425, 0.07, 6200);
           this.small(22, 26, "08 / DINNER?");
@@ -1453,6 +1495,7 @@ export default function GameClient() {
           this.small(22, 26, "08 / COOKING");
           const cookActor = this.faceCharacter(310, 250, 0.42, "body-cook-a", "face-smile", false);
           this.heroActor = cookActor;
+          this.sceneOccluders("kitchen");
           this.text(22, 70, "Tap the pan 3 times.", 28);
           const pan = this.keep(this.add.container(195, 360));
           const p = this.add.circle(0, 0, 105, 0x24282e);
@@ -1611,6 +1654,7 @@ export default function GameClient() {
           this.stage = 9;
           this.clearScene(0x5d759c);
           this.artBackground("rooftop-bg", 1);
+          this.midgroundParallax("rooftop");
           this.ambientDots(0xffe3a0, 12, 0.18);
           this.foregroundParallax(0x11131d, 0.16, 8200);
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
