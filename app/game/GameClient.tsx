@@ -488,6 +488,7 @@ export default function GameClient() {
           this.clearScene(0xeef7ff);
           this.artBackground("office-bg", 0.78);
           this.ambientDots(0x8ed7ff, 7, 0.18);
+          this.foregroundParallax(0x0d1118, 0.09, 7200);
           this.small(22, 26, "02 / WORK");
           this.text(22, 70, "Tớ làm phần mềm.", 34);
 
@@ -647,6 +648,7 @@ export default function GameClient() {
           this.clearScene(0xeaf7ff);
           this.artBackground("park-bg", 0.92);
           this.ambientDots(0xffffff, 8, 0.16);
+          this.foregroundParallax(0x2d7f49, 0.11, 5200);
           this.small(22, 26, "04 / MOVE");
           this.text(22, 70, "Okay.\nEnough sitting.", 36);
           this.small(22, 170, "tap the shuttle when it hits the green zone");
@@ -782,6 +784,7 @@ export default function GameClient() {
           this.clearScene(0xfff4e6);
           this.artBackground("cafe-bg", 0.92);
           this.ambientDots(0xffe4a9, 7, 0.16);
+          this.foregroundParallax(0x4f2d1f, 0.07, 6800);
           this.small(22, 26, "05 / COFFEE?");
           this.text(22, 70, "Okay. Enough cardio.", 31);
           this.text(22, 118, "Coffee?", 42);
@@ -951,6 +954,7 @@ export default function GameClient() {
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.9);
           this.ambientDots(0xffd9a8, 7, 0.12);
+          this.foregroundParallax(0x5c3425, 0.07, 6200);
           this.small(22, 26, "08 / DINNER?");
           this.text(22, 70, "Nói chuyện sẽ hay hơn\nnếu có đồ ăn.", 31);
           this.button(24, 170, 165, 54, "cook", () => this.cookMiniGame());
@@ -1032,6 +1036,7 @@ export default function GameClient() {
           this.clearScene(0x5d759c);
           this.artBackground("rooftop-bg", 1);
           this.ambientDots(0xffe3a0, 12, 0.18);
+          this.foregroundParallax(0x11131d, 0.16, 8200);
           const endShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x111529, 0.34));
           endShade.setDepth(-0.5);
           this.small(22, 26, "END / 7%", "#ffffff");
