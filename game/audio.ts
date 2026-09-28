@@ -61,6 +61,32 @@ export class TinyAudio {
     this.tone(260, 0.08, "triangle", 0.1, 0.02);
   }
 
+  step(variant = 0) {
+    const base = variant % 2 === 0 ? 118 : 136;
+    this.tone(base, 0.045, "triangle", 0.055);
+    this.tone(base * 0.72, 0.035, "sine", 0.03, 0.012);
+  }
+
+  kick() {
+    this.tone(86, 0.09, "triangle", 0.12);
+    this.tone(210, 0.045, "square", 0.055, 0.018);
+  }
+
+  page() {
+    this.tone(720, 0.035, "triangle", 0.035);
+    this.tone(940, 0.05, "sine", 0.025, 0.03);
+  }
+
+  sip() {
+    this.tone(470, 0.05, "sine", 0.028);
+    this.tone(520, 0.045, "sine", 0.022, 0.06);
+  }
+
+  settle() {
+    this.tone(240, 0.07, "triangle", 0.055);
+    this.tone(180, 0.09, "sine", 0.035, 0.04);
+  }
+
   whoosh() {
     if (!this.enabled || !this.ctx || !this.master) return;
     const bufferSize = this.ctx.sampleRate * 0.18;
