@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useSpring, useTransform } from "motion/react";
 import { photos } from "./photos";
 
 const scenes = [
@@ -29,6 +30,42 @@ function SceneLabel({ n, children }: { n: number; children: React.ReactNode }) {
 
 function Doodle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <span className={`doodle ${className}`}>{children}</span>;
+}
+function SceneAtmosphere({ index }: { index: number }) {
+  return (
+    <div className="scene-atmosphere" aria-hidden="true">
+      <motion.i className="ambient-blob ambient-a"
+        animate={{ x: [0, 36, -12, 0], y: [0, -22, 18, 0], rotate: [0, 8, -6, 0] }}
+        transition={{ duration: 11 + (index % 3) * 2, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.i className="ambient-blob ambient-b"
+        animate={{ x: [0, -28, 16, 0], y: [0, 20, -16, 0], rotate: [0, -10, 7, 0] }}
+        transition={{ duration: 14 + (index % 4), repeat: Infinity, ease: "easeInOut" }} />
+      <motion.i className="ambient-line"
+        animate={{ x: ["-8%", "8%", "-8%"], opacity: [0.18, 0.42, 0.18] }}
+        transition={{ duration: 9 + index, repeat: Infinity, ease: "easeInOut" }} />
+    </div>
+  );
+}
+
+function GymRoomArt() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const imageX = useTransform(scrollYProgress, [0, 1], [-24, 24]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.08, 1, 1.06]);
+  const badgeY = useTransform(scrollYProgress, [0, 1], [18, -22]);
+  return (
+    <div ref={ref} className="gym-art reveal">
+      <motion.img src="/art/gym-room.svg" alt="Phòng gym hiện đại" style={{ x: imageX, scale: imageScale }} />
+      <motion.div className="gym-height-badge" style={{ y: badgeY }}><b>1m86</b><span>still building</span></motion.div>
+      <motion.div className="gym-orbit-note note-one" animate={{ y: [0, -8, 0], rotate: [-2, 2, -2] }} transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}>consistency &gt; hype</motion.div>
+      <motion.div className="gym-orbit-note note-two" animate={{ y: [0, 9, 0], rotate: [2, -2, 2] }} transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}>average day. still showed up.</motion.div>
+    </div>
+  );
+}
+
+function StoryProgress({ value }: { value: number }) {
+  const spring = useSpring(value, { stiffness: 120, damping: 24, mass: 0.7 });
+  return <motion.div className="story-progress-fill" style={{ scaleX: spring }} />;
 }
 
 export default function Home() {
