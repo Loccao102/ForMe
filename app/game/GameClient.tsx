@@ -1129,12 +1129,15 @@ export default function GameClient() {
                   ["body-cook-a", "body-cook-b", "body-cook-a"],
                   110
                 );
-                this.tweens.add({
-                  targets: plates,
-                  scale: 1.05,
-                  duration: 150,
-                  yoyo: true,
-                  stagger: 60,
+                plates.forEach((plate, i) => {
+                  this.tweens.add({
+                    targets: plate,
+                    scale: 1.05,
+                    duration: 150,
+                    delay: i * 60,
+                    yoyo: true,
+                    ease: "Sine.InOut",
+                  });
                 });
               });
 
@@ -1178,15 +1181,28 @@ export default function GameClient() {
           ["portfolio", "new project", "another project", "sleep earlier?"].forEach((v, i) => this.small(38, 320 + i * 28, v));
           flawTags.forEach((tag, i) => {
             const card = this.panel(32, 485 + i * 50, 326, 38, i % 2 ? 0xffe5dc : 0xe6ecff, 1, 14);
-            card.setAlpha(0).setX(i % 2 ? 40 : -40);
             const label = this.small(48, 498 + i * 50, tag);
-            label.setAlpha(0).setX(i % 2 ? 56 : 8);
+            const cardTargetX = card.x;
+            const labelTargetX = label.x;
+            const offset = i % 2 ? 36 : -36;
+
+            card.setAlpha(0).setX(cardTargetX + offset);
+            label.setAlpha(0).setX(labelTargetX + offset);
+
             this.tweens.add({
-              targets: [card, label],
-              x: 0,
+              targets: card,
+              x: cardTargetX,
               alpha: 1,
               duration: 360,
               delay: 120 + i * 110,
+              ease: "Back.Out",
+            });
+            this.tweens.add({
+              targets: label,
+              x: labelTargetX,
+              alpha: 1,
+              duration: 360,
+              delay: 150 + i * 110,
               ease: "Back.Out",
             });
           });
