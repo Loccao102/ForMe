@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { photos } from "../photos";
@@ -97,7 +98,6 @@ export default function EditorialPage() {
   const heroSmooth = useSpring(heroProgress, { stiffness: 90, damping: 24, mass: 0.35 });
   const heroScale = useTransform(heroSmooth, [0, 0.75], [1, reduceMotion ? 1 : 1.12]);
   const heroY = useTransform(heroSmooth, [0, 1], [0, reduceMotion ? 0 : -72]);
-  const heroPhotoRotate = useTransform(heroSmooth, [0, 1], [-3, reduceMotion ? -3 : 3]);
 
   const { scrollYProgress: workProgress } = useScroll({
     target: workRef,
@@ -119,7 +119,6 @@ export default function EditorialPage() {
     offset: ["start end", "end start"],
   });
   const cafeSmooth = useSpring(cafeProgress, { stiffness: 95, damping: 28, mass: 0.35 });
-  const cafeImageY = useTransform(cafeSmooth, [0, 1], [reduceMotion ? 0 : -24, reduceMotion ? 0 : 24]);
   const cafeTypeX = useTransform(cafeSmooth, [0, 1], ["4%", reduceMotion ? "4%" : "-18%"]);
 
   const chosenQuestion = question ? questions[question] : null;
@@ -150,8 +149,22 @@ export default function EditorialPage() {
           <em>KNOW ME.</em>
         </motion.div>
 
-        <motion.div className={styles.heroPhoto} style={{ rotate: heroPhotoRotate }}>
-          <img src={photos.fullbody} alt="Lộc" />
+        <motion.div
+          className={styles.heroPhoto}
+          initial={{ y: 36, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <Image
+            src={photos.cafeBlack}
+            alt="Lộc"
+            width={360}
+            height={360}
+            priority
+            unoptimized
+            draggable={false}
+            className={styles.faceImage}
+          />
           <span className={styles.photoIndex}>01</span>
         </motion.div>
 
@@ -179,12 +192,21 @@ export default function EditorialPage() {
 
           <motion.div
             className={styles.portraitCard}
-            initial={{ rotate: -6, y: 40 }}
-            whileInView={{ rotate: -2, y: 0 }}
+            initial={{ y: 38, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img src={photos.cafeBlack} alt="Lộc at a cafe" />
+            <Image
+              src={photos.cafeYellow}
+              alt="Lộc at a cafe"
+              width={360}
+              height={360}
+              priority
+              unoptimized
+              draggable={false}
+              className={styles.faceImage}
+            />
             <div className={styles.handArrow}>↙</div>
             <span>judge responsibly</span>
           </motion.div>
@@ -277,7 +299,15 @@ export default function EditorialPage() {
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img src={photos.cafeYellow} alt="Lộc at a cafe" />
+            <Image
+              src={photos.cafeBlack}
+              alt="Lộc at a cafe"
+              width={360}
+              height={360}
+              unoptimized
+              draggable={false}
+              className={styles.faceImage}
+            />
           </motion.div>
 
           <p className={styles.moreCopy}>
@@ -339,7 +369,15 @@ export default function EditorialPage() {
           </div>
 
           <div className={styles.cafeImageWrap}>
-            <motion.img src={photos.cafeYellow} alt="Lộc having coffee" style={{ y: cafeImageY }} />
+            <Image
+              src={photos.cafeYellow}
+              alt="Lộc having coffee"
+              width={360}
+              height={360}
+              unoptimized
+              draggable={false}
+              className={styles.faceImage}
+            />
             <span>stay a little longer.</span>
           </div>
         </div>
@@ -468,7 +506,15 @@ export default function EditorialPage() {
 
       <section className={styles.ending}>
         <div className={styles.endingPhoto}>
-          <img src={photos.fullbody} alt="" />
+          <Image
+            src={photos.cafeBlack}
+            alt="Lộc"
+            width={360}
+            height={360}
+            unoptimized
+            draggable={false}
+            className={styles.endingFace}
+          />
         </div>
 
         <div className={styles.endingCopy}>
