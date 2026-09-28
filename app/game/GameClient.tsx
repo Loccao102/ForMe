@@ -42,6 +42,30 @@ export default function GameClient() {
         }
 
         preload() {
+          const loadBg = this.add.rectangle(W / 2, H / 2, W, H, 0x11151b);
+          const loadTitle = this.add.text(W / 2, H / 2 - 42, "FIGURE OUT LOC", {
+            fontFamily: "Arial, sans-serif",
+            fontSize: "24px",
+            fontStyle: "bold",
+            color: "#ffffff",
+          }).setOrigin(0.5);
+          const loadTrack = this.add.rectangle(W / 2, H / 2 + 8, 250, 7, 0xffffff, 0.12);
+          const loadBar = this.add.rectangle(W / 2 - 125, H / 2 + 8, 0, 7, 0xffd76d, 1).setOrigin(0, 0.5);
+          const loadText = this.add.text(W / 2, H / 2 + 36, "loading 2D world · 0%", {
+            fontFamily: "monospace",
+            fontSize: "11px",
+            color: "#cfd5e3",
+          }).setOrigin(0.5);
+
+          this.load.on("progress", (value: number) => {
+            loadBar.width = 250 * value;
+            loadText.setText("loading 2D world · " + Math.round(value * 100) + "%");
+          });
+
+          this.load.on("complete", () => {
+            [loadBg, loadTitle, loadTrack, loadBar, loadText].forEach((o) => o.destroy());
+          });
+
           this.load.image("face-neutral", "/game/face-neutral.svg");
           this.load.image("face-smile", "/game/face-smile.svg");
           this.load.image("face-thinking", "/game/face-thinking.svg");
@@ -84,7 +108,18 @@ export default function GameClient() {
           this.cameras.main.setBackgroundColor("#fff8ec");
           this.bg = this.add.graphics().setDepth(-20);
           this.progress = this.add.graphics().setDepth(50);
-          this.input.on("pointerdown", () => this.audio.click());
+          this.input.on("pointerdown", (pointer: any) => {
+            this.audio.click();
+            const ripple = this.add.circle(pointer.x, pointer.y, 8, 0xffffff, 0.22).setDepth(99);
+            this.tweens.add({
+              targets: ripple,
+              scale: 3.6,
+              alpha: 0,
+              duration: 260,
+              ease: "Sine.Out",
+              onComplete: () => ripple.destroy(),
+            });
+          });
           this.showIntro();
         }
 
@@ -124,7 +159,7 @@ export default function GameClient() {
             align,
             wordWrap: { width },
             lineSpacing: 4,
-          }).setOrigin(align === "center" ? 0.5 : 0, 0));
+          }).setOrigin(align === "center" ? 0.5 : 0, 0).setDepth(20));
         }
 
         small(x: number, y: number, value: string, color = "#5b6069") {
@@ -134,18 +169,18 @@ export default function GameClient() {
             fontStyle: "bold",
             color,
             letterSpacing: 1.5,
-          }));
+          }).setDepth(20));
         }
 
         panel(x: number, y: number, w: number, h: number, color = 0xffffff, alpha = 1, radius = 20) {
-          const g = this.keep(this.add.graphics());
+          const g = this.keep(this.add.graphics().setDepth(18));
           g.fillStyle(color, alpha).fillRoundedRect(x, y, w, h, radius);
           g.lineStyle(2, 0x17191f, 0.9).strokeRoundedRect(x, y, w, h, radius);
           return g;
         }
 
         button(x: number, y: number, w: number, h: number, label: string, onClick: () => void, dark = true) {
-          const c = this.keep(this.add.container(x, y));
+          const c = this.keep(this.add.container(x, y).setDepth(30));
           const g = this.add.graphics();
           g.fillStyle(dark ? 0x17191f : 0xffffff, 1).fillRoundedRect(0, 0, w, h, 16);
           g.lineStyle(2, 0x17191f, 1).strokeRoundedRect(0, 0, w, h, 16);
