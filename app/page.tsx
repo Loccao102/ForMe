@@ -125,7 +125,7 @@ export default function Home() {
         <div className="nav-count">{String(active + 1).padStart(2, "0")} / 10</div>
       </aside>
 
-      <section className="scene intro-scene" data-scene="0">
+      <section className="scene intro-scene" data-scene="0">\n        <SceneAtmosphere index={0} />
         <div className="paper-grain" />
         <div className="intro-grid">
           <div className="fake-profile reveal">
@@ -173,7 +173,7 @@ export default function Home() {
         <p className="tiny-note bottom-note">Same facts. Better way to tell them.</p>
       </section>
 
-      <section className="scene work-scene" data-scene="1">
+      <section className="scene work-scene" data-scene="1">\n        <SceneAtmosphere index={1} />
         <SceneLabel n={2}>WORK</SceneLabel>
         <div className="work-layout">
           <div className="copy-block reveal">
@@ -203,7 +203,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene growth-scene" data-scene="2">
+      <section className="scene growth-scene" data-scene="2">\n        <SceneAtmosphere index={2} />
         <SceneLabel n={3}>SELF-GROWTH</SceneLabel>
         <div className="growth-layout">
           <div className="photo-cutout reveal">
@@ -229,7 +229,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene sports-scene" data-scene="3">
+      <section className="scene sports-scene" data-scene="3">\n        <SceneAtmosphere index={3} />
         <SceneLabel n={4}>MOVE</SceneLabel>
         <div className="sports-title reveal">
           <p className="eyebrow">TÔI KHÔNG NGỒI TRƯỚC MÁY TÍNH CẢ NGÀY.</p>
@@ -258,7 +258,7 @@ export default function Home() {
         <div className="flying-shuttle" aria-hidden="true">🏸</div>
       </section>
 
-      <section className="scene cafe-scene" data-scene="4">
+      <section className="scene cafe-scene" data-scene="4">\n        <SceneAtmosphere index={4} />
         <SceneLabel n={5}>WORK CAFÉ</SceneLabel>
         <div className="cafe-layout">
           <figure className="photo-frame reveal">
@@ -277,7 +277,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene reading-scene" data-scene="5">
+      <section className="scene reading-scene" data-scene="5">\n        <SceneAtmosphere index={5} />
         <SceneLabel n={6}>READING</SceneLabel>
         <div className="reading-layout">
           <div className="book reveal">
@@ -305,7 +305,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene talks-scene" data-scene="6">
+      <section className="scene talks-scene" data-scene="6">\n        <SceneAtmosphere index={6} />
         <SceneLabel n={7}>DEEP TALKS</SceneLabel>
         <div className="talks-bg">
           <img src={photos.cafeBlack} alt="Lộc at a café" />
@@ -330,7 +330,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene cooking-scene" data-scene="7">
+      <section className="scene cooking-scene" data-scene="7">\n        <SceneAtmosphere index={7} />
         <SceneLabel n={8}>COOKING</SceneLabel>
         <div className="kitchen">
           <div className="counter">
@@ -349,7 +349,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene imperfect-scene" data-scene="8">
+      <section className="scene imperfect-scene" data-scene="8">\n        <SceneAtmosphere index={8} />
         <SceneLabel n={9}>REALITY CHECK</SceneLabel>
         <div className="chaos-window win-one">
           <div className="browser-bar"><i /><i /><i /><span>tabs: 27</span></div>
@@ -372,7 +372,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene ending-scene" data-scene="9">
+      <section className="scene ending-scene" data-scene="9">\n        <SceneAtmosphere index={9} />
         <div className="sun" />
         <div className="city">
           <i /><i /><i /><i /><i /><i /><i /><i />
