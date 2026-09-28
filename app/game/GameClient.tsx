@@ -1075,9 +1075,70 @@ export default function GameClient() {
             this.tweens.add({ targets: pan, angle: { from: -7, to: 7 }, x: { from: -8, to: 8 }, duration: 90, yoyo: true });
             if (taps >= 3) {
               pan.disableInteractive();
-              this.text(W / 2, 520, "Tớ thích nấu ăn.", 28, "#17191f", 340, "center");
-              this.text(W / 2, 565, "Nhưng chủ yếu là nấu cho\nnhững người mình quan tâm.", 19, "#6a4b43", 340, "center");
-              this.button(58, 685, 274, 56, "show me the bad part", () => this.transitionTo(() => this.showFlaws()));
+              cookActor.head.setTexture("face-smile");
+              this.cameraNudge(0, 6, 160);
+
+              const plates = [
+                { x: 105, y: 650, emoji: "🍽️" },
+                { x: 195, y: 650, emoji: "🍽️" },
+                { x: 285, y: 650, emoji: "🍽️" },
+              ].map((item, i) => {
+                const plate = this.keep(this.add.text(item.x, item.y + 70, item.emoji, {
+                  fontSize: "42px",
+                }).setOrigin(0.5).setAlpha(0).setScale(0.7));
+
+                this.tweens.add({
+                  targets: plate,
+                  y: item.y,
+                  alpha: 1,
+                  scale: 1,
+                  duration: 420,
+                  delay: i * 120,
+                  ease: "Back.Out",
+                });
+                return plate;
+              });
+
+              const garnish = this.keep(this.add.text(W / 2, 605, "🥬  🍅  ✨", {
+                fontSize: "28px",
+              }).setOrigin(0.5).setAlpha(0));
+              this.tweens.add({
+                targets: garnish,
+                alpha: 1,
+                y: 592,
+                duration: 420,
+                delay: 260,
+                ease: "Back.Out",
+              });
+
+              this.tweens.add({
+                targets: pan,
+                y: 330,
+                scale: 0.78,
+                alpha: 0.38,
+                duration: 420,
+                ease: "Sine.InOut",
+              });
+
+              this.text(W / 2, 500, "Tớ thích nấu ăn.", 28, "#17191f", 340, "center");
+              this.text(W / 2, 545, "Nhưng chủ yếu là nấu cho\nnhững người mình quan tâm.", 19, "#6a4b43", 340, "center");
+
+              this.time.delayedCall(620, () => {
+                this.playBodySequence(
+                  cookActor,
+                  ["body-cook-a", "body-cook-b", "body-cook-a"],
+                  110
+                );
+                this.tweens.add({
+                  targets: plates,
+                  scale: 1.05,
+                  duration: 150,
+                  yoyo: true,
+                  stagger: 60,
+                });
+              });
+
+              this.button(58, 710, 274, 56, "show me the bad part", () => this.transitionTo(() => this.showFlaws()));
             }
           });
         }
@@ -1100,7 +1161,15 @@ export default function GameClient() {
           const flawShade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x17191f, 0.2));
           flawShade.setDepth(-0.5);
           this.small(22, 26, "09 / MUCH BETTER");
-          this.faceCharacter(315, 120, 0.36, "body-deadpan", "face-deadpan", false);
+          const flawActor = this.faceCharacter(315, 120, 0.36, "body-deadpan", "face-deadpan", false);
+          this.tweens.add({
+            targets: flawActor.container,
+            y: 126,
+            duration: 1800,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.InOut",
+          });
           this.text(W / 2, 75, "lol no.", 64, "#17191f", 350, "center");
           const clock = this.panel(218, 165, 150, 75, 0x17191f, 1, 16);
           this.text(235, 180, "02:17 AM", 24, "#ffd76d");
@@ -1108,8 +1177,18 @@ export default function GameClient() {
           this.small(38, 286, "tabs: 27");
           ["portfolio", "new project", "another project", "sleep earlier?"].forEach((v, i) => this.small(38, 320 + i * 28, v));
           flawTags.forEach((tag, i) => {
-            this.panel(32, 485 + i * 50, 326, 38, i % 2 ? 0xffe5dc : 0xe6ecff, 1, 14);
-            this.small(48, 498 + i * 50, tag);
+            const card = this.panel(32, 485 + i * 50, 326, 38, i % 2 ? 0xffe5dc : 0xe6ecff, 1, 14);
+            card.setAlpha(0).setX(i % 2 ? 40 : -40);
+            const label = this.small(48, 498 + i * 50, tag);
+            label.setAlpha(0).setX(i % 2 ? 56 : 8);
+            this.tweens.add({
+              targets: [card, label],
+              x: 0,
+              alpha: 1,
+              duration: 360,
+              delay: 120 + i * 110,
+              ease: "Back.Out",
+            });
           });
           this.text(W / 2, 705, "Better?", 22, "#17191f", 340, "center");
           this.button(92, 750, 206, 50, "Much.", () => this.transitionTo(() => this.showEnding(), 360));
