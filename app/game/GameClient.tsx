@@ -225,6 +225,12 @@ export default function GameClient() {
           return g;
         }
 
+        haptic(pattern: number | number[] = 10) {
+          if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+            navigator.vibrate(pattern);
+          }
+        }
+
         button(x: number, y: number, w: number, h: number, label: string, onClick: () => void, dark = true) {
           const c = this.keep(this.add.container(x, y).setDepth(30).setScrollFactor(0));
           const g = this.add.graphics();
@@ -245,6 +251,7 @@ export default function GameClient() {
           c.add([g, t, a]);
           c.setSize(w, h).setInteractive({ useHandCursor: true });
           c.on("pointerdown", () => {
+            this.haptic(8);
             this.audio.pop();
             this.tweens.add({ targets: c, scale: 0.97, duration: 70, yoyo: true, onComplete: onClick });
           });
@@ -762,6 +769,7 @@ export default function GameClient() {
 
         showIntro() {
           this.stage = 0;
+          this.clueLabel?.setVisible(false);
           this.clearScene(0xfff8ec);
           this.artBackground("rooftop-bg", 0.94);
           this.midgroundParallax("rooftop");
@@ -962,6 +970,7 @@ export default function GameClient() {
             if (lifting) return;
             lifting = true;
             reps += 1;
+            this.haptic(12);
             this.audio.pop();
             gymActor.head.setTexture(reps >= 3 ? "face-smile" : "face-neutral");
             repText.setText("rep " + reps + (reps >= 3 ? " · okay, enough 😅" : ""));
@@ -1106,10 +1115,12 @@ export default function GameClient() {
               ease: "Back.Out",
             });
             if (ok) {
+              this.haptic([12, 24, 18]);
               this.audio.hit();
               this.speedLines(360, 1);
               this.cameraNudge(10, -3, 120);
             } else {
+              this.haptic(28);
               this.audio.wrong();
               this.cameraNudge(-7, 5, 140);
             }
@@ -1586,6 +1597,7 @@ export default function GameClient() {
           let taps = 0;
           pan.on("pointerdown", () => {
             taps += 1;
+            this.haptic(10);
             this.audio.sizzle();
             this.playBodySequence(
               cookActor,
@@ -1857,6 +1869,15 @@ export default function GameClient() {
               ease: "Back.Out",
               onComplete: () => cta.setInteractive({ useHandCursor: true }),
             });
+
+            const replay = this.small(W / 2 - 34, 805, "REPLAY ↺", "#ffffff");
+            replay.setAlpha(0).setInteractive({ useHandCursor: true });
+            replay.on("pointerdown", () => {
+              this.haptic(8);
+              this.state = {};
+              this.transitionTo(() => this.showIntro(), 260);
+            });
+            this.tweens.add({ targets: replay, alpha: 0.72, duration: 380, delay: 520 });
           });
         }
       }
