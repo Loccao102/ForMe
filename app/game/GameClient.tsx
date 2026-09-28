@@ -39,6 +39,7 @@ export default function GameClient() {
         soundEnabled = false;
         soundToggle: any = null;
         soundLabel: any = null;
+        clueLabel: any = null;
 
         constructor() {
           super("main");
@@ -111,6 +112,14 @@ export default function GameClient() {
           this.cameras.main.setBackgroundColor("#fff8ec");
           this.bg = this.add.graphics().setDepth(-20);
           this.progress = this.add.graphics().setDepth(50).setScrollFactor(0);
+          this.clueLabel = this.add.text(12, 10, "CLUES 0/7", {
+            fontFamily: "monospace",
+            fontSize: "9px",
+            fontStyle: "bold",
+            color: "#ffffff",
+            backgroundColor: "rgba(17,21,27,0.45)",
+            padding: { x: 7, y: 4 },
+          }).setDepth(120).setScrollFactor(0).setVisible(false);
 
           const soundBg = this.add.graphics();
           soundBg.fillStyle(0x11151b, 0.7).fillRoundedRect(-38, -15, 76, 30, 12);
@@ -178,8 +187,13 @@ export default function GameClient() {
         drawProgress() {
           this.progress.clear();
           this.progress.fillStyle(0x11151b, 0.08).fillRect(0, 0, W, 4);
-          const p = Math.max(0.04, (this.stage + 1) / 9);
+          const p = Math.max(0.04, Math.min(1, this.stage / 9));
           this.progress.fillStyle(0x2f80d8, 1).fillRect(0, 0, W * p, 4);
+          if (this.clueLabel) {
+            const clueByStage = [0, 1, 2, 3, 4, 4, 5, 6, 7, 7];
+            const clues = clueByStage[Math.min(this.stage, clueByStage.length - 1)] ?? 0;
+            this.clueLabel.setText("CLUES " + clues + "/7");
+          }
         }
 
         text(x: number, y: number, value: string, size = 24, color = "#17191f", width = 330, align: "left" | "center" = "left") {
@@ -772,6 +786,7 @@ export default function GameClient() {
             this.soundEnabled = true;
             this.soundLabel.setText("SOUND ON");
             this.soundToggle.setVisible(true);
+            this.clueLabel.setVisible(true);
             this.showImpression();
           });
           this.button(24, 605, 342, 58, "PLAY MUTED", async () => {
@@ -779,6 +794,7 @@ export default function GameClient() {
             this.soundEnabled = false;
             this.soundLabel.setText("MUTED");
             this.soundToggle.setVisible(true);
+            this.clueLabel.setVisible(true);
             this.showImpression();
           }, false);
 
