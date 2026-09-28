@@ -1710,7 +1710,9 @@ export default function GameClient() {
               ease: "Sine.InOut",
             });
           });
-          this.text(W / 2, 75, "So...", 34, "#ffffff", 350, "center");
+          const soText = this.text(W / 2, 75, "So...", 34, "#ffffff", 350, "center");
+          soText.setAlpha(0);
+          this.tweens.add({ targets: soText, alpha: 1, y: 68, duration: 360, ease: "Back.Out" });
 
           const first = impressionOptions.find((o) => o.id === this.state.impression)?.label ?? "something";
           const seat = seatOptions.find((o) => o.id === this.state.seat)?.label ?? "a seat";
@@ -1722,24 +1724,86 @@ export default function GameClient() {
             "You " + sport + ".",
             "And you asked: “" + q + "”",
           ];
-          lines.forEach((line, i) => {
-            this.keep(this.add.text(28, 150 + i * 55, line, {
-              fontFamily: "Arial", fontSize: "16px", fontStyle: "bold", color: "#ffffff",
-              wordWrap: { width: 334 }, lineSpacing: 3,
-            }));
+
+          const memoryLines = lines.map((line, i) => {
+            const t = this.keep(this.add.text(28, 150 + i * 55, line, {
+              fontFamily: "Arial",
+              fontSize: "16px",
+              fontStyle: "bold",
+              color: "#ffffff",
+              wordWrap: { width: 334 },
+              lineSpacing: 3,
+            }).setDepth(20).setScrollFactor(0).setAlpha(0).setX(48));
+
+            this.tweens.add({
+              targets: t,
+              x: 28,
+              alpha: 1,
+              duration: 380,
+              delay: 280 + i * 260,
+              ease: "Back.Out",
+            });
+            return t;
           });
 
-          this.panel(28, 405, 334, 180, 0xffffff, 0.16, 22);
-          this.text(W / 2, 435, "YOU KNOW LOC", 16, "#ffffff", 300, "center");
-          this.text(W / 2, 475, "7%", 58, "#ffffff", 300, "center");
-          this.text(W / 2, 555, "Not bad.", 16, "#ffffff", 300, "center");
+          const resultPanel = this.panel(28, 405, 334, 180, 0xffffff, 0.16, 22);
+          const resultTitle = this.text(W / 2, 435, "YOU KNOW LOC", 16, "#ffffff", 300, "center");
+          const resultPercent = this.text(W / 2, 475, "0%", 58, "#ffffff", 300, "center");
+          const resultNote = this.text(W / 2, 555, "Not bad.", 16, "#ffffff", 300, "center");
+          [resultPanel, resultTitle, resultPercent, resultNote].forEach((o: any) => o.setAlpha(0));
 
-          this.text(W / 2, 625, "The other 93% probably needs\nan actual conversation.", 22, "#ffffff", 350, "center");
-          this.button(44, 730, 302, 58, "SAY HI", () => {
+          const meterBg = this.keep(this.add.rectangle(195, 585, 250, 5, 0xffffff, 0.18).setDepth(20).setScrollFactor(0).setAlpha(0));
+          const meter = this.keep(this.add.rectangle(70, 585, 0, 5, 0xffd76d, 1).setOrigin(0, 0.5).setDepth(21).setScrollFactor(0).setAlpha(0));
+
+          this.time.delayedCall(1420, () => {
+            this.audio.chime();
+            this.tweens.add({
+              targets: [resultPanel, resultTitle, resultPercent, resultNote, meterBg, meter],
+              alpha: 1,
+              duration: 320,
+              ease: "Sine.Out",
+            });
+
+            const counter = { value: 0 };
+            this.tweens.add({
+              targets: counter,
+              value: 7,
+              duration: 920,
+              ease: "Cubic.Out",
+              onUpdate: () => {
+                const value = Math.round(counter.value);
+                resultPercent.setText(value + "%");
+                meter.width = 250 * (value / 100);
+              },
+              onComplete: () => {
+                this.dustBurst(W / 2, 510, 0xffd76d, 12);
+                this.squash(endActor, 0.025, 130);
+              },
+            });
+          });
+
+          const restText = this.text(W / 2, 625, "The other 93% probably needs\nan actual conversation.", 22, "#ffffff", 350, "center");
+          restText.setAlpha(0);
+
+          const cta = this.button(44, 730, 302, 58, "SAY HI", () => {
             const url = process.env.NEXT_PUBLIC_CONTACT_URL;
             if (url) window.open(url, "_blank", "noopener,noreferrer");
             else this.speech("Chưa gắn link chat — nhưng ít nhất game chạy rồi 😅", 650);
           }, false);
+          cta.setAlpha(0).disableInteractive();
+
+          this.time.delayedCall(2500, () => {
+            this.tweens.add({ targets: restText, alpha: 1, y: 615, duration: 420, ease: "Back.Out" });
+            this.tweens.add({
+              targets: cta,
+              alpha: 1,
+              y: 720,
+              duration: 460,
+              delay: 180,
+              ease: "Back.Out",
+              onComplete: () => cta.setInteractive({ useHandCursor: true }),
+            });
+          });
         }
       }
 
