@@ -1877,3 +1877,635 @@ button { color: inherit; }
     font-size: .58rem;
   }
 }
+
+
+/* =========================================================
+   MOBILE-FIRST SCENE ART CORE — v2
+   The story is composed for a phone first; desktop expands it.
+   ========================================================= */
+
+.cinematic-art {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: visible;
+}
+
+.art-image-shell {
+  position: relative;
+  width: 100%;
+  min-height: 54svh;
+  overflow: hidden;
+  border: 1.5px solid rgba(23,25,31,.72);
+  border-radius: 28px;
+  background: #17191f;
+  box-shadow:
+    0 24px 60px rgba(25,30,38,.18),
+    8px 10px 0 rgba(23,25,31,.10);
+  transform: translateZ(0);
+}
+
+.art-image-shell img {
+  position: absolute;
+  inset: -7% -4%;
+  width: 108%;
+  height: 114%;
+  max-width: none;
+  object-fit: cover;
+  will-change: transform;
+  filter: saturate(.86) contrast(1.03);
+}
+
+.art-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(10,12,16,.03), transparent 48%, rgba(10,12,16,.45)),
+    radial-gradient(circle at 50% 42%, transparent 30%, rgba(10,12,16,.18) 100%);
+}
+
+.art-scanline {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  top: -25%;
+  height: 22%;
+  opacity: .24;
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.48), transparent);
+  animation: scan-art 5.8s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes scan-art {
+  0%, 16% { transform: translateY(0); opacity: 0; }
+  25% { opacity: .24; }
+  70% { opacity: .12; }
+  88%, 100% { transform: translateY(570%); opacity: 0; }
+}
+
+.art-caption {
+  position: absolute;
+  z-index: 7;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255,255,255,.26);
+  border-radius: 15px;
+  color: white;
+  background: rgba(15,17,21,.44);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: .67rem;
+  letter-spacing: .05em;
+}
+
+.art-caption span {
+  font: 900 .62rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .1em;
+}
+
+.art-caption b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Gym: environment first, no posed body shot */
+.gym-art {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.gym-art::before { display: none; }
+
+.gym-art > img { display: none; }
+
+.gym-art .art-image-shell {
+  min-height: 55svh;
+}
+
+.gym-art .art-image-shell img {
+  min-height: 0;
+  border-radius: 0;
+}
+
+.gym-height-badge {
+  top: 12%;
+  right: 10px;
+  min-width: 116px;
+  z-index: 8;
+  box-shadow: 4px 5px 0 rgba(23,25,31,.82);
+}
+
+.gym-orbit-note {
+  z-index: 8;
+  max-width: 150px;
+  font-size: .7rem;
+}
+
+.gym-art .note-one {
+  left: 8px;
+  bottom: 22%;
+}
+
+.gym-art .note-two {
+  right: 16px;
+  bottom: -18px;
+}
+
+/* Work café: the subject is the desk, not a portrait */
+.cafe-desk-art {
+  width: 100%;
+}
+
+.cafe-desk-art .art-image-shell {
+  min-height: 52svh;
+  transform: rotate(-.55deg);
+}
+
+.cafe-desk-art .art-image-shell img {
+  object-position: center 55%;
+  filter: saturate(.80) contrast(1.04) brightness(.94);
+}
+
+.cafe-warm-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(145deg, rgba(255,213,144,.15), transparent 45%),
+    linear-gradient(0deg, rgba(45,27,18,.30), transparent 45%);
+  mix-blend-mode: screen;
+}
+
+.fake-cursor {
+  position: absolute;
+  z-index: 8;
+  left: 46%;
+  top: 45%;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #fff;
+  background: rgba(20,22,26,.72);
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 11px;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.22);
+  backdrop-filter: blur(10px);
+}
+
+.desk-status {
+  position: absolute;
+  z-index: 8;
+  top: 16px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 999px;
+  color: white;
+  background: rgba(20,22,26,.52);
+  backdrop-filter: blur(12px);
+  font: 850 .68rem/1 ui-monospace, monospace;
+}
+
+.desk-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #80e69e;
+  box-shadow: 0 0 0 5px rgba(128,230,158,.13);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  50% { transform: scale(.72); opacity: .6; }
+}
+
+.coffee-ring {
+  position: absolute;
+  z-index: 6;
+  left: 8%;
+  bottom: 16%;
+  width: 76px;
+  height: 76px;
+  border: 5px solid rgba(116,66,34,.34);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  filter: blur(.2px);
+  opacity: .55;
+}
+
+/* Mobile gets the designed experience first */
+@media (max-width: 860px) {
+  html {
+    scroll-snap-type: y proximity;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    background: #fffaf2;
+  }
+
+  .scene {
+    min-height: 100svh;
+    padding: 68px 16px 82px;
+    scroll-snap-align: start;
+  }
+
+  .scene h2 {
+    font-size: clamp(2.65rem, 13vw, 4.5rem);
+    line-height: .91;
+    letter-spacing: -.062em;
+    margin-bottom: 18px;
+  }
+
+  .scene-copy,
+  .lead {
+    font-size: .98rem;
+    line-height: 1.56;
+  }
+
+  .scene-label {
+    left: 16px;
+    top: 18px;
+  }
+
+  .scene-label span {
+    width: 34px;
+    height: 34px;
+    font-size: .7rem;
+  }
+
+  .scene-label b {
+    display: block;
+    font-size: .62rem;
+  }
+
+  .story-progress {
+    height: 3px;
+  }
+
+  .story-nav {
+    bottom: max(12px, env(safe-area-inset-bottom));
+    max-width: calc(100vw - 78px);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(23,25,31,.10);
+  }
+
+  .next-scene {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .intro-scene {
+    display: block;
+    padding-top: 74px;
+  }
+
+  .intro-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .fake-profile {
+    order: 2;
+    width: min(340px, 94vw);
+    margin: 0 auto;
+    padding: 14px;
+    border-radius: 22px;
+    transform: rotate(-1.4deg) scale(.93);
+    transform-origin: top center;
+  }
+
+  .intro-copy {
+    order: 1;
+    text-align: left;
+  }
+
+  .intro-copy h1 {
+    font-size: clamp(3.5rem, 17vw, 5.8rem);
+    line-height: .86;
+    margin-bottom: 16px;
+  }
+
+  .intro-copy .lead {
+    margin: 0 0 22px;
+  }
+
+  .intro-copy .primary {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .scribble {
+    top: -18px;
+    right: 4px;
+  }
+
+  .work-layout,
+  .growth-layout,
+  .cafe-layout,
+  .reading-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+  }
+
+  .work-layout .copy-block,
+  .growth-layout .copy-block,
+  .cafe-layout .copy-block {
+    order: 2;
+  }
+
+  .browser-card,
+  .gym-art,
+  .cafe-desk-art {
+    order: 1;
+    width: 100%;
+  }
+
+  .browser-card {
+    border-radius: 20px;
+    transform: rotate(.6deg);
+  }
+
+  .terminal {
+    min-height: 285px;
+    display: grid;
+    align-content: center;
+  }
+
+  .work-sticker {
+    right: 6px;
+    bottom: -20px;
+  }
+
+  .growth-scene {
+    background:
+      radial-gradient(circle at 85% 10%, rgba(142,226,170,.28), transparent 32%),
+      #f3f7ef;
+  }
+
+  .growth-layout {
+    gap: 34px;
+  }
+
+  .growth-layout .copy-block {
+    order: 2 !important;
+  }
+
+  .gym-art {
+    order: 1;
+  }
+
+  .gym-art .art-image-shell {
+    min-height: 51svh;
+    border-radius: 26px;
+  }
+
+  .gym-height-badge {
+    right: 9px;
+    top: 12%;
+    padding: 11px 12px;
+  }
+
+  .gym-height-badge b {
+    font-size: 1.25rem;
+  }
+
+  .gym-height-badge span {
+    font-size: .58rem;
+  }
+
+  .growth-bars {
+    margin-top: 22px;
+    gap: 13px;
+  }
+
+  .sports-scene {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .sports-title {
+    padding: 0 16px;
+    margin: 16px auto 28px;
+  }
+
+  .sport-track {
+    display: flex;
+    width: 100%;
+    gap: 12px;
+    padding: 8px 16px 28px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .sport-track::-webkit-scrollbar { display: none; }
+
+  .sport-card {
+    flex: 0 0 min(78vw, 340px);
+    min-height: 46svh;
+    scroll-snap-align: center;
+    border-radius: 26px;
+  }
+
+  .sport-card h3 {
+    font-size: 3rem;
+  }
+
+  .sport-icon {
+    font-size: 5.3rem;
+  }
+
+  .sport-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -20% -22% 10%;
+    height: 48%;
+    border-radius: 50%;
+    background: rgba(255,255,255,.26);
+    transform: rotate(-8deg);
+  }
+
+  .cafe-layout {
+    gap: 30px;
+  }
+
+  .cafe-desk-art .art-image-shell {
+    min-height: 50svh;
+    border-radius: 26px;
+  }
+
+  .cafe-chips {
+    margin-top: 18px;
+  }
+
+  .reading-scene {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .reading-layout {
+    gap: 22px;
+  }
+
+  .book {
+    min-height: 48svh;
+    width: calc(100vw - 24px);
+    grid-template-columns: 1fr 7px 1fr;
+    filter: drop-shadow(0 18px 30px rgba(33,28,60,.15));
+  }
+
+  .page {
+    padding: 24px 13px;
+  }
+
+  .page p {
+    margin-top: 54px;
+    font-size: clamp(1.2rem, 5.6vw, 1.95rem);
+  }
+
+  .reading-side {
+    padding: 0 8px;
+    text-align: left;
+  }
+
+  .talks-scene {
+    min-height: 112svh;
+    align-items: end;
+    padding-bottom: 112px;
+  }
+
+  .talks-bg img {
+    object-position: 43% 26%;
+  }
+
+  .talks-gradient {
+    background:
+      linear-gradient(0deg, rgba(11,12,15,.98) 0 48%, rgba(11,12,15,.12) 79%),
+      linear-gradient(90deg, rgba(11,12,15,.06), rgba(11,12,15,.48));
+  }
+
+  .talks-copy {
+    width: 100%;
+    margin: 0;
+  }
+
+  .talks-copy h2 {
+    font-size: clamp(2.65rem, 12vw, 4.4rem);
+  }
+
+  .bubbles {
+    gap: 7px;
+  }
+
+  .bubbles span {
+    font-size: .7rem;
+    padding: 8px 10px;
+  }
+
+  .cooking-scene {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 68px;
+  }
+
+  .kitchen {
+    order: 1;
+    min-height: 42svh;
+    width: 100%;
+  }
+
+  .cooking-copy {
+    order: 2;
+    width: 100%;
+  }
+
+  .cooking-copy h2 {
+    margin-bottom: 10px;
+  }
+
+  .cooking-copy .big-line {
+    font-size: clamp(2rem, 10.8vw, 3.5rem);
+  }
+
+  .imperfect-scene {
+    min-height: 108svh;
+  }
+
+  .imperfect-copy h2 {
+    font-size: clamp(5.4rem, 26vw, 8rem);
+  }
+
+  .chaos-window {
+    opacity: .48;
+  }
+
+  .ending-scene {
+    min-height: 105svh;
+    padding: 70px 16px 84px;
+  }
+
+  .ending-card {
+    width: 100%;
+    border-radius: 28px;
+    padding: 34px 20px 38px;
+  }
+
+  .ending-card h2 {
+    font-size: clamp(3.4rem, 15vw, 5.2rem);
+  }
+}
+
+/* Desktop enhancement — same composition, more breathing room */
+@media (min-width: 861px) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+
+  .art-image-shell {
+    min-height: 520px;
+    border-radius: 34px;
+  }
+
+  .gym-art .art-image-shell,
+  .cafe-desk-art .art-image-shell {
+    min-height: 540px;
+  }
+
+  .cafe-desk-art {
+    width: min(650px, 100%);
+  }
+
+  .sport-card {
+    transition: box-shadow .25s ease;
+  }
+
+  .sport-card:hover {
+    box-shadow: 14px 18px 0 rgba(23,25,31,.12);
+  }
+}
