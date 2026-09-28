@@ -320,7 +320,7 @@ export default function GameClient() {
         }
 
         foregroundParallax(color = 0x11151b, alpha = 0.12, speed = 6000) {
-          const near = this.keep(this.add.graphics().setDepth(20));
+          const near = this.keep(this.add.graphics().setDepth(-0.1));
           near.fillStyle(color, alpha);
           near.fillEllipse(-30, H - 80, 150, 110);
           near.fillEllipse(W + 20, H - 55, 190, 130);
