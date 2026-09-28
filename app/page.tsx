@@ -107,7 +107,8 @@ export default function Home() {
   };
 
   return (
-    <main className="story" ref={rootRef}>\n      <div className="story-progress" aria-hidden="true"><StoryProgress value={(active + 1) / 10} /></div>
+    <main className="story" ref={rootRef}>
+      <div className="story-progress" aria-hidden="true"><StoryProgress value={(active + 1) / 10} /></div>
       <aside className="story-nav" aria-label="Story progress">
         <div className="nav-name">LOC / 90 SEC</div>
         <div className="dots">
@@ -125,7 +126,8 @@ export default function Home() {
         <div className="nav-count">{String(active + 1).padStart(2, "0")} / 10</div>
       </aside>
 
-      <section className="scene intro-scene" data-scene="0">\n        <SceneAtmosphere index={0} />
+      <section className="scene intro-scene" data-scene="0">
+        <SceneAtmosphere index={0} />
         <div className="paper-grain" />
         <div className="intro-grid">
           <div className="fake-profile reveal">
@@ -173,7 +175,8 @@ export default function Home() {
         <p className="tiny-note bottom-note">Same facts. Better way to tell them.</p>
       </section>
 
-      <section className="scene work-scene" data-scene="1">\n        <SceneAtmosphere index={1} />
+      <section className="scene work-scene" data-scene="1">
+        <SceneAtmosphere index={1} />
         <SceneLabel n={2}>WORK</SceneLabel>
         <div className="work-layout">
           <div className="copy-block reveal">
@@ -203,7 +206,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene growth-scene" data-scene="2">\n        <SceneAtmosphere index={2} />
+      <section className="scene growth-scene" data-scene="2">
+        <SceneAtmosphere index={2} />
         <SceneLabel n={3}>SELF-GROWTH</SceneLabel>
         <div className="growth-layout">
           <div className="photo-cutout reveal">
@@ -229,7 +233,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene sports-scene" data-scene="3">\n        <SceneAtmosphere index={3} />
+      <section className="scene sports-scene" data-scene="3">
+        <SceneAtmosphere index={3} />
         <SceneLabel n={4}>MOVE</SceneLabel>
         <div className="sports-title reveal">
           <p className="eyebrow">TÔI KHÔNG NGỒI TRƯỚC MÁY TÍNH CẢ NGÀY.</p>
@@ -241,24 +246,25 @@ export default function Home() {
             <h3>Football</h3>
             <p>Chạy nhiều hơn mình tưởng.</p>
             <Doodle>pass!</Doodle>
-          </article>
-          <article className="sport-card badminton reveal delay-1">
+          </motion.article>
+          <motion.article className="sport-card badminton reveal delay-1" whileHover={{ y: -12, rotate: 2, scale: 1.02 }} transition={{ type: "spring", stiffness: 260, damping: 18 }}>
             <span className="sport-icon">🏸</span>
             <h3>Badminton</h3>
             <p>Môn dễ khiến tôi nghiêm túc hơi quá.</p>
             <Doodle>one more game?</Doodle>
-          </article>
-          <article className="sport-card running reveal delay-2">
+          </motion.article>
+          <motion.article className="sport-card running reveal delay-2" whileHover={{ y: -12, rotate: -1, scale: 1.02 }} transition={{ type: "spring", stiffness: 260, damping: 18 }}>
             <span className="sport-icon">⌁</span>
             <h3>Running</h3>
             <p>Đầu óc thường yên hơn sau vài km.</p>
             <Doodle>keep moving →</Doodle>
-          </article>
+          </motion.article>
         </div>
         <div className="flying-shuttle" aria-hidden="true">🏸</div>
       </section>
 
-      <section className="scene cafe-scene" data-scene="4">\n        <SceneAtmosphere index={4} />
+      <section className="scene cafe-scene" data-scene="4">
+        <SceneAtmosphere index={4} />
         <SceneLabel n={5}>WORK CAFÉ</SceneLabel>
         <div className="cafe-layout">
           <figure className="photo-frame reveal">
@@ -277,7 +283,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene reading-scene" data-scene="5">\n        <SceneAtmosphere index={5} />
+      <section className="scene reading-scene" data-scene="5">
+        <SceneAtmosphere index={5} />
         <SceneLabel n={6}>READING</SceneLabel>
         <div className="reading-layout">
           <motion.div className="book reveal" initial={{ rotateX: 8, rotateZ: -2 }} whileInView={{ rotateX: 2, rotateZ: -1 }} viewport={{ amount: 0.45 }} transition={{ duration: 0.9, ease: "easeOut" }}>
@@ -291,7 +298,7 @@ export default function Home() {
               <p>Con người cũng vậy.</p>
               <div className="highlight" />
             </div>
-          </div>
+          </motion.div>
           <div className="reading-side reveal delay-1">
             <p className="scene-copy">
               Đọc với tôi không phải để đếm số cuốn. Tôi chỉ thích cảm giác có thêm một góc nhìn mới.
@@ -305,7 +312,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene talks-scene" data-scene="6">\n        <SceneAtmosphere index={6} />
+      <section className="scene talks-scene" data-scene="6">
+        <SceneAtmosphere index={6} />
         <SceneLabel n={7}>DEEP TALKS</SceneLabel>
         <div className="talks-bg">
           <motion.img src={photos.cafeBlack} alt="Lộc ở quán cà phê" animate={{ scale: [1.06, 1.1, 1.06], x: [0, -10, 0] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} />
@@ -330,12 +338,20 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene cooking-scene" data-scene="7">\n        <SceneAtmosphere index={7} />
+      <section className="scene cooking-scene" data-scene="7">
+        <SceneAtmosphere index={7} />
         <SceneLabel n={8}>COOKING</SceneLabel>
         <div className="kitchen">
           <div className="counter">
-            <div className="pan">🍳</div>
-            <div className="ingredients">🥬 &nbsp; 🍅 &nbsp; 🥩 &nbsp; 🧄</div>
+            <motion.div className="pan" animate={{ rotate: [-9, -6, -10, -9], y: [0, -2, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}>
+              <span className="pan-food">fresh dinner</span>
+            </motion.div>
+            <div className="ingredients">
+              <motion.i animate={{ y: [0, -7, 0] }} transition={{ duration: 3, repeat: Infinity }} />
+              <motion.i animate={{ y: [0, 6, 0] }} transition={{ duration: 3.7, repeat: Infinity }} />
+              <motion.i animate={{ y: [0, -5, 0] }} transition={{ duration: 4.2, repeat: Infinity }} />
+              <motion.i animate={{ y: [0, 7, 0] }} transition={{ duration: 3.4, repeat: Infinity }} />
+            </div>
           </div>
           <div className="plates">
             <span>🍽️</span><span>🍽️</span><span>🍽️</span>
@@ -349,16 +365,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene imperfect-scene" data-scene="8">\n        <SceneAtmosphere index={8} />
+      <section className="scene imperfect-scene" data-scene="8">
+        <SceneAtmosphere index={8} />
         <SceneLabel n={9}>REALITY CHECK</SceneLabel>
-        <div className="chaos-window win-one">
+        <motion.div className="chaos-window win-one" animate={{ y: [0, -10, 0], rotate: [-8, -5, -8] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
           <div className="browser-bar"><i /><i /><i /><span>tabs: 27</span></div>
           <p>portfolio</p><p>new project idea</p><p>another new project idea</p><p>how to sleep earlier</p>
-        </div>
-        <div className="chaos-window win-two">
+        </motion.div>
+        <motion.div className="chaos-window win-two" animate={{ y: [0, 9, 0], rotate: [7, 4, 7] }} transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}>
           <b>02:17 AM</b>
           <span>“mình sửa nốt cái này thôi”</span>
-        </div>
+        </motion.div>
         <div className="imperfect-copy reveal">
           <p className="narrator">Narrator: “Nghe có vẻ mọi thứ ổn hết nhỉ?”</p>
           <h2>lol no.</h2>
@@ -372,8 +389,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="scene ending-scene" data-scene="9">\n        <SceneAtmosphere index={9} />
-        <div className="sun" />
+      <section className="scene ending-scene" data-scene="9">
+        <SceneAtmosphere index={9} />
+        <motion.div className="sun" animate={{ scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
         <div className="city">
           <i /><i /><i /><i /><i /><i /><i /><i />
         </div>
