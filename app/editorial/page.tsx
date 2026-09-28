@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { photos } from "../photos";
 import styles from "./editorial.module.css";
@@ -74,7 +74,16 @@ export default function EditorialPage() {
   const [impression, setImpression] = useState<string | null>(null);
   const [question, setQuestion] = useState<QuestionKey | null>(null);
   const [contactHint, setContactHint] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 900px)");
+    const sync = () => setIsMobile(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   const heroRef = useRef<HTMLElement>(null);
   const workRef = useRef<HTMLElement>(null);
@@ -103,7 +112,7 @@ export default function EditorialPage() {
     offset: ["start start", "end end"],
   });
   const afterSmooth = useSpring(afterProgress, { stiffness: 88, damping: 26, mass: 0.38 });
-  const afterX = useTransform(afterSmooth, [0, 1], ["0vw", reduceMotion ? "0vw" : "-300vw"]);
+  const afterX = useTransform(afterSmooth, [0, 1], ["0vw", reduceMotion ? "0vw" : "-200vw"]);
 
   const { scrollYProgress: cafeProgress } = useScroll({
     target: cafeRef,
@@ -281,30 +290,29 @@ export default function EditorialPage() {
       <section ref={afterRef} className={styles.after}>
         <div className={styles.afterSticky}>
           <div className={styles.sectionNoLight}>04 / AFTER WORK</div>
-          <motion.div className={styles.afterTrack} style={{ x: afterX }}>
+          <motion.div className={styles.afterTrack} style={{ x: isMobile ? 0 : afterX }}>
             <article className={styles.afterPanel + " " + styles.badminton}>
-              <span className={styles.afterIndex}>01</span>
+              <span className={styles.afterIndex}>01 / 03</span>
+              <p className={styles.sportKicker}>after work · favourite sport</p>
               <h3>BADMINTON</h3>
               <p>The “one last game” lie is alive and well.</p>
-              <div className={styles.shuttle}>◒</div>
+              <div className={styles.shuttleArt} aria-hidden="true">
+                <i /><i /><i /><b />
+              </div>
             </article>
             <article className={styles.afterPanel + " " + styles.football}>
-              <span className={styles.afterIndex}>02</span>
+              <span className={styles.afterIndex}>02 / 03</span>
+              <p className={styles.sportKicker}>switch off the brain</p>
               <h3>FOOTBALL</h3>
               <p>Good excuse to stop thinking and just move.</p>
-              <div className={styles.ball}>●</div>
+              <div className={styles.ballArt} aria-hidden="true"><i /></div>
             </article>
             <article className={styles.afterPanel + " " + styles.running}>
-              <span className={styles.afterIndex}>03</span>
+              <span className={styles.afterIndex}>03 / 03</span>
+              <p className={styles.sportKicker}>reset button</p>
               <h3>RUNNING</h3>
               <p>A few kilometres can reset a surprisingly noisy brain.</p>
-              <div className={styles.route}>⌁⌁⌁⌁⌁</div>
-            </article>
-            <article className={styles.afterPanel + " " + styles.coffeePanel}>
-              <span className={styles.afterIndex}>04</span>
-              <h3>COFFEE.</h3>
-              <p>And eventually, everything somehow ends here.</p>
-              <div className={styles.cup}>◯</div>
+              <div className={styles.runArt} aria-hidden="true"><i /><i /><i /></div>
             </article>
           </motion.div>
         </div>
