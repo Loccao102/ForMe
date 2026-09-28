@@ -210,18 +210,14 @@ export default function Home() {
         <SceneAtmosphere index={2} />
         <SceneLabel n={3}>SELF-GROWTH</SceneLabel>
         <div className="growth-layout">
-          <div className="photo-cutout reveal">
-            <img src={photos.fullbody} alt="Lộc standing" />
-            <div className="height-line"><span>1m86</span></div>
-            <Doodle className="weight-tag">~90kg</Doodle>
-          </div>
+          <GymRoomArt />
 
           <div className="copy-block reveal delay-1">
             <p className="eyebrow">NOT A TRANSFORMATION POST</p>
             <h2>Chỉ đang cố tốt hơn một chút mỗi ngày.</h2>
             <p className="scene-copy">
-              Gym không phải để trông như siêu anh hùng. Với tôi nó là chuyện khỏe hơn,
-              kỷ luật hơn và giữ lời hứa với chính mình.
+              Tôi chưa phải kiểu người bước vào phòng tập là ai cũng ngoái nhìn. Mục tiêu đơn giản hơn:
+              khỏe hơn, kỷ luật hơn và tiếp tục xuất hiện kể cả những ngày rất bình thường.
             </p>
             <div className="growth-bars">
               <div><span>healthier</span><i style={{ width: "72%" }} /></div>
