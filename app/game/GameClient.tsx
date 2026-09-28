@@ -522,11 +522,30 @@ export default function GameClient() {
           const cafeActor = this.faceCharacter(285, 300, 0.42, "body-seated", "face-smile", true);
           cafeActor.container.setDepth(2);
 
+          let picked = false;
           seatOptions.forEach((s, i) => {
             this.button(30, 540 + i * 66, 330, 50, s.label, () => {
+              if (picked) return;
+              picked = true;
               this.state.seat = s.id;
               this.audio.chime();
-              this.showBook();
+
+              const targetX = s.id === "window" ? 115 : s.id === "corner" ? 286 : 205;
+              const reply = s.id === "window"
+                ? "Window seat. Good choice."
+                : s.id === "corner"
+                  ? "Quiet corner. Tớ cũng hay chọn chỗ này."
+                  : "Outside? Okay, miễn là trời không quá nóng.";
+
+              cafeActor.head.setTexture("face-smile");
+              this.tweens.add({
+                targets: cafeActor.container,
+                x: targetX,
+                duration: 520,
+                ease: "Back.Out",
+              });
+              this.speech(reply, 420);
+              this.time.delayedCall(900, () => this.showBook());
             }, i === 0);
           });
         }
@@ -539,7 +558,7 @@ export default function GameClient() {
           this.small(22, 26, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
-          const book = this.keep(this.add.container(195, 330));
+          const book = this.keep(this.add.container(195, 330).setScale(0.15).setAlpha(0));
           const left = this.add.graphics();
           left.fillStyle(0xfffdf6, 1).fillRoundedRect(-155, -120, 150, 240, 16);
           left.lineStyle(2, 0x17191f, 1).strokeRoundedRect(-155, -120, 150, 240, 16);
@@ -550,8 +569,26 @@ export default function GameClient() {
             fontFamily: "Georgia, serif", fontSize: "22px", color: "#17191f", align: "center",
           }).setOrigin(0.5);
           book.add([left, right, q]);
+          this.tweens.add({
+            targets: book,
+            scale: 1,
+            alpha: 1,
+            duration: 650,
+            ease: "Back.Out",
+          });
 
-          this.button(58, 535, 274, 58, "OPEN IT", () => this.showDeepTalk());
+          this.button(58, 535, 274, 58, "OPEN IT", () => {
+            this.audio.whoosh();
+            this.tweens.add({
+              targets: book,
+              scaleX: 1.05,
+              scaleY: 0.94,
+              angle: -2,
+              duration: 160,
+              yoyo: true,
+              onComplete: () => this.showDeepTalk(),
+            });
+          });
         }
 
         showDeepTalk() {
