@@ -283,6 +283,7 @@ export default function GameClient() {
             knob.x = Phaser.Math.Clamp(dragX, 45, 345);
           });
           knob.on("dragend", () => {
+            knob.disableInteractive();
             if (knob.x > 270) {
               this.audio.wrong();
               this.speech("Không đến mức đó đâu 😐", 700);
@@ -476,7 +477,7 @@ export default function GameClient() {
         }
 
         showEnding() {
-          this.stage = 8;
+          this.stage = 9;
           this.clearScene(0x5d759c);
           this.small(22, 26, "END / 7%", "#ffffff");
           this.text(W / 2, 75, "So...", 34, "#ffffff", 350, "center");
