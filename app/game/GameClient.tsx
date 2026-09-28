@@ -1006,31 +1006,40 @@ export default function GameClient() {
           this.small(28, 662, "couch potato", "#cbd4d1");
           this.small(275, 662, "gym rat", "#cbd4d1");
 
+          let gymLeaving = false;
+          const leaveGym = () => {
+            if (gymLeaving) return;
+            gymLeaving = true;
+            knob.disableInteractive();
+            continueGym.disableInteractive();
+            gymActor.head.setTexture("face-smile");
+            gymActor.body.setTexture("body-idle");
+            this.walkActorTo(gymActor, W + 105, 520);
+            this.time.delayedCall(500, () =>
+              this.slideWorldTo("park-bg", () => this.showSports(), 1, 620)
+            );
+          };
+
           const knob = this.keep(this.add.circle(195, 635, 16, 0x5f8dff).setInteractive({ useHandCursor: true, draggable: true }));
           this.input.setDraggable(knob);
           knob.on("drag", (_p: any, dragX: number) => {
             knob.x = Phaser.Math.Clamp(dragX, 45, 345);
           });
           knob.on("dragend", () => {
-            knob.disableInteractive();
             if (knob.x > 270) {
               this.audio.wrong();
-              this.speech("Không đến mức đó đâu 😐", 700);
+              this.speech("Không đến mức đó đâu 😐", 690);
             } else if (knob.x < 105) {
               this.audio.wrong();
-              this.speech("Cũng không lười đến thế.", 700);
+              this.speech("Cũng không lười đến thế.", 690);
             } else {
               this.audio.pop();
-              this.speech("Ừ, khoảng giữa là đúng.", 700);
+              this.speech("Ừ, khoảng giữa là đúng.", 690);
             }
             this.tweens.add({ targets: knob, x: 195, duration: 420, ease: "Back.Out" });
-            this.time.delayedCall(420, () => {
-              gymActor.head.setTexture("face-smile");
-              gymActor.body.setTexture("body-idle");
-              this.walkActorTo(gymActor, W + 105, 520);
-            });
-            this.time.delayedCall(900, () => this.slideWorldTo("park-bg", () => this.showSports(), 1, 620));
           });
+
+          const continueGym = this.button(72, 746, 246, 54, "CONTINUE →", leaveGym, false);
         }
 
         showSports() {
@@ -1888,7 +1897,10 @@ export default function GameClient() {
       }
 
       game = new Phaser.Game({
-        type: Phaser.AUTO,
+        // Canvas is intentional here. The game is 2D-only and some browsers / GPUs
+        // reject decoded SVG sources when Phaser uploads them through WebGL
+        // (texImage2D: INVALID_VALUE / bad image data).
+        type: Phaser.CANVAS,
         parent: hostRef.current,
         width: W,
         height: H,
@@ -1905,6 +1917,7 @@ export default function GameClient() {
           antialias: true,
           pixelArt: false,
           roundPixels: false,
+          transparent: false,
         },
         input: {
           activePointers: 2,
