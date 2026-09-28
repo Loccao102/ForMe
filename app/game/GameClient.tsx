@@ -910,7 +910,19 @@ export default function GameClient() {
           this.small(22, 26, "06 / OPEN THE BOOK");
           this.text(22, 70, "Không mở laptop thì...", 30);
 
-          const book = this.keep(this.add.container(195, 330).setScale(0.15).setAlpha(0));
+          const book = this.keep(this.add.container(195, 330).setScale(0.75).setAlpha(0));
+          const cover = this.add.graphics();
+          cover.fillStyle(0x3a4968, 1).fillRoundedRect(-85, -115, 170, 230, 16);
+          cover.lineStyle(3, 0x17191f, 1).strokeRoundedRect(-85, -115, 170, 230, 16);
+          const coverTitle = this.add.text(0, -5, "WHY\nPEOPLE?", {
+            fontFamily: "Georgia, serif",
+            fontSize: "24px",
+            fontStyle: "bold",
+            color: "#fff5dc",
+            align: "center",
+          }).setOrigin(0.5);
+
+          const pages = this.add.container(0, 0).setAlpha(0);
           const left = this.add.graphics();
           left.fillStyle(0xfffdf6, 1).fillRoundedRect(-155, -120, 150, 240, 16);
           left.lineStyle(2, 0x17191f, 1).strokeRoundedRect(-155, -120, 150, 240, 16);
@@ -920,26 +932,52 @@ export default function GameClient() {
           const q = this.add.text(0, 0, "Why do people\nbecome who\nthey are?", {
             fontFamily: "Georgia, serif", fontSize: "22px", color: "#17191f", align: "center",
           }).setOrigin(0.5);
-          book.add([left, right, q]);
+          pages.add([left, right, q]);
+          book.add([pages, cover, coverTitle]);
+
           this.tweens.add({
             targets: book,
             scale: 1,
             alpha: 1,
-            duration: 650,
+            y: 320,
+            duration: 560,
             ease: "Back.Out",
           });
 
           this.button(58, 535, 274, 58, "OPEN IT", () => {
             this.audio.whoosh();
+            this.cameraNudge(0, -6, 170);
             this.tweens.add({
-              targets: book,
-              scaleX: 1.05,
-              scaleY: 0.94,
-              angle: -2,
-              duration: 160,
-              yoyo: true,
-              onComplete: () => this.transitionTo(() => this.showDeepTalk(), 240),
+              targets: cover,
+              scaleX: 0.04,
+              x: -150,
+              angle: -8,
+              alpha: 0,
+              duration: 360,
+              ease: "Sine.InOut",
             });
+            this.tweens.add({ targets: coverTitle, alpha: 0, duration: 180 });
+            this.tweens.add({
+              targets: pages,
+              alpha: 1,
+              scaleX: { from: 0.55, to: 1 },
+              duration: 420,
+              ease: "Back.Out",
+            });
+
+            const pageFlip = this.add.rectangle(6, 0, 148, 230, 0xfffdf6).setOrigin(0, 0.5);
+            pages.add(pageFlip);
+            this.tweens.add({
+              targets: pageFlip,
+              scaleX: 0.02,
+              x: -4,
+              duration: 430,
+              delay: 240,
+              ease: "Sine.InOut",
+              onComplete: () => pageFlip.destroy(),
+            });
+
+            this.time.delayedCall(950, () => this.transitionTo(() => this.showDeepTalk(), 240));
           });
         }
 
