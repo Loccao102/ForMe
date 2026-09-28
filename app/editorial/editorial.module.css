@@ -57,8 +57,8 @@
 .more{min-height:125vh;padding:110px 5vw}
 .editorialSpread{min-height:100vh;display:grid;grid-template-columns:1.05fr .85fr 1fr;grid-template-rows:auto 1fr auto;gap:28px;align-items:start}
 .moreTitle{grid-column:1/3}
-.bigNumber{font-size:clamp(80px,15vw,220px);line-height:.72;font-weight:950;letter-spacing:-.08em;grid-column:1/3;align-self:center}
-.bigNumber small{display:block;font:700 11px/1.4 monospace;letter-spacing:.08em;margin:24px 0 0 10px}
+.bigStatement{font-size:clamp(72px,12vw,180px);line-height:.76;font-weight:950;letter-spacing:-.075em;grid-column:1/3;align-self:center;color:var(--blue)}
+.bigStatement small{display:block;max-width:640px;font:500 clamp(18px,2.2vw,30px)/1.15 Georgia,serif;letter-spacing:0;color:var(--ink);margin:28px 0 0 8px}
 .factRail{display:flex;flex-wrap:wrap;gap:12px;align-content:start;grid-column:1/3}
 .tape{background:#fff;border:1px solid #1b1c20;box-shadow:4px 5px 0 #1b1c20;padding:10px 15px;font:800 13px monospace;display:inline-block}
 .yellowPortrait{grid-column:3;grid-row:1/4;height:88vh;position:sticky;top:6vh}
@@ -88,6 +88,7 @@
 .build{min-height:135vh;padding:14vh 5vw;background:#f5f1e8}
 .buildGrid{display:grid;grid-template-columns:.85fr 1.15fr;gap:7vw;align-items:start}
 .buildGrid>h2{position:sticky;top:14vh}
+.buildGrid>h2 i{font-family:Georgia,serif;font-weight:400;color:var(--coral)}
 .projectPile{display:flex;flex-direction:column;padding-top:8vh}
 .projectPile article{background:#fff;border:2px solid #17181d;box-shadow:9px 10px 0 #17181d;padding:36px;min-height:210px;margin-bottom:-6px}
 .projectPile article b{font:800 11px monospace;color:var(--blue)}
@@ -96,8 +97,8 @@
 
 .twoAm{min-height:120vh;background:#111216;color:#fff;padding:14vh 5vw;overflow:hidden}
 .tabs{width:min(850px,92vw);margin:10vh auto 0;position:relative;min-height:420px}
-.tabs>div{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(680px,86vw);height:72px;background:#272a32;border:1px solid #4a4f5e;border-radius:16px;padding:24px 26px;font:700 17px monospace;box-shadow:0 20px 45px rgba(0,0,0,.22)}
-.tabs>div span{float:right;opacity:.5}
+.tabs>div{position:absolute;left:50%;top:0;transform:translateX(-50%);width:min(680px,86vw);height:72px;background:#f1eadc;color:#18191d;border:1px solid #5c5f66;border-radius:4px;padding:24px 26px;font:700 17px Georgia,serif;box-shadow:0 20px 45px rgba(0,0,0,.24)}
+.tabs>div span{float:right;color:var(--coral);font-family:monospace}
 .twoAmCopy{text-align:center;position:relative;z-index:4}
 .twoAmCopy>span{font:900 clamp(60px,10vw,150px)/1 monospace;color:var(--yellow)}
 .twoAmCopy h2{font-size:clamp(42px,7vw,94px);letter-spacing:-.06em;line-height:.9;margin:20px 0}
@@ -147,7 +148,7 @@
   .techStream{top:58vh}
   .editorialSpread{display:block}
   .yellowPortrait{height:68vh;position:relative;top:auto;margin:32px 0}
-  .bigNumber{margin:18vh 0 8vh}
+  .bigStatement{margin:18vh 0 8vh}
   .moreCopy{margin-top:10vh}
   .after{height:360vh}
   .afterPanel{padding:12vh 7vw}
