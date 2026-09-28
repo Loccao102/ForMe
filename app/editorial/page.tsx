@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { photos } from "../photos";
 import styles from "./editorial.module.css";
 
@@ -74,6 +74,7 @@ export default function EditorialPage() {
   const [impression, setImpression] = useState<string | null>(null);
   const [question, setQuestion] = useState<QuestionKey | null>(null);
   const [contactHint, setContactHint] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const heroRef = useRef<HTMLElement>(null);
   const workRef = useRef<HTMLElement>(null);
@@ -84,29 +85,33 @@ export default function EditorialPage() {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroScale = useTransform(heroProgress, [0, 0.75], [1, 1.22]);
-  const heroY = useTransform(heroProgress, [0, 1], [0, -110]);
-  const heroPhotoRotate = useTransform(heroProgress, [0, 1], [-3, 7]);
+  const heroSmooth = useSpring(heroProgress, { stiffness: 90, damping: 24, mass: 0.35 });
+  const heroScale = useTransform(heroSmooth, [0, 0.75], [1, reduceMotion ? 1 : 1.12]);
+  const heroY = useTransform(heroSmooth, [0, 1], [0, reduceMotion ? 0 : -72]);
+  const heroPhotoRotate = useTransform(heroSmooth, [0, 1], [-3, reduceMotion ? -3 : 3]);
 
   const { scrollYProgress: workProgress } = useScroll({
     target: workRef,
     offset: ["start end", "end start"],
   });
-  const workX = useTransform(workProgress, [0, 1], ["18%", "-22%"]);
-  const workRotate = useTransform(workProgress, [0, 1], [-2, 4]);
+  const workSmooth = useSpring(workProgress, { stiffness: 100, damping: 28, mass: 0.35 });
+  const workX = useTransform(workSmooth, [0, 1], ["8%", reduceMotion ? "8%" : "-14%"]);
+  const workRotate = useTransform(workSmooth, [0, 1], [-1, reduceMotion ? -1 : 2]);
 
   const { scrollYProgress: afterProgress } = useScroll({
     target: afterRef,
     offset: ["start start", "end end"],
   });
-  const afterX = useTransform(afterProgress, [0, 1], ["0%", "-67%"]);
+  const afterSmooth = useSpring(afterProgress, { stiffness: 88, damping: 26, mass: 0.38 });
+  const afterX = useTransform(afterSmooth, [0, 1], ["0vw", reduceMotion ? "0vw" : "-300vw"]);
 
   const { scrollYProgress: cafeProgress } = useScroll({
     target: cafeRef,
     offset: ["start end", "end start"],
   });
-  const cafeImageY = useTransform(cafeProgress, [0, 1], [-60, 70]);
-  const cafeTypeX = useTransform(cafeProgress, [0, 1], ["12%", "-28%"]);
+  const cafeSmooth = useSpring(cafeProgress, { stiffness: 95, damping: 28, mass: 0.35 });
+  const cafeImageY = useTransform(cafeSmooth, [0, 1], [reduceMotion ? 0 : -24, reduceMotion ? 0 : 24]);
+  const cafeTypeX = useTransform(cafeSmooth, [0, 1], ["4%", reduceMotion ? "4%" : "-18%"]);
 
   const chosenQuestion = question ? questions[question] : null;
   const endingLine = useMemo(() => {
@@ -350,7 +355,7 @@ export default function EditorialPage() {
               <motion.article
                 key={title}
                 initial={{ y: 80, rotate: i % 2 ? 4 : -4, opacity: 0 }}
-                whileInView={{ y: i * 18, rotate: i % 2 ? 2 : -2, opacity: 1 }}
+                whileInView={{ y: 0, rotate: i % 2 ? 1.5 : -1.5, opacity: 1 }}
                 viewport={{ once: true, amount: 0.45 }}
                 transition={{ duration: 0.7, delay: i * 0.08 }}
               >
@@ -370,10 +375,11 @@ export default function EditorialPage() {
             (thought, i) => (
               <motion.div
                 key={thought}
-                initial={{ y: 110, rotate: i % 2 ? 7 : -7, opacity: 0 }}
-                whileInView={{ y: i * 10, rotate: i % 2 ? 3 : -3, opacity: 1 }}
+                style={{ top: i * 54, x: "-50%" }}
+                initial={{ y: 48, rotate: i % 2 ? 5 : -5, opacity: 0 }}
+                whileInView={{ y: 0, rotate: i % 2 ? 2 : -2, opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ type: "spring", stiffness: 130, damping: 18, delay: i * 0.06 }}
+                transition={{ type: "spring", stiffness: 150, damping: 22, delay: i * 0.06 }}
               >
                 <span>✦</span>
                 {thought}
