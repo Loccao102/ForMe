@@ -503,23 +503,33 @@ export default function GameClient() {
           this.small(22, 26, "03 / SELF-GROWTH", "#ffffff");
           this.panel(18, 56, 354, 95, 0x101419, 0.72, 20);
           this.text(34, 76, "Ngồi nhiều quá thì\nphải bù lại chứ.", 28, "#ffffff", 320);
-          const gymActor = this.faceCharacter(195, 310, 0.56, "body-gym", "face-neutral");
+          const gymActor = this.faceCharacter(195, 310, 0.56, "body-gym", "face-neutral", false);
           this.heroActor = gymActor;
           gymActor.container.setSize(160, 250).setInteractive({ useHandCursor: true });
           let reps = 0;
+          let lifting = false;
           const repText = this.small(150, 500, "tap me for a rep");
           gymActor.container.on("pointerdown", () => {
+            if (lifting) return;
+            lifting = true;
             reps += 1;
             this.audio.pop();
             gymActor.head.setTexture(reps >= 3 ? "face-smile" : "face-neutral");
             repText.setText("rep " + reps + (reps >= 3 ? " · okay, enough 😅" : ""));
+
+            this.playBodySequence(
+              gymActor,
+              ["body-gym", "body-gym-up", "body-gym-up", "body-gym"],
+              115,
+              () => { lifting = false; }
+            );
+            this.squash(gymActor, 0.035, 140);
             this.tweens.add({
               targets: gymActor.container,
-              y: gymActor.container.y - 16,
-              angle: reps % 2 ? -3 : 3,
-              duration: 150,
+              y: 300,
+              duration: 180,
               yoyo: true,
-              ease: "Back.Out",
+              ease: "Sine.InOut",
             });
           });
 
@@ -574,20 +584,39 @@ export default function GameClient() {
           this.heroActor = player;
           player.container.setDepth(3);
 
+          let readyFrame = false;
+          const readyLoop = this.time.addEvent({
+            delay: 330,
+            loop: true,
+            callback: () => {
+              if (!player.body.active) return;
+              readyFrame = !readyFrame;
+              player.body.setTexture(readyFrame ? "body-badminton-back" : "body-badminton");
+            },
+          });
+
           const shuttle = this.keep(this.add.text(250, 348, "🏸", { fontSize: "42px" }).setOrigin(0.5).setDepth(4));
           let dir = 1;
           const move = this.tweens.add({ targets: shuttle, x: 354, duration: 1500, yoyo: true, repeat: -1, ease: "Sine.InOut" });
 
           const hit = this.button(72, 600, 246, 62, "HIT!", () => {
             move.pause();
+            readyLoop.remove();
             const ok = shuttle.x > 150 && shuttle.x < 240;
             this.state.badmintonHit = ok;
             player.head.setTexture(ok ? "face-smile" : "face-surprised");
+
+            this.playBodySequence(
+              player,
+              ["body-badminton-back", "body-badminton-hit", "body-badminton"],
+              85
+            );
+            this.squash(player, 0.045, 90);
             this.tweens.add({
               targets: player.container,
-              angle: ok ? -5 : 5,
-              x: ok ? 104 : 82,
-              duration: 180,
+              angle: ok ? -6 : 6,
+              x: ok ? 108 : 80,
+              duration: 170,
               yoyo: true,
               ease: "Back.Out",
             });
@@ -629,6 +658,7 @@ export default function GameClient() {
             });
 
             const runner = this.faceCharacter(310, 355, 0.43, "body-run", "face-neutral", false);
+            const runLoop = this.loopBodyFrames(runner, ["body-run", "body-run-b"], 120);
             runner.container.setAlpha(0).setX(420);
             const runLabel = this.text(82, 330, "running", 28, "#17191f", 130, "center");
             runLabel.setAlpha(0);
@@ -648,7 +678,10 @@ export default function GameClient() {
             streaks.setAlpha(0);
             this.tweens.add({ targets: streaks, alpha: 1, x: -28, duration: 340, repeat: 1, yoyo: true });
 
-            this.time.delayedCall(900, () => this.transitionTo(() => this.showCafe()));
+            this.time.delayedCall(900, () => {
+              runLoop.remove();
+              this.transitionTo(() => this.showCafe());
+            });
           });
         }
 
@@ -682,12 +715,22 @@ export default function GameClient() {
 
           const coffee = this.keep(this.add.text(332, 402, "☕", { fontSize: "34px" }).setOrigin(0.5).setDepth(4));
           coffee.setInteractive({ useHandCursor: true });
+          let sipping = false;
           coffee.on("pointerdown", () => {
+            if (sipping) return;
+            sipping = true;
             this.audio.pop();
-            this.tweens.add({ targets: coffee, angle: { from: -8, to: 8 }, duration: 90, yoyo: true, repeat: 1 });
+            cafeActor.body.setTexture("body-seated-sip");
+            cafeActor.head.setTexture("face-smile");
+            this.tweens.add({ targets: coffee, alpha: 0.2, y: 386, duration: 160, yoyo: true, hold: 170 });
+            this.tweens.add({ targets: cafeActor.container, angle: -2, duration: 180, yoyo: true });
             const note = this.text(250, 455, "probably the second one.", 12, "#5c4032", 125, "center");
             note.setAlpha(0);
             this.tweens.add({ targets: note, alpha: 1, y: 443, duration: 180, yoyo: true, hold: 650 });
+            this.time.delayedCall(620, () => {
+              if (cafeActor.body.active) cafeActor.body.setTexture("body-seated");
+              sipping = false;
+            });
           });
 
           let picked = false;
@@ -767,8 +810,17 @@ export default function GameClient() {
           const shade = this.keep(this.add.rectangle(W / 2, H / 2, W, H, 0x101116, 0.72));
           shade.setDepth(-0.5);
           this.small(22, 26, "07 / ASK ME ONE", "#ffffff");
-          const talkActor = this.faceCharacter(195, 130, 0.65, "body-talk", "face-thinking");
+          const talkActor = this.faceCharacter(195, 130, 0.65, "body-talk", "face-thinking", false);
           this.heroActor = talkActor;
+          this.loopBodyFrames(talkActor, ["body-talk", "body-talk-alt"], 620);
+          this.tweens.add({
+            targets: talkActor.container,
+            y: 126,
+            duration: 1700,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.InOut",
+          });
           this.text(W / 2, 270, "Small talk is fine.", 20, "#ffffff", 350, "center");
           this.text(W / 2, 310, "Nhưng tớ thích câu hỏi\nkhiến mình phải nghĩ.", 27, "#ffffff", 350, "center");
 
@@ -813,7 +865,7 @@ export default function GameClient() {
           this.clearScene(0xfff0e1);
           this.artBackground("kitchen-bg", 0.98);
           this.small(22, 26, "08 / COOKING");
-          const cookActor = this.faceCharacter(310, 250, 0.42, "body-cook", "face-smile");
+          const cookActor = this.faceCharacter(310, 250, 0.42, "body-cook-a", "face-smile", false);
           this.heroActor = cookActor;
           this.text(22, 70, "Tap the pan 3 times.", 28);
           const pan = this.keep(this.add.container(195, 360));
@@ -825,7 +877,13 @@ export default function GameClient() {
           pan.on("pointerdown", () => {
             taps += 1;
             this.audio.sizzle();
-            this.tweens.add({ targets: pan, angle: { from: -5, to: 5 }, duration: 100, yoyo: true });
+            this.playBodySequence(
+              cookActor,
+              ["body-cook-a", "body-cook-b", "body-cook-a"],
+              90
+            );
+            this.squash(cookActor, 0.03, 100);
+            this.tweens.add({ targets: pan, angle: { from: -7, to: 7 }, x: { from: -8, to: 8 }, duration: 90, yoyo: true });
             if (taps >= 3) {
               pan.disableInteractive();
               this.text(W / 2, 520, "Tớ thích nấu ăn.", 28, "#17191f", 340, "center");
