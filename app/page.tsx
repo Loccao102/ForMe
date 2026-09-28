@@ -50,15 +50,92 @@ function SceneAtmosphere({ index }: { index: number }) {
 function GymRoomArt() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const imageX = useTransform(scrollYProgress, [0, 1], [-24, 24]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.08, 1, 1.06]);
-  const badgeY = useTransform(scrollYProgress, [0, 1], [18, -22]);
+  const imageY = useTransform(scrollYProgress, [0, 1], [-22, 22]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.02, 1.1]);
+  const badgeY = useTransform(scrollYProgress, [0, 1], [18, -20]);
+
   return (
-    <div ref={ref} className="gym-art reveal">
-      <motion.img src="/art/gym-room.svg" alt="Phòng gym hiện đại" style={{ x: imageX, scale: imageScale }} />
-      <motion.div className="gym-height-badge" style={{ y: badgeY }}><b>1m86</b><span>still building</span></motion.div>
-      <motion.div className="gym-orbit-note note-one" animate={{ y: [0, -8, 0], rotate: [-2, 2, -2] }} transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}>consistency &gt; hype</motion.div>
-      <motion.div className="gym-orbit-note note-two" animate={{ y: [0, 9, 0], rotate: [2, -2, 2] }} transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}>average day. still showed up.</motion.div>
+    <div ref={ref} className="cinematic-art gym-art reveal">
+      <div className="art-image-shell">
+        <motion.img
+          src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=86"
+          alt="Không gian phòng gym với tạ và thiết bị tập"
+          loading="lazy"
+          decoding="async"
+          style={{ y: imageY, scale: imageScale }}
+        />
+        <div className="art-vignette" />
+        <div className="art-scanline" />
+      </div>
+
+      <motion.div className="gym-height-badge" style={{ y: badgeY }}>
+        <b>1m86</b>
+        <span>~90kg · in progress</span>
+      </motion.div>
+
+      <motion.div
+        className="gym-orbit-note note-one"
+        animate={{ y: [0, -8, 0], rotate: [-2, 2, -2] }}
+        transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
+      >
+        consistency &gt; hype
+      </motion.div>
+      <motion.div
+        className="gym-orbit-note note-two"
+        animate={{ y: [0, 9, 0], rotate: [2, -2, 2] }}
+        transition={{ duration: 5.4, repeat: Infinity, ease: "easeInOut" }}
+      >
+        just another session
+      </motion.div>
+
+      <div className="art-caption">
+        <span>03 / SELF-GROWTH</span>
+        <b>show up → repeat</b>
+      </div>
+    </div>
+  );
+}
+
+function CafeDeskArt() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const imageY = useTransform(scrollYProgress, [0, 1], [-18, 24]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.09, 1.015, 1.08]);
+  const cursorX = useTransform(scrollYProgress, [0, 1], ["-4%", "30%"]);
+  const cursorY = useTransform(scrollYProgress, [0, 1], ["12%", "-20%"]);
+
+  return (
+    <div ref={ref} className="cinematic-art cafe-desk-art reveal">
+      <div className="art-image-shell">
+        <motion.img
+          src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1600&q=86"
+          alt="Laptop và đồ làm việc trên bàn cà phê, không có người"
+          loading="lazy"
+          decoding="async"
+          style={{ y: imageY, scale: imageScale }}
+        />
+        <div className="art-vignette" />
+        <div className="cafe-warm-wash" />
+      </div>
+
+      <motion.div className="fake-cursor" style={{ x: cursorX, y: cursorY }} aria-hidden="true">
+        ↖
+      </motion.div>
+
+      <motion.div
+        className="desk-status"
+        animate={{ y: [0, -5, 0], rotate: [-1, 1, -1] }}
+        transition={{ duration: 4.6, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <i />
+        focus mode
+      </motion.div>
+
+      <div className="coffee-ring" aria-hidden="true" />
+      <div className="art-caption">
+        <span>05 / WORK CAFÉ</span>
+        <b>laptop open · coffee nearby</b>
+      </div>
     </div>
   );
 }
@@ -216,8 +293,8 @@ export default function Home() {
             <p className="eyebrow">NOT A TRANSFORMATION POST</p>
             <h2>Chỉ đang cố tốt hơn một chút mỗi ngày.</h2>
             <p className="scene-copy">
-              Tôi chưa phải kiểu người bước vào phòng tập là ai cũng ngoái nhìn. Mục tiêu đơn giản hơn:
-              khỏe hơn, kỷ luật hơn và tiếp tục xuất hiện kể cả những ngày rất bình thường.
+              Không phải để thành bodybuilder. Tôi tập để khỏe hơn, chạy bền hơn và giữ được
+              một thói quen đủ lâu để thấy mình thay đổi.
             </p>
             <div className="growth-bars">
               <div><span>healthier</span><i style={{ width: "72%" }} /></div>
@@ -263,16 +340,15 @@ export default function Home() {
         <SceneAtmosphere index={4} />
         <SceneLabel n={5}>WORK CAFÉ</SceneLabel>
         <div className="cafe-layout">
-          <figure className="photo-frame reveal">
-            <img src={photos.cafeYellow} alt="Lộc sitting in a café" />
-            <figcaption>somewhere with coffee + a socket</figcaption>
-          </figure>
+          <CafeDeskArt />
           <div className="copy-block reveal delay-1">
             <p className="eyebrow">FAVOURITE THIRD PLACE</p>
-            <h2>Có những ngày tôi ra quán để làm việc.</h2>
-            <p className="scene-copy">Có những ngày chỉ để ngồi, nghĩ và nhìn mọi thứ trôi qua.</p>
+            <h2>Một góc yên, laptop mở, cà phê cạnh tay.</h2>
+            <p className="scene-copy">
+              Đây gần như là setup mặc định khi tôi muốn làm việc, nghĩ linh tinh hoặc biến một ý tưởng mới thành project.
+            </p>
             <div className="cafe-chips">
-              <span>work</span><span>think</span><span>people-watch</span><span>coffee</span>
+              <span>work</span><span>think</span><span>build</span><span>coffee</span>
             </div>
             <Doodle className="coffee-note">good coffee = better ideas?</Doodle>
           </div>
