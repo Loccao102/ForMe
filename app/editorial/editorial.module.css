@@ -1,5 +1,3 @@
-:global(html){scroll-snap-type:none!important;scroll-behavior:auto!important;overscroll-behavior-y:auto}
-:global(body){overflow-x:hidden}
 .site{
   --ink:#111216;
   --paper:#f3eee3;
