@@ -40,14 +40,15 @@ const questions = {
 type QuestionKey = keyof typeof questions;
 
 function SplitWord({ children }: { children: string }) {
+  const reduceMotion = useReducedMotion();
   return (
     <span className={styles.splitWord} aria-label={children}>
       {children.split("").map((letter, index) => (
         <motion.span
           key={index}
           aria-hidden="true"
-          initial={{ y: "110%", rotate: 6, opacity: 0 }}
-          whileInView={{ y: "0%", rotate: 0, opacity: 1 }}
+          initial={reduceMotion ? false : { y: "110%", rotate: 6, opacity: 0 }}
+          whileInView={reduceMotion ? undefined : { y: "0%", rotate: 0, opacity: 1 }}
           viewport={{ once: true, amount: 0.7 }}
           transition={{ duration: 0.6, delay: index * 0.025, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -59,11 +60,12 @@ function SplitWord({ children }: { children: string }) {
 }
 
 function Tape({ children, tilt = -3 }: { children: React.ReactNode; tilt?: number }) {
+  const reduceMotion = useReducedMotion();
   return (
     <motion.span
       className={styles.tape}
       style={{ rotate: tilt }}
-      whileHover={{ rotate: 0, scale: 1.04 }}
+      whileHover={reduceMotion ? undefined : { rotate: 0, scale: 1.04 }}
       transition={{ type: "spring", stiffness: 260, damping: 16 }}
     >
       {children}
@@ -229,7 +231,8 @@ export default function EditorialPage() {
                 key={item}
                 className={impression === item ? styles.choiceActive : ""}
                 onClick={() => setImpression(item)}
-                whileHover={{ x: 12 }}
+                aria-pressed={impression === item}
+                whileHover={reduceMotion ? undefined : { x: 12 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <b>0{i + 1}</b>
@@ -491,6 +494,7 @@ export default function EditorialPage() {
             <motion.button
               key={key}
               onClick={() => setQuestion(key)}
+              aria-pressed={question === key}
               className={question === key ? styles.questionActive : ""}
               whileHover={{ y: -6 }}
               whileTap={{ scale: 0.98 }}
@@ -503,6 +507,8 @@ export default function EditorialPage() {
 
         <motion.div
           className={styles.answer}
+          role="status"
+          aria-live="polite"
           key={question ?? "none"}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: chosenQuestion ? 1 : 0, y: chosenQuestion ? 0 : 20 }}
