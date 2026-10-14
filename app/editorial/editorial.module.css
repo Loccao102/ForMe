@@ -248,3 +248,28 @@
   .yellowPortrait,.cafeImageWrap{width:min(82vw,290px)}
   .endingPhoto img{width:min(78vw,290px);border-width:6px;box-shadow:12px 15px 0 rgba(49,88,255,.72)}
 }
+
+
+/* The horizontal three-panel scroll track hides panels on narrow screens
+   when its JS translation is intentionally disabled. Stack the panels so
+   badminton, football and running remain visible and keyboard reachable. */
+@media (max-width:900px), (prefers-reduced-motion:reduce){
+  .after{height:auto}
+  .afterSticky{position:relative;top:auto;height:auto;overflow:visible}
+  .afterTrack{
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    transform:none!important;
+    will-change:auto;
+  }
+  .afterPanel{width:100%;flex:0 0 auto;min-height:75svh;height:auto}
+  .afterPanel h3{margin-top:12vh}
+}
+@media (prefers-reduced-motion:reduce){
+  .site *, .site *::before, .site *::after{
+    animation-duration:0.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;
+  }
+}
