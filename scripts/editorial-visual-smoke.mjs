@@ -27,7 +27,7 @@ async function exercise(label, viewport, reducedMotion) {
       throw new Error(`${label}: impression choice did not expose pressed state`);
     }
 
-    const question = page.getByRole("button", { name: "people", exact: true });
+    const question = page.getByRole("button", { name: /^people\\b/i });
     await question.click();
     if ((await question.getAttribute("aria-pressed")) !== "true") {
       throw new Error(`${label}: question did not expose pressed state`);
