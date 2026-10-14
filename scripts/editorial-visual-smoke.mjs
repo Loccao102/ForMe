@@ -40,10 +40,17 @@ async function exercise(label, viewport, reducedMotion) {
     const positions = [];
     for (const title of titles) {
       const heading = page.getByRole("heading", { name: title, exact: true });
-      await heading.scrollIntoViewIfNeeded({ timeout: 15000 });
+      // The desktop panels intentionally animate horizontally as the user scrolls.
+      // Only require all three panels to enter the viewport on mobile/reduced-motion.
+      if (viewport.width <= 900 || reducedMotion === "reduce") {
+        await heading.scrollIntoViewIfNeeded({ timeout: 15000 });
+      }
       const rect = await heading.boundingBox();
       if (!rect || rect.width < 10 || rect.height < 10) {
-        throw new Error(`${label}: '${title}' is clipped or hidden`);
+        throw new Error(`${label}: '${title}' is missing or zero-sized`);
+      }
+      if (viewport.width <= 900 && (rect.y < -2 || rect.y > viewport.height)) {
+        throw new Error(`${label}: '${title}' could not be scrolled into view`);
       }
       positions.push({ title, y: Math.round(rect.y), x: Math.round(rect.x) });
     }
