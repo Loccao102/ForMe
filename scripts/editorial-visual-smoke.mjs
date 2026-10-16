@@ -36,6 +36,19 @@ async function exercise(label, viewport, reducedMotion) {
     await answer.waitFor({ state: "visible", timeout: 15000 });
     await page.screenshot({ path: `${folder}/${label}-question.png`, animations: "disabled" });
 
+    // The interactive editorial choices must expose a keyboard-visible
+    // outline; color changes alone are not enough for keyboard navigation.
+    await page.keyboard.press("Tab");
+    await question.focus();
+    const keyboardFocus = await question.evaluate(el => {
+      const style = getComputedStyle(el);
+      return { width: style.outlineWidth, kind: style.outlineStyle };
+    });
+    if (keyboardFocus.kind === "none" || keyboardFocus.width === "0px") {
+      throw new Error(`${label}: question button has no visible keyboard focus outline`);
+    }
+
+
     if (reducedMotion === "reduce") {
       // Reduced-motion mode must suppress JS-driven hover motion, not just
       // CSS keyframes. Exercise both the guess and the question controls.
