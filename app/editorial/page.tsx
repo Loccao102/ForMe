@@ -6,7 +6,20 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "mo
 import { photos } from "../photos";
 import styles from "./editorial.module.css";
 
-const contactUrl = process.env.NEXT_PUBLIC_CONTACT_URL;
+const contactUrl = (() => {
+  const raw = process.env.NEXT_PUBLIC_CONTACT_URL?.trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    // The public environment variable may be misconfigured; never make a
+    // user-clickable link from javascript:, data:, file: or custom protocols.
+    return parsed.protocol === "https:" || parsed.protocol === "mailto:"
+      ? parsed.href
+      : null;
+  } catch {
+    return null;
+  }
+})();
 
 const impressions = [
   "quiet at first",
@@ -146,10 +159,6 @@ export default function EditorialPage() {
   }, [impression, question]);
 
   const handleContact = () => {
-    if (contactUrl) {
-      window.open(contactUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
     setContactHint(true);
     window.setTimeout(() => setContactHint(false), 3000);
   };
@@ -553,14 +562,28 @@ export default function EditorialPage() {
 
           <p className={styles.endingSub}>Want the unedited version?</p>
 
-          <motion.button
-            className={styles.dmButton}
-            onClick={handleContact}
-            whileHover={reduceMotion ? undefined : { scale: 1.04, rotate: -1 }}
-            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-          >
-            DM ME <span>↗</span>
-          </motion.button>
+          {contactUrl ? (
+            <motion.a
+              className={styles.dmButton}
+              href={contactUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={reduceMotion ? undefined : { scale: 1.04, rotate: -1 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+            >
+              DM ME <span>↗</span>
+            </motion.a>
+          ) : (
+            <motion.button
+              type="button"
+              className={styles.dmButton}
+              onClick={handleContact}
+              whileHover={reduceMotion ? undefined : { scale: 1.04, rotate: -1 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+            >
+              DM ME <span>↗</span>
+            </motion.button>
+          )}
 
           {contactHint && (
             <p className={styles.contactHint}>
