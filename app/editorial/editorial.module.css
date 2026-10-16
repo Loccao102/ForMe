@@ -149,7 +149,7 @@
 .endingCopy h2{font-size:clamp(52px,7.5vw,115px);line-height:.86;letter-spacing:-.07em;margin:0;max-width:980px}
 .endingCopy h2 em{font-family:Georgia,serif;font-weight:400}
 .endingSub{font:500 clamp(24px,3vw,38px) Georgia,serif;margin:42px 0 20px}
-.dmButton{border:0;background:#111;color:#fff;font:900 clamp(25px,3vw,42px) inherit;padding:22px 30px;cursor:pointer;box-shadow:8px 8px 0 var(--blue)}
+.dmButton{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;background:#111;color:#fff;font:900 clamp(25px,3vw,42px) inherit;padding:22px 30px;cursor:pointer;box-shadow:8px 8px 0 var(--blue);text-decoration:none}
 .dmButton span{margin-left:35px}
 .githubLink{margin-top:24px;color:#111;font:800 12px monospace;text-decoration:none;border-bottom:1px solid}
 .contactHint{font:700 11px monospace;max-width:520px;margin-top:20px}
