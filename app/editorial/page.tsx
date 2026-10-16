@@ -165,7 +165,7 @@ export default function EditorialPage() {
 
         <motion.div
           className={styles.heroPhoto}
-          initial={{ y: 36, opacity: 0 }}
+          initial={reduceMotion ? false : { y: 36, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
         >
@@ -206,8 +206,8 @@ export default function EditorialPage() {
 
           <motion.div
             className={styles.portraitCard}
-            initial={{ y: 38, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
+            initial={reduceMotion ? false : { y: 38, opacity: 0 }}
+            whileInView={reduceMotion ? undefined : { y: 0, opacity: 1 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
@@ -233,7 +233,7 @@ export default function EditorialPage() {
                 onClick={() => setImpression(item)}
                 aria-pressed={impression === item}
                 whileHover={reduceMotion ? undefined : { x: 12 }}
-                whileTap={{ scale: 0.98 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.98 }}
               >
                 <b>0{i + 1}</b>
                 <span>{item}</span>
@@ -287,8 +287,8 @@ export default function EditorialPage() {
 
           <motion.div
             className={styles.bigStatement}
-            initial={{ scale: 0.75, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
+            initial={reduceMotion ? false : { scale: 0.75, opacity: 0 }}
+            whileInView={reduceMotion ? undefined : { scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
@@ -309,8 +309,8 @@ export default function EditorialPage() {
 
           <motion.div
             className={styles.yellowPortrait}
-            initial={{ clipPath: "inset(100% 0 0 0)" }}
-            whileInView={{ clipPath: "inset(0% 0 0 0)" }}
+            initial={reduceMotion ? false : { clipPath: "inset(100% 0 0 0)" }}
+            whileInView={reduceMotion ? undefined : { clipPath: "inset(0% 0 0 0)" }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           >
@@ -415,8 +415,8 @@ export default function EditorialPage() {
             ].map(([n, title, copy], i) => (
               <motion.article
                 key={title}
-                initial={{ y: 80, rotate: i % 2 ? 4 : -4, opacity: 0 }}
-                whileInView={{ y: 0, rotate: i % 2 ? 1.5 : -1.5, opacity: 1 }}
+                initial={reduceMotion ? false : { y: 80, rotate: i % 2 ? 4 : -4, opacity: 0 }}
+                whileInView={reduceMotion ? undefined : { y: 0, rotate: i % 2 ? 1.5 : -1.5, opacity: 1 }}
                 viewport={{ once: true, amount: 0.45 }}
                 transition={{ duration: 0.7, delay: i * 0.08 }}
               >
@@ -437,8 +437,8 @@ export default function EditorialPage() {
               <motion.div
                 key={thought}
                 style={{ top: i * 54, x: "-50%" }}
-                initial={{ y: 48, rotate: i % 2 ? 5 : -5, opacity: 0 }}
-                whileInView={{ y: 0, rotate: i % 2 ? 2 : -2, opacity: 1 }}
+                initial={reduceMotion ? false : { y: 48, rotate: i % 2 ? 5 : -5, opacity: 0 }}
+                whileInView={reduceMotion ? undefined : { y: 0, rotate: i % 2 ? 2 : -2, opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ type: "spring", stiffness: 150, damping: 22, delay: i * 0.06 }}
               >
@@ -462,19 +462,19 @@ export default function EditorialPage() {
       <section className={styles.human}>
         <div className={styles.sectionNo}>08 / THE HUMAN PART</div>
         <div className={styles.comic}>
-          <motion.div whileInView={{ rotate: -2 }} viewport={{ once: true }} className={styles.comicPanel}>
+          <motion.div whileInView={reduceMotion ? undefined : { rotate: -2 }} viewport={{ once: true }} className={styles.comicPanel}>
             <span>01</span>
             <div className={styles.panIcon}>⌁</div>
             <strong>cooks</strong>
             <p>especially when there’s someone to cook for</p>
           </motion.div>
-          <motion.div whileInView={{ rotate: 2 }} viewport={{ once: true }} className={styles.comicPanel}>
+          <motion.div whileInView={reduceMotion ? undefined : { rotate: 2 }} viewport={{ once: true }} className={styles.comicPanel}>
             <span>02</span>
             <div className={styles.bookIcon}>▱</div>
             <strong>reads</strong>
             <p>mostly to leave with better questions</p>
           </motion.div>
-          <motion.div whileInView={{ rotate: -1 }} viewport={{ once: true }} className={styles.comicPanel}>
+          <motion.div whileInView={reduceMotion ? undefined : { rotate: -1 }} viewport={{ once: true }} className={styles.comicPanel}>
             <span>03</span>
             <div className={styles.talkIcon}>“ ”</div>
             <strong>talks</strong>
@@ -496,8 +496,8 @@ export default function EditorialPage() {
               onClick={() => setQuestion(key)}
               aria-pressed={question === key}
               className={question === key ? styles.questionActive : ""}
-              whileHover={{ y: -6 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={reduceMotion ? undefined : { y: -6 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
             >
               <span>{questions[key].label}</span>
               <i>↗</i>
@@ -538,8 +538,8 @@ export default function EditorialPage() {
         <div className={styles.endingCopy}>
           <motion.p
             className={styles.endingMemory}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={reduceMotion ? false : { opacity: 0 }}
+            whileInView={reduceMotion ? undefined : { opacity: 1 }}
             viewport={{ once: true }}
           >
             {endingLine}
@@ -556,8 +556,8 @@ export default function EditorialPage() {
           <motion.button
             className={styles.dmButton}
             onClick={handleContact}
-            whileHover={{ scale: 1.04, rotate: -1 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={reduceMotion ? undefined : { scale: 1.04, rotate: -1 }}
+            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
           >
             DM ME <span>↗</span>
           </motion.button>
