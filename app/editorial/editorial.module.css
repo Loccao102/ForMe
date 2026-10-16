@@ -273,3 +273,11 @@
     transition-duration:0.01ms!important;
   }
 }
+
+
+/* Keyboard navigation must remain visible on both the light editorial
+   sections and the dark sports/closing sections, without relying on hover. */
+.site :is(button, a):focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 4px;
+}
