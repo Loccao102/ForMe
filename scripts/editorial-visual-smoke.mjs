@@ -97,7 +97,26 @@ async function exercise(label, viewport, reducedMotion) {
         });
       if (!stacked) throw new Error(`${label}: After Work panels are not vertically stacked`);
     }
-    console.log(`PASS ${label}: heading/choices/answers/three sports panels`, JSON.stringify(positions));
+    // A configured DM destination must be a safe navigable HTTPS/mailto link.
+    // Without config it remains a button and surfaces an actionable hint.
+    const link = page.getByRole("link", { name: /DM ME/i });
+    if (await link.count()) {
+      const destination = await link.getAttribute("href");
+      const url = new URL(destination);
+      if (!["https:", "mailto:"].includes(url.protocol)) {
+        throw new Error(`${label}: unsupported DM link protocol ${url.protocol}`);
+      }
+      if ((await link.getAttribute("rel")) !== "noopener noreferrer") {
+        throw new Error(`${label}: external DM link must disable opener access`);
+      }
+    } else {
+      const contact = page.getByRole("button", { name: /DM ME/i });
+      await contact.click();
+      await page.locator('[class*="contactHint"]').waitFor({
+        state: "visible", timeout: 3000,
+      });
+    }
+    console.log(`PASS ${label}: heading/choices/answers/sports panels and contact CTA`, JSON.stringify(positions));
   } finally {
     await context.close();
   }
