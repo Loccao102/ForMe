@@ -36,6 +36,25 @@ async function exercise(label, viewport, reducedMotion) {
     await answer.waitFor({ state: "visible", timeout: 15000 });
     await page.screenshot({ path: `${folder}/${label}-question.png`, animations: "disabled" });
 
+    if (reducedMotion === "reduce") {
+      // Reduced-motion mode must suppress JS-driven hover motion, not just
+      // CSS keyframes. Exercise both the guess and the question controls.
+      for (const [name, target] of [
+        ["impression", impression],
+        ["question", question],
+      ]) {
+        await page.mouse.move(1, 1);
+        const before = await target.evaluate(el => getComputedStyle(el).transform);
+        await target.hover();
+        await page.waitForTimeout(170);
+        const after = await target.evaluate(el => getComputedStyle(el).transform);
+        if (after !== before) {
+          throw new Error(`${label}: ${name} moves on hover even with reduced motion (${before} -> ${after})`);
+        }
+      }
+    }
+
+
     const titles = ["BADMINTON", "FOOTBALL", "RUNNING"];
     const positions = [];
     for (const title of titles) {
