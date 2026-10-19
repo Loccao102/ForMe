@@ -135,9 +135,19 @@ async function exercise(label, viewport, reducedMotion) {
     } else {
       const contact = page.getByRole("button", { name: /DM ME/i });
       await contact.click();
-      await page.locator('[class*="contactHint"]').waitFor({
-        state: "visible", timeout: 3000,
-      });
+      const hint = page.getByRole("status").filter({ hasText: /NEXT_PUBLIC_CONTACT_URL/ });
+      await hint.waitFor({ state: "visible", timeout: 3000 });
+      // Repeated clicks must re-arm the hint timeout; an earlier click
+      // must never close the later message prematurely.
+      if (label === "mobile") {
+        await page.waitForTimeout(1100);
+        await contact.click();
+        await page.waitForTimeout(2100);
+        if (!(await hint.isVisible())) {
+          throw new Error(`${label}: previous contact click dismissed the refreshed hint`);
+        }
+        await hint.waitFor({ state: "hidden", timeout: 2500 });
+      }
     }
     console.log(`PASS ${label}: heading/choices/answers/sports panels and contact CTA`, JSON.stringify(positions));
   } finally {
