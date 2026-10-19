@@ -129,12 +129,20 @@ async function exercise(label, viewport, reducedMotion) {
       if (!["https:", "mailto:"].includes(url.protocol)) {
         throw new Error(`${label}: unsupported DM link protocol ${url.protocol}`);
       }
-      if ((await link.getAttribute("rel")) !== "noopener noreferrer") {
-        throw new Error(`${label}: external DM link must disable opener access`);
+      const target = await link.getAttribute("target");
+      const rel = await link.getAttribute("rel");
+      if (url.protocol === "https:" && (target !== "_blank" || rel !== "noopener noreferrer")) {
+        throw new Error(`${label}: external HTTPS DM link must safely open in a new tab`);
+      }
+      if (url.protocol === "mailto:" && target === "_blank") {
+        throw new Error(`${label}: mailto DM link must not open a blank browser tab`);
       }
     } else {
       const contact = page.getByRole("button", { name: /DM ME/i });
-      await contact.click();
+      // Confirm a keyboard-only visitor can reach the same actionable
+      // guidance without depending on pointer events.
+      await contact.focus();
+      await page.keyboard.press("Enter");
       const hint = page.getByRole("status").filter({ hasText: /NEXT_PUBLIC_CONTACT_URL/ });
       await hint.waitFor({ state: "visible", timeout: 3000 });
       // Repeated clicks must re-arm the hint timeout; an earlier click
