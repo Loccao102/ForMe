@@ -7,6 +7,22 @@ await mkdir(folder, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const errors = [];
 
+// Reduced-motion feedback must appear at its final position rather than
+// running JS-driven position/opacity tweens after an interactive click.
+async function assertStaticFeedback(page, label, name, locator) {
+  const snapshot = () => locator.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    return { top: box.top, opacity: Number(getComputedStyle(element).opacity) };
+  });
+  const before = await snapshot();
+  await page.waitForTimeout(100);
+  const after = await snapshot();
+  if (Math.abs(after.top - before.top) > 0.5 ||
+      Math.abs(after.opacity - before.opacity) > 0.02) {
+    throw new Error(`${label}: ${name} animates despite reduced motion (${JSON.stringify(before)} -> ${JSON.stringify(after)})`);
+  }
+}
+
 async function exercise(label, viewport, reducedMotion) {
   const context = await browser.newContext({
     viewport,
@@ -26,6 +42,10 @@ async function exercise(label, viewport, reducedMotion) {
     if ((await impression.getAttribute("aria-pressed")) !== "true") {
       throw new Error(`${label}: impression choice did not expose pressed state`);
     }
+    if (reducedMotion === "reduce") {
+      await assertStaticFeedback(page, label, "impression feedback",
+        page.locator('[class*="impressionReply"]'));
+    }
 
     const question = page.getByRole("button", { name: /people/i });
     await question.click();
@@ -34,6 +54,9 @@ async function exercise(label, viewport, reducedMotion) {
     }
     const answer = page.getByRole("status").filter({ hasText: /conversations/ });
     await answer.waitFor({ state: "visible", timeout: 15000 });
+    if (reducedMotion === "reduce") {
+      await assertStaticFeedback(page, label, "question answer", answer);
+    }
     await page.screenshot({ path: `${folder}/${label}-question.png`, animations: "disabled" });
 
     // The interactive editorial choices must expose a keyboard-visible
