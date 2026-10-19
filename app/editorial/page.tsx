@@ -587,8 +587,10 @@ export default function EditorialPage() {
             <motion.a
               className={styles.dmButton}
               href={contactUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              // Mail clients should open directly, without an empty browser
+              // tab. External HTTPS profiles still use a safe new tab.
+              target={contactUrl.startsWith("mailto:") ? undefined : "_blank"}
+              rel={contactUrl.startsWith("mailto:") ? undefined : "noopener noreferrer"}
               whileHover={reduceMotion ? undefined : { scale: 1.04, rotate: -1 }}
               whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             >
