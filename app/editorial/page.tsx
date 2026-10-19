@@ -90,6 +90,7 @@ export default function EditorialPage() {
   const [impression, setImpression] = useState<string | null>(null);
   const [question, setQuestion] = useState<QuestionKey | null>(null);
   const [contactHint, setContactHint] = useState(false);
+  const contactHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const reduceMotion = useReducedMotion();
 
@@ -158,9 +159,23 @@ export default function EditorialPage() {
     return "You skipped the judging and asked about " + questions[question!].label + ".";
   }, [impression, question]);
 
+  useEffect(() => () => {
+    if (contactHintTimer.current !== null) {
+      window.clearTimeout(contactHintTimer.current);
+    }
+  }, []);
+
   const handleContact = () => {
+    // A second click starts a fresh 3-second hint; an older timer must not
+    // dismiss it early. Clear the timer when the editorial page unmounts.
+    if (contactHintTimer.current !== null) {
+      window.clearTimeout(contactHintTimer.current);
+    }
     setContactHint(true);
-    window.setTimeout(() => setContactHint(false), 3000);
+    contactHintTimer.current = window.setTimeout(() => {
+      contactHintTimer.current = null;
+      setContactHint(false);
+    }, 3000);
   };
 
   return (
@@ -592,7 +607,7 @@ export default function EditorialPage() {
           )}
 
           {contactHint && (
-            <p className={styles.contactHint}>
+            <p className={styles.contactHint} role="status" aria-live="polite">
               Add <code>NEXT_PUBLIC_CONTACT_URL</code> and this button will open your DMs.
             </p>
           )}
