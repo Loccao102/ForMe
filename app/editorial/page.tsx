@@ -90,7 +90,7 @@ export default function EditorialPage() {
   const [impression, setImpression] = useState<string | null>(null);
   const [question, setQuestion] = useState<QuestionKey | null>(null);
   const [contactHint, setContactHint] = useState(false);
-  const contactHintTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const contactHintTimer = useRef<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const reduceMotion = useReducedMotion();
 
