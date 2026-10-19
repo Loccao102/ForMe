@@ -252,8 +252,11 @@ export default function EditorialPage() {
             <motion.p
               key={impression ?? "empty"}
               className={styles.impressionReply}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: impression ? 1 : 0, y: impression ? 0 : 12 }}
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={reduceMotion
+                ? { opacity: impression ? 1 : 0, y: 0 }
+                : { opacity: impression ? 1 : 0, y: impression ? 0 : 12 }}
+              transition={reduceMotion ? { duration: 0 } : undefined}
             >
               {impression ? "noted. this will come back later." : "\u00A0"}
             </motion.p>
@@ -519,8 +522,11 @@ export default function EditorialPage() {
           role="status"
           aria-live="polite"
           key={question ?? "none"}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: chosenQuestion ? 1 : 0, y: chosenQuestion ? 0 : 20 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          animate={reduceMotion
+            ? { opacity: chosenQuestion ? 1 : 0, y: 0 }
+            : { opacity: chosenQuestion ? 1 : 0, y: chosenQuestion ? 0 : 20 }}
+          transition={reduceMotion ? { duration: 0 } : undefined}
         >
           {chosenQuestion && (
             <>
